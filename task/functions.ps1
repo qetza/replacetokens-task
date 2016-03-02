@@ -18,11 +18,18 @@ Function Get-MatchingFiles
     {
         $matchingFiles = ($Pattern -split ';')
     }
-    else    
+    else
     {
         $matchingFiles = ,$Pattern
     }
 
+    for ($i = 0 ; $i -lt $matchingFiles.Length ; ++$i) {
+        if (!$matchingFiles[$i].StartsWith($Root))
+        {
+            $matchingFiles[$i] = (Join-Path $Root $matchingFiles[$i])
+        }
+    }
+    
     $matchingFiles
 }
 
@@ -67,14 +74,35 @@ Function Get-FileEncoding
     'Ascii'
 }
 
+Function Get-Encoding
+{
+    [CmdletBinding()]
+    param(
+        [string] $Name,
+        [switch] $WriteBOM
+    )
+    
+    switch ($Name)
+    {
+        "Ascii" { return New-Object System.Text.ASCIIEncoding }
+        "UTF7" { return New-Object System.Text.UTF7Encoding($WriteBOM) }
+        "UTF8" { return New-Object System.Text.UTF8Encoding($WriteBOM) }
+        "Unicode" { return New-Object System.Text.UnicodeEncoding($WriteBOM) }
+        "BigEndianUnicode" { return New-Object System.Text.UnicodeEncoding($true, $WriteBOM) }
+        "UTF32" { return New-Object System.Text.UTF32Encoding($WriteBOM) }
+        "BigEndianUTF32" { return New-Object System.Text.UTF32Encoding($true, $WriteBOM) }
+    }
+}
+
 Function Set-Variables
 {
     [CmdletBinding()]
     param(
         [string] $Path,
         [regex] $Regex,
-        [string] $Encoding,
-        [switch] $FailOnMissing
+        [string] $EncodingName,
+        [switch] $FailOnMissing,
+        [switch] $WriteBOM
     )
     
     Write-Host "Replacing tokens in file '${Path}'..."
@@ -104,11 +132,18 @@ Function Set-Variables
     
     $content = $regex.Replace($content, $replaceCallback)
     
-    if (!$Encoding)
+    if (!$EncodingName -or $EncodingName -eq "auto")
     {
-        $Encoding = Get-FileEncoding -Path $Path
+        $EncodingName = Get-FileEncoding -Path $Path
+    }
+
+    $encoding = Get-Encoding -Name $EncodingName -WriteBOM:$WriteBOM
+    if (!$encoding)
+    {
+        Write-Error "Unknown encoding '${EncodingName}'."
+        return
     }
     
-    Write-Verbose "Using encoding '${Encoding}'"
-    $content | Set-Content -Path $Path -Encoding $Encoding
+    Write-Verbose "Using encoding '$($encoding.WebName)' (BOM: ${WriteBOM})"
+    [System.IO.File]::WriteAllText($Path, $content, $Encoding)
 }

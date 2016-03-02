@@ -1,88 +1,97 @@
 {
-  "id": "A8515EC8-7254-4FFD-912C-86772E2B5962",
-  "name": "replacetokens",
-  "friendlyName": "Replace Tokens",
-  "description": "Replace tokens in files",
-  "helpMarkDown": "[More Information](https://github.com/psake/vsts-replacetokens-task#readme)",
-  "category": "Utility",
-  "visibility": [
-    "Build",
-    "Release"
-  ],
-  "author": "Guillaume Rouchon",
-  "version": {
-    "Major": 1,
-    "Minor": 0,
-    "Patch": 0
-  },
-  "minimumAgentVersion": "1.92.0",
-  "groups": [
-      {
-        "name": "advanced",
-        "displayName": "Advanced",
-        "isExpanded": false
-      }
+    "id": "A8515EC8-7254-4FFD-912C-86772E2B5962",
+    "name": "replacetokens",
+    "friendlyName": "Replace Tokens",
+    "description": "Replace tokens in files",
+    "helpMarkDown": "[More Information](https://github.com/qetza/vsts-replacetokens-task#readme)",
+    "category": "Utility",
+    "visibility": [
+        "Build",
+        "Release"
     ],
-  "inputs": [
-    {
-      "name": "targetFiles",
-      "type": "filePath",
-      "label": "Target files",
-      "defaultValue": "**\\*.config",
-      "required": true,
-      "helpMarkDown": "Relative semicolon-separated paths to the files to replace tokens. Wildcards can be used.<br/>Eg: `**\\*.config` for all config files in all sub folders"
+    "author": "Guillaume Rouchon",
+    "version": {
+        "Major": 1,
+        "Minor": 0,
+        "Patch": 0
     },
-    {
-      "name": "encoding",
-      "type": "pickList",
-      "label": "File encoding",
-      "defaultValue": "",
-      "required": false,
-      "options": {
-        "": "auto",
-        "Ascii": "ascii",
-        "UTF7": "utf-7",
-        "UTF8": "utf-8",
-        "Unicode": "utf-16",
-        "BigEndianUnicode": "utf-16 (big endian)",
-        "UTF32": "utf-32",
-        "BigEndianUTF32": "utf-32 (big endian)"
-      },
-      "helpMarkDown": "Specify the files encoding."
-    },
-    {
-      "name": "failOnMissing",
-      "type": "boolean",
-      "label": "Fail on missing",
-      "defaultValue": "false",
-      "required": false,
-      "helpMarkDown": "If checked fails the task if a variable doesn't exists."
-    },
-    {
-      "name": "tokenPrefix",
-      "type": "string",
-      "label": "Token prefix",
-      "defaultValue": "#{",
-      "groupName": "advanced",
-      "required": true,
-      "helpMarkDown": "The prefix of the tokens to search in the target files."
-    },
-    {
-      "name": "tokenSuffix",
-      "type": "string",
-      "label": "Token suffix",
-      "defaultValue": "}#",
-      "groupName": "advanced",
-      "required": true,
-      "helpMarkDown": "The suffix of the tokens to search in the target files."
+    "minimumAgentVersion": "1.92.0",
+    "groups": [
+        {
+            "name": "advanced",
+            "displayName": "Advanced",
+            "isExpanded": false
+        }
+    ],
+    "inputs": [
+        {
+            "name": "targetFiles",
+            "type": "filePath",
+            "label": "Target files",
+            "defaultValue": "**\\*.config",
+            "required": true,
+            "helpMarkDown": "Relative semicolon-separated paths to the files to replace tokens. Wildcards can be used.<br/>Eg: `**\\*.config` for all config files in all sub folders"
+        },
+        {
+            "name": "encoding",
+            "type": "pickList",
+            "label": "Output file encoding",
+            "defaultValue": "auto",
+            "required": false,
+            "options": {
+                "auto": "auto",
+                "Ascii": "ascii",
+                "UTF7": "utf-7",
+                "UTF8": "utf-8",
+                "Unicode": "utf-16",
+                "BigEndianUnicode": "utf-16 (big endian)",
+                "UTF32": "utf-32",
+                "BigEndianUTF32": "utf-32 (big endian)"
+            },
+            "helpMarkDown": "Specify the output files encoding.<br/>The 'auto' value reuses the file encoding if a BOM is present; otherwise it will use ascii."
+        },
+        {
+            "name": "writeBOM",
+            "type": "boolean",
+            "label": "Write unicode BOM",
+            "defaultValue": "true",
+            "required": true,
+            "helpMarkDown": "If checked writes an unicode Byte Order Mark (BOM).",
+            "visibleRule": "encoding != Ascii"
+        },
+        {
+            "name": "failOnMissing",
+            "type": "boolean",
+            "label": "Fail on missing",
+            "defaultValue": "false",
+            "required": true,
+            "helpMarkDown": "If checked fails the task if a variable doesn't exists."
+        },
+        {
+            "name": "tokenPrefix",
+            "type": "string",
+            "label": "Token prefix",
+            "defaultValue": "#{",
+            "groupName": "advanced",
+            "required": true,
+            "helpMarkDown": "The prefix of the tokens to search in the target files."
+        },
+        {
+            "name": "tokenSuffix",
+            "type": "string",
+            "label": "Token suffix",
+            "defaultValue": "}#",
+            "groupName": "advanced",
+            "required": true,
+            "helpMarkDown": "The suffix of the tokens to search in the target files."
+        }
+    ],
+    "instanceNameFormat": "Replace tokens in $(targetFiles)",
+    "execution": {
+        "PowerShell": {
+            "target": "$(currentDirectory)\\replace-tokens.ps1",
+            "argumentFormat": "",
+            "workingDirectory": "$(currentDirectory)"
+        }
     }
-  ],
-  "instanceNameFormat": "Replace tokens in $(targetFiles)",
-  "execution": {
-    "PowerShell": {
-      "target": "$(currentDirectory)\\replace-tokens.ps1",
-      "argumentFormat": "",
-      "workingDirectory": "$(currentDirectory)"
-    }
-  }
 }
