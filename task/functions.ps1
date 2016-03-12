@@ -5,10 +5,12 @@ Function Get-MatchingFiles
         [string] $Pattern,
         [string] $Root
     )
-    
+
+    [string[]]$matchingFiles = @()
+
     if ($Pattern.Contains("*") -or $Pattern.Contains("?"))
     {
-        $matchingFiles = Find-Files -SearchPattern $Pattern -Root $Root
+        $matchingFiles += @(Find-Files -SearchPattern $Pattern -Root $Root)
         if (!$matchingFiles.Count)
         {
             throw "Target files not found using search pattern '${Pattern}'."
@@ -16,11 +18,11 @@ Function Get-MatchingFiles
     }
     elseif ($Pattern.Contains(';'))
     {
-        $matchingFiles = ($Pattern -split ';')
+        $matchingFiles += @($Pattern -split ';')
     }
     else
     {
-        $matchingFiles = ,$Pattern
+        $matchingFiles += @($Pattern)
     }
 
     for ($i = 0 ; $i -lt $matchingFiles.Length ; ++$i) {
@@ -29,7 +31,7 @@ Function Get-MatchingFiles
             $matchingFiles[$i] = (Join-Path $Root $matchingFiles[$i])
         }
     }
-    
+
     $matchingFiles
 }
 
