@@ -146,6 +146,13 @@ Function Set-Variables
         return
     }
     
+    $fileInfo = New-Object 'System.IO.FileInfo' $Path
+    if ($fileInfo.IsReadOnly)
+    {
+        Write-Verbose "Removing readonly flag on file '${Path}'."
+        $fileInfo.IsReadOnly = $false
+    }
+    
     Write-Verbose "Using encoding '$($encoding.WebName)' (BOM: ${WriteBOM})"
     [System.IO.File]::WriteAllText($Path, $content, $Encoding)
 }
