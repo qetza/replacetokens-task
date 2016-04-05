@@ -1,5 +1,6 @@
 [CmdletBinding()]
 param(
+    [string] $rootDirectory,
     [string] $targetFiles,
     [string] $encoding,
     [string] $failOnMissing,
@@ -11,12 +12,9 @@ param(
 Import-Module "Microsoft.TeamFoundation.DistributedTask.Task.Internal"
 Import-Module "Microsoft.TeamFoundation.DistributedTask.Task.Common"
 
-Write-Verbose "targetFiles = ${targetFiles}"
-Write-Verbose "encoding = ${encoding}"
-Write-Verbose "failOnMissing = ${failOnMissing}"
-Write-Verbose "tokenPrefix = ${tokenPrefix}"
-Write-Verbose "tokenSuffix = ${tokenSuffix}"
-Write-Verbose "writeBOM = ${writeBOM}"
+Write-Verbose "Entering script $($MyInvocation.MyCommand.Name)"
+Write-Verbose "Parameter Values"
+$PSBoundParameters.Keys | %{ Write-Verbose "$_ = $($PSBoundParameters[$_])" }
 
 [bool]$failOnMissing = $failOnMissing -eq 'true'
 [bool]$writeBOM = $writeBOM -eq 'true'
@@ -26,7 +24,7 @@ Write-Verbose "writeBOM = ${writeBOM}"
 $regex = [regex] "${tokenPrefix}((?:(?!${tokenSuffix}).)*)${tokenSuffix}"
 Write-Verbose "regex: ${regex}"
 
-Get-MatchingFiles -Pattern $targetFiles -Root $env:BUILD_SOURCESDIRECTORY | % {
+Get-MatchingFiles -Pattern $targetFiles -Root $rootDirectory | % {
     if (!(Test-Path $_))
     {
         Write-Error "File '${_}' not found."
