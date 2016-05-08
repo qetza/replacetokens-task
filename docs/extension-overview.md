@@ -10,3 +10,8 @@ This extension contains a build/release task for VS Team Services to replace tok
 ##Links
 - [File an issue](https://github.com/qetza/vsts-replacetokens-task/issues)
 - [View or contribute to the source code](https://github.com/qetza/vsts-replacetokens-task/)
+
+##Release notes
+**New in 1.2.0**
+- Add _Root directory_ task parameter to configure file search root directory (contributed by Jesse Houwing).
+- Update _Target files_ task parameter to support newline-separator (contributed by Jesse Houwing).
