@@ -27,10 +27,10 @@
         {
             "name": "rootDirectory",
             "type": "filePath",
-            "label": "Root Directory",
+            "label": "Root directory",
             "defaultValue": "$(System.DefaultWorkingDirectory)",
             "required": true,
-            "helpMarkDown": "Base directory"
+            "helpMarkDown": "Base directory for searching files."
         },
         {
             "name": "targetFiles",
@@ -38,7 +38,7 @@
             "label": "Target files",
             "defaultValue": "**\\*.config",
             "required": true,
-            "helpMarkDown": "Relative semicolon or newline-separated paths to the files to replace tokens. Wildcards can be used.<br/>Eg: `**\\*.config` for all config files in all sub folders"
+            "helpMarkDown": "Relative semicolon or newline-separated paths to the files to replace tokens. Wildcards can be used.<br/>Eg: `**\\*.config` for all config files in all sub folders."
         },
         {
             "name": "encoding",
