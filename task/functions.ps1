@@ -100,8 +100,9 @@ Function Set-Variables
         [string] $Path,
         [regex] $Regex,
         [string] $EncodingName,
-        [switch] $FailOnMissing,
-        [switch] $WriteBOM
+        [string] $ActionOnMissing,
+        [switch] $WriteBOM,
+        [switch] $KeepToken
     )
     
     Write-Host "Replacing tokens in file '${Path}'..."
@@ -121,13 +122,16 @@ Function Set-Variables
         $value = Get-TaskVariable $distributedTaskContext $Match.Groups[1].Value
         if (!$value)
         {
-            if ($FailOnMissing)
+            if ($KeepToken)
             {
-                Write-Error "Variable '$($Match.Groups[1].Value)' not found."
+                $value = $Match.Value
             }
-            else
+
+            switch ($ActionOnMissing)
             {
-                Write-Warning "Variable '$($Match.Groups[1].Value)' not found."   
+                'warn' { Write-Warning "Variable '$($Match.Groups[1].Value)' not found." }
+                'fail' { Write-Error "Variable '$($Match.Groups[1].Value)' not found." }
+                default { Write-Verbose "Variable '$($Match.Groups[1].Value)' not found." }
             }
         }
         

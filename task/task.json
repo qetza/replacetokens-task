@@ -12,7 +12,7 @@
     "author": "Guillaume Rouchon",
     "version": {
         "Major": 1,
-        "Minor": 2,
+        "Minor": 3,
         "Patch": 0
     },
     "minimumAgentVersion": "1.92.0",
@@ -68,12 +68,25 @@
             "visibleRule": "encoding != Ascii"
         },
         {
-            "name": "failOnMissing",
+            "name": "actionOnMissing",
+            "type": "pickList",
+            "label": "Action on missing variable",
+            "defaultValue": "warn",
+            "required": true,
+            "options": {
+                "continue": "silently continue",
+                "warn": "log warning",
+                "fail": "fail" 
+            },
+            "helpMarkDown": "Specify the action on a missing variable."
+        },
+        {
+            "name": "keepToken",
             "type": "boolean",
-            "label": "Fail on missing",
+            "label": "Keep token for missing variable",
             "defaultValue": "false",
             "required": true,
-            "helpMarkDown": "If checked fails the task if a variable doesn't exists."
+            "helpMarkDown": "If checked tokens with missing variables will not be replaced by empty string."
         },
         {
             "name": "tokenPrefix",
