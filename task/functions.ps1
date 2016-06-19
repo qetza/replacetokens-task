@@ -107,6 +107,12 @@ Function Set-Variables
     Write-Host "Replacing tokens in file '${Path}'..."
     
     $content = [System.IO.File]::ReadAllText($Path)
+    if (!$content)
+    {
+        Write-Verbose "Skipping empty file."
+        return
+    }
+    
     $replaceCallback = {
         param(
             [System.Text.RegularExpressions.Match] $Match
