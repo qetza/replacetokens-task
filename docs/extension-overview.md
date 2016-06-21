@@ -13,8 +13,8 @@ This extension contains a build/release task for VS Team Services to replace tok
 
 ##Release notes
 **New in 1.3.0**
-- Replaced parameter 'Fail on missing' with 'Action on missing variable'.
-- Add 'Keep token on missing variable' parameter.
+- Replaced parameter 'Fail on missing' with 'Action' in 'Missing variables' group.
+- Add 'Keep token' parameter in 'Missing variables' group.
 - Fix issue on empty file.
 
 **New in 1.2.0**
