@@ -12,6 +12,11 @@ This extension contains a build/release task for VS Team Services to replace tok
 - [View or contribute to the source code](https://github.com/qetza/vsts-replacetokens-task/)
 
 ##Release notes
+**New in 1.3.0**
+- Replaced parameter 'Fail on missing' with 'Action on missing variable'.
+- Add 'Keep token on missing variable' parameter.
+- Fix issue on empty file.
+
 **New in 1.2.0**
 - Add _Root directory_ task parameter to configure file search root directory (contributed by Jesse Houwing).
 - Update _Target files_ task parameter to support newline-separator (contributed by Jesse Houwing).
