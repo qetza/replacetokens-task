@@ -18,6 +18,11 @@
     "minimumAgentVersion": "1.92.0",
     "groups": [
         {
+            "name": "missing",
+            "displayName": "Missing variables",
+            "isExpanded": true
+        },
+        {
             "name": "advanced",
             "displayName": "Advanced",
             "isExpanded": false
@@ -70,8 +75,9 @@
         {
             "name": "actionOnMissing",
             "type": "pickList",
-            "label": "Action on missing variable",
+            "label": "Action",
             "defaultValue": "warn",
+            "groupName": "missing",
             "required": true,
             "options": {
                 "continue": "silently continue",
@@ -83,8 +89,9 @@
         {
             "name": "keepToken",
             "type": "boolean",
-            "label": "Keep token for missing variable",
+            "label": "Keep token",
             "defaultValue": "false",
+            "groupName": "missing",
             "required": true,
             "helpMarkDown": "If checked tokens with missing variables will not be replaced by empty string."
         },
