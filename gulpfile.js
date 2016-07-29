@@ -15,7 +15,7 @@ var _packagesRoot = path.join(__dirname, '_packages');
 gulp.task('default', ['build']);
 
 gulp.task('build', ['clean'], function () {
-    var extension = gulp.src(['docs/**/*', 'images/**/*', 'LICENSE.txt', 'vss-extension.json'], { base: '.' })
+    var extension = gulp.src(['README.md', 'LICENSE.txt', 'images/**/*', 'vss-extension.json'], { base: '.' })
         .pipe(debug({title: 'extension:'}))
         .pipe(gulp.dest(_buildRoot));
     var task = gulp.src('task/**/*', { base: '.' })
