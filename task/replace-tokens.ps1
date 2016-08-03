@@ -31,6 +31,8 @@ if ($failOnMissing)
 
 . $PSScriptRoot\functions.ps1
 
+$tokenPrefix = [regex]::Escape($tokenPrefix)
+$tokenSuffix = [regex]::Escape($tokenSuffix)
 $regex = [regex] "${tokenPrefix}((?:(?!${tokenSuffix}).)*)${tokenSuffix}"
 Write-Verbose "regex: ${regex}"
 

@@ -12,6 +12,7 @@ This extension contains a build/release task for VS Team Services to replace tok
 # Release notes
 **New in 1.4.0**
 - Add variables expansion in variable values.
+- Escape token prefix and suffix in regex pattern.
 
 **New in 1.3.1**
 - Fix wrong encoding constructors parameters.
