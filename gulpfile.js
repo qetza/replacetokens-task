@@ -134,8 +134,9 @@ updateTaskManifest = function(options) {
         manifest.version.Major = semver.major(options.version);
         manifest.version.Minor = semver.minor(options.version);
         manifest.version.Patch = semver.patch(options.version);
-        manifest.helpMarkDown = 'v' + options.version + ' - ' + manifest.helpMarkDown;
     }
+
+    manifest.helpMarkDown = 'v' + manifest.version.Major + '.' + manifest.version.Minor + '.' + manifest.version.Patch + ' - ' + manifest.helpMarkDown;
     
     if (options.stage) {
         manifest.friendlyName = manifest.friendlyName + ' (' + options.stage
