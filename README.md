@@ -21,6 +21,8 @@ Parameters include:
 - **Token prefix**: the prefix of the tokens to search in the target files.
 - **Token suffix**: the suffix of the tokens to search in the target files.
 - **Empty value**: the variable value that will be replaced with an empty string.
+- **Escape character**: the escape character to use when escaping characters in the variable values.
+- **Characters to escape**: characters in variable values to escape before replacing tokens.
 
 ## Tips
 If you want to use tokens in XML based configuration files to be replaced during deployment and also have those files usable for local development you can combine the [Replace Tokens task](https://marketplace.visualstudio.com/items?itemName=qetza.replacetokens) with the [XDT tranform task](https://marketplace.visualstudio.com/items?itemName=qetza.xdttransform):
@@ -31,8 +33,11 @@ If you want to use tokens in XML based configuration files to be replaced during
   - replace tokens in your updated configuration file
 
 ## Release notes
+**New in 2.3.0**
+- Add support to escape characters in variable values ([#52](https://github.com/qetza/vsts-replacetokens-task/issues/52))
+
 **New in 2.2.1**
-- Fix issue with backslash in default target files value on mac ([#50](https://github.com/qetza/vsts-replacetokens-task/issues/50)
+- Fix issue with backslash in default target files value on mac ([#50](https://github.com/qetza/vsts-replacetokens-task/issues/50))
 
 **New in 2.2.0**
 - Fix issue on file not found when using network paths ([#40](https://github.com/qetza/vsts-replacetokens-task/issues/40), [#41](https://github.com/qetza/vsts-replacetokens-task/issues/41)).
