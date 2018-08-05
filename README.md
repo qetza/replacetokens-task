@@ -22,8 +22,8 @@ Parameters include:
 - **Token suffix**: the suffix of the tokens to search in the target files.
 - **Empty value**: the variable value that will be replaced with an empty string.
 - **Escape type**: specify how to escape variable values.
-- **Escape character**: when using custom escape type, the escape character to use when escaping characters in the variable values.
-- **Characters to escape**: when using custom escape type, characters in variable values to escape before replacing tokens.
+- **Escape character**: when using `custom` escape type, the escape character to use when escaping characters in the variable values.
+- **Characters to escape**: when using `custom` escape type, characters in variable values to escape before replacing tokens.
 
 ## Tips
 If you want to use tokens in XML based configuration files to be replaced during deployment and also have those files usable for local development you can combine the [Replace Tokens task](https://marketplace.visualstudio.com/items?itemName=qetza.replacetokens) with the [XDT tranform task](https://marketplace.visualstudio.com/items?itemName=qetza.xdttransform):
@@ -34,6 +34,11 @@ If you want to use tokens in XML based configuration files to be replaced during
   - replace tokens in your updated configuration file
 
 ## Release notes
+**New in 3.0.0**
+- **Breaking change**: If you were using the character escaping feature you need to select `custom` in _Escape values type_ parameter.
+- Add support to escape JSON in variable values (contributed by Justin Gould)
+- Add support to escape XML in variable values (contributed by Justin Gould)
+
 **New in 2.3.0**
 - Add support to escape characters in variable values ([#52](https://github.com/qetza/vsts-replacetokens-task/issues/52))
 

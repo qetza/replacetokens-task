@@ -60,7 +60,7 @@ gulp.task('package', ['build'], function() {
         if (options.version === 'auto') {
             var ref = new Date(2000, 1, 1);
             var now = new Date();
-            var major = 1
+            var major = 2
             var minor = Math.floor((now - ref) / 86400000);
             var patch = Math.floor(Math.floor(now.getSeconds() + (60 * (now.getMinutes() + (60 * now.getHours())))) * 0.5)
             options.version = major + '.' + minor + '.' + patch
