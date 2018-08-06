@@ -57,7 +57,9 @@
                 "utf-7": "utf-7",
                 "utf-8": "utf-8",
                 "utf-16le": "utf-16",
-                "utf-16be": "utf-16 (big endian)"
+                "utf-16be": "utf-16 (big endian)",
+                "win1252": "windows 1252",
+                "iso88591": "iso 8859-1"
             },
             "helpMarkDown": "Specify the files encoding.<br/>The 'auto' value will determine the encoding based on the Byte Order Mark (BOM) if present; otherwise it will use ascii."
         },
@@ -68,7 +70,7 @@
             "defaultValue": "true",
             "required": true,
             "helpMarkDown": "If checked writes an unicode Byte Order Mark (BOM).",
-            "visibleRule": "encoding != ascii"
+            "visibleRule": "encoding != ascii && encoding != win1252 && encoding != iso88591"
         },
         {
             "name": "actionOnMissing",
@@ -139,7 +141,7 @@
             "type": "string",
             "label": "Escape character",
             "groupName": "advanced",
-            "visibleRule": "escapeType = custom",
+            "visibleRule": "escapeType == custom",
             "helpMarkDown": "The escape character to use when escaping characters in the variable values."
         },
         {
@@ -147,7 +149,7 @@
             "type": "string",
             "label": "Characters to escape",
             "groupName": "advanced",
-            "visibleRule": "escapeType = custom",
+            "visibleRule": "escapeType == custom",
             "helpMarkDown": "Characters in variable values to escape before replacing tokens."
         }
     ],

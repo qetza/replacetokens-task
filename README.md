@@ -38,6 +38,7 @@ If you want to use tokens in XML based configuration files to be replaced during
 - **Breaking change**: If you were using the character escaping feature you need to select `custom` in _Escape values type_ parameter.
 - Add support to escape JSON in variable values (contributed by Justin Gould)
 - Add support to escape XML in variable values (contributed by Justin Gould)
+- Add `Windows 1252` and `ISO 8859-1` encoding to _File encoding_ ([#67](https://github.com/qetza/vsts-replacetokens-task/issues/67))
 
 **New in 2.3.0**
 - Add support to escape characters in variable values ([#52](https://github.com/qetza/vsts-replacetokens-task/issues/52))

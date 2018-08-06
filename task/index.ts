@@ -10,6 +10,8 @@ const ENCODING_UTF_7: string = 'utf-7';
 const ENCODING_UTF_8: string = 'utf-8';
 const ENCODING_UTF_16LE: string = 'utf-16le';
 const ENCODING_UTF_16BE: string = 'utf-16be';
+const ENCODING_WIN1252: string = 'windows1252';
+const ENCODING_ISO_8859_1: string = 'iso88591';
 
 const ACTION_WARN: string = 'warn';
 const ACTION_FAIL: string = 'fail';
@@ -54,6 +56,12 @@ var mapEncoding = function (encoding: string): string {
         case 'utf-16be': 
             return ENCODING_UTF_16BE;
 
+        case 'win1252':
+            return ENCODING_WIN1252;
+        
+        case 'iso88591':
+            return ENCODING_ISO_8859_1;
+
         case 'UTF32':
             throw new Error('utf-32 encoding is no more supported.');
 
@@ -85,8 +93,6 @@ var getEncoding = function (filePath: string): string {
         else
             tl.debug('BOM no found: default to ascii.');
 
-        tl.debug('encoding: ' + encoding);
-
         return encoding;
     }
     finally
@@ -105,6 +111,8 @@ var replaceTokensInFile = function (
     let encoding: string = options.encoding;
     if (options.encoding === ENCODING_AUTO)
         encoding = getEncoding(filePath);
+
+    tl.debug('using encoding: ' + encoding);
 
     // read file and replace tokens
     let content: string = iconv.decode(fs.readFileSync(filePath), encoding);
