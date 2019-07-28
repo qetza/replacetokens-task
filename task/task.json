@@ -12,9 +12,10 @@
     "author": "Guillaume Rouchon",
     "version": {
         "Major": 3,
-        "Minor": 1,
+        "Minor": 2,
         "Patch": 0
     },
+    "instanceNameFormat": "Replace tokens in $(targetFiles)",
     "minimumAgentVersion": "2.105.0",
     "groups": [
         {
@@ -165,7 +166,6 @@
             "helpMarkDown": "Characters in variable values to escape before replacing tokens."
         }
     ],
-    "instanceNameFormat": "Replace tokens in $(targetFiles)",
     "execution": {
         "Node": {
             "target": "index.js"
