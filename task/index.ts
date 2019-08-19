@@ -235,6 +235,9 @@ var replaceTokensInFile = function (
             }
         }
 
+        // log value before escaping to show raw value and avoid secret leaks (escaped secrets are not replaced by ***)
+        logger.debug(name + ': ' + value);
+
         switch (escapeType) {
             case 'json':
                 value = value.replace(JSON_ESCAPE, match => {
@@ -272,8 +275,6 @@ var replaceTokensInFile = function (
                         value = value.split(c).join(options.escapeChar + c);
                 break;
         }
-
-        logger.debug(name + ': ' + value);
 
         return value;
     });
