@@ -4,9 +4,7 @@
 Azure Pipelines extension that replace tokens in **text** files with variable values.
 
 ## Usage
-If you are using the UI, add a new task, select **Replace Tokens** from the **Utility** category and configure it as needed:
-
-![Replace Tokens parameters](images/task-parameters.png)
+If you are using the UI, add a new task, select **Replace Tokens** from the **Utility** category and configure it as needed.
 
 If your are using a YAML file, add a task with the following syntax:
 ```yaml
@@ -20,7 +18,7 @@ If your are using a YAML file, add a task with the following syntax:
 
 **Note:** the task will only work on text files, if you need to replace token in archive file you will need to first extract the files and after archive them back.
 
-### Parameters
+## Parameters
 The parameters of the task are described bellow, in parenthesis is the YAML name:
 
 - **Root directory** (rootDirectory): the base directory for searching files. If not specified the default working directory will be used.
@@ -47,16 +45,15 @@ The parameters of the task are described bellow, in parenthesis is the YAML name
 - **Escape type** (escapeType): specify how to escape variable values. Value `auto` uses the file extension (`.json` and `.xml`) to determine the escaping and `none` as fallback. (allowed values: auto, none, json, xml and custom)
 - **Escape character** (escapeChar): when using `custom` escape type, the escape character to use when escaping characters in the variable values.
 - **Characters to escape** (charsToEscape): when using `custom` escape type, characters in variable values to escape before replacing tokens.
-- **Verbosity** (verbosity): specify the level of log verbosity. (note: error and system debug are always on)
+- **Verbosity** (verbosity): specify the level of log verbosity. (note: error and system debug are always on) (allowed values: normal, detailed and off)
 - **Action on missing variable** (actionOnMissing): specify the action to take on a missing variable.
   - _silently continue_ (continue): the task will continue without displaying any message.
   - _log warning_ (warn): the task will continue but log a warning with the missing variable name.
   - _fail_ (fail): the task will fail and log the missing variable name.
 - **Keep token for missing variable** (keepToken): if checked tokens with missing variables will not be replaced by empty string.
-- **Action on no file processed** (actionOnNoFiles):  specify the action when no file was processed. (allowed values: continue, warn, fail)
-- **Token pattern** (tokenPattern): specify the pattern of the tokens to search in the target files. (allowed values: default, rm, octopus, azpipelines, doublebraces and custom)
-- **Token prefix** (tokenPrefix): when using `custom` token pattern, the prefix of the tokens to search in the target files.
-- **Token suffix** (tokenSuffix): when using `custom` token pattern, the suffix of the tokens to search in the target files.
+- **Action on no file processed** (actionOnNoFiles):  specify the action when no file was processed.
+- **Token prefix** (tokenPrefix): the prefix of the tokens to search in the target files.
+- **Token suffix** (tokenSuffix): the suffix of the tokens to search in the target files.
 - **Use legacy pattern** (useLegacyPattern): if checked whitespaces between the token prefix/suffix and the variable name are not ignored.  
 - **Use legacy empty/default feature** (useLegacyEmptyFeature): if check use the old empty & default values features. The new feature/code can now distinguish between an undefined variable and an defined empty variable without the use of a specific "empty" token (_Empty value_ parameter).
 - **Empty value** (emptyValue): with legacy empty/default feature: the variable value that will be replaced with an empty string.
@@ -75,14 +72,6 @@ The parameters of the task are described bellow, in parenthesis is the YAML name
 - **Enable recursion in values** (enableRecursion): if checked token replacement (with transformation) will be run on values.Example: "Say: #{value1}#" with value1 = "hello #{upper(value2)}#" and value2 = "world!" will result in "hello WORLD!".
 - **Send anonymous usage telemetry** (enableTelemetry): if checked anonymous usage data (hashed collection and pipeline id, no file parameter values, no variable values) will be sent to the task author only to analyze task usage.
 
-### Output variables
-The task creates the following as output variables:
-- **tokenReplacedCount**: the total number of tokens which were replaced by a variable.
-- **tokenFoundCount**: the total number of of tokens which were found.
-- **fileProcessedCount**: the total number of files which were processed.
-- **transformExecutedCount**: the total number of transformations which were executed.
-- **defaultValueCount**: the total number of default value used.
-
 ## Data/Telemetry
 The Replace Tokens task for Azure Pipelines collects anonymous usage data and sends them to its author to help improve the product by default. If you don’t wish to send usage data, you can change your telemetry settings through _Send anonymous usage telemetry_ parameter or by setting a variable or environment variable `REPLACETOKENS_DISABLE_TELEMETRY` to `true`.
 
@@ -95,50 +84,20 @@ If you want to use tokens in XML based configuration files to be replaced during
   - replace tokens in your updated configuration file
 
 ## Release notes
-**New in 4.4.0**
-- Task **5.1.0**
-  - Add support for inline variables ([#252](https://github.com/qetza/vsts-replacetokens-task/issues/252)).
-  - Add support for recursive token replacement in values ([#201](https://github.com/qetza/vsts-replacetokens-task/issues/201)).
-  - Add optional reworked feature to simplify empty and default values (this is a **breaking change** if enabled as the old _Empty value_ is not used anymore but replaced by an empty variable declaration).
-- Task **4.2.0**
-  - Add support for inline variables ([#252](https://github.com/qetza/vsts-replacetokens-task/issues/252)).
-  - Add support for recursive token replacement in values ([#201](https://github.com/qetza/vsts-replacetokens-task/issues/201)).
-  - Add optional reworked feature to simplify empty and default values (this is a **breaking change** if enabled as the old _Empty value_ is not used anymore but replaced by an empty variable declaration).
-- Task **3.10.0**
-  - Add support for inline variables ([#252](https://github.com/qetza/vsts-replacetokens-task/issues/252)).
-  - Add support for recursive token replacement in values ([#201](https://github.com/qetza/vsts-replacetokens-task/issues/201)).
-  - Add optional reworked feature to simplify empty and default values (this is a **breaking change** if enabled as the old _Empty value_ is not used anymore but replaced by an empty variable declaration).
+**New in 3.10.0**
+- Add support for inline variables ([#252](https://github.com/qetza/vsts-replacetokens-task/issues/252)).
+- Add support for recursive token replacement in values ([#201](https://github.com/qetza/vsts-replacetokens-task/issues/201)).
+- Add optional reworked feature to simplify empty and default values (this is a **breaking change** if enabled as the old _Empty value_ is not used anymore but replaced by an empty variable declaration).
 
-**New in 4.3.0**
-- Add task **5.0.0**
-  - **Breaking change**: Migrate task to Node10 execution handler needing agent `2.144.0` minimum ([#228](https://github.com/qetza/vsts-replacetokens-task/issues/228), [#230](https://github.com/qetza/vsts-replacetokens-task/issues/230)).
+**New in 3.9.1**
+- Revert migrate tasks to Node10 execution handler ([#233](https://github.com/qetza/vsts-replacetokens-task/issues/233)).
 
-**New in 4.2.1**
-- Task **4.1.1**
-  - Revert migrate tasks to Node10 execution handler ([#233](https://github.com/qetza/vsts-replacetokens-task/issues/233)).
-- Task **3.9.1**
-  - Revert migrate tasks to Node10 execution handler ([#233](https://github.com/qetza/vsts-replacetokens-task/issues/233)).
+**New in 3.9.0**
+- Migrate tasks to Node10 execution handler ([#228](https://github.com/qetza/vsts-replacetokens-task/issues/228), [#230](https://github.com/qetza/vsts-replacetokens-task/issues/230)).
 
-**New in 4.2.0**
-- Task **4.1.0**
-  - Migrate tasks to Node10 execution handler ([#228](https://github.com/qetza/vsts-replacetokens-task/issues/228), [#230](https://github.com/qetza/vsts-replacetokens-task/issues/230)).
-- Task **3.9.0**
-  - Migrate tasks to Node10 execution handler ([#228](https://github.com/qetza/vsts-replacetokens-task/issues/228), [#230](https://github.com/qetza/vsts-replacetokens-task/issues/230)).
-
-**New in 4.1.0**
-- Task **4.0.1**
-  - Promoted to release.
-  - Add `base64` transform ([#163](https://github.com/qetza/vsts-replacetokens-task/issues/163)).
-  - Add action on no file processed ([#210](https://github.com/qetza/vsts-replacetokens-task/issues/210)).
-- Task **3.8.0**
-  - Add `base64` transform ([#163](https://github.com/qetza/vsts-replacetokens-task/issues/163)).
-  - Add action on no file processed ([#210](https://github.com/qetza/vsts-replacetokens-task/issues/210)).
-
-**New in 4.0.0**
-- Add support for multiple task versions.
-- Add task 4.x (preview)
-  - **Breaking change**: Add output variables ([#160](https://github.com/qetza/vsts-replacetokens-task/issues/160)). (some older version of TFS/Azure Pipelines doesn't support output variables when used in release pipelines)
-  - **Breaking change**: Add dropdown parameter _Token pattern_ to select token pattern ([#131](https://github.com/qetza/vsts-replacetokens-task/issues/131)). (users with customized token pattern will need to manually select one or `custom`)
+**New in 3.8.0**
+- Add `base64` transform ([#163](https://github.com/qetza/vsts-replacetokens-task/issues/163)).
+- Add action on no file processed ([#210](https://github.com/qetza/vsts-replacetokens-task/issues/210)).
 
 **New in 3.7.1**
 - Fix issue on binary files ([#193](https://github.com/qetza/vsts-replacetokens-task/issues/193)).
@@ -198,45 +157,3 @@ If you want to use tokens in XML based configuration files to be replaced during
 - Add support to escape JSON in variable values (contributed by Justin Gould)
 - Add support to escape XML in variable values (contributed by Justin Gould)
 - Add `Windows 1252` and `ISO 8859-1` encoding to _File encoding_ ([#67](https://github.com/qetza/vsts-replacetokens-task/issues/67))
-
-**New in 2.3.0**
-- Add support to escape characters in variable values ([#52](https://github.com/qetza/vsts-replacetokens-task/issues/52))
-
-**New in 2.2.1**
-- Fix issue with backslash in default target files value on mac ([#50](https://github.com/qetza/vsts-replacetokens-task/issues/50))
-
-**New in 2.2.0**
-- Fix issue on file not found when using network paths ([#40](https://github.com/qetza/vsts-replacetokens-task/issues/40), [#41](https://github.com/qetza/vsts-replacetokens-task/issues/41)).
-
-**New in 2.1.0**
-- Add support for comma-separator in _Target files_ ([#35](https://github.com/qetza/vsts-replacetokens-task/issues/35)).
-- Add _Empty value_ parameter to allow token replacement with an empty string ([#32](https://github.com/qetza/vsts-replacetokens-task/issues/32)).
-
-**New in 2.0.2**
-- Fix invalid file permissions after saving files.
-
-**New in 2.0.0**
-- **Breaking change**: Migrated code to typescript to support cross-platform agent. This change requires the use of an agent at least in version 2.105.0 which is **not compatible with TFS 2015**. If you need to install the task on TFS 2015, download the vsix from the repository: [https://github.com/qetza/vsts-replacetokens-task/releases/download/v1.4.1/qetza.replacetokens-1.4.1.vsix](https://github.com/qetza/vsts-replacetokens-task/releases/download/v1.4.1/qetza.replacetokens-1.4.1.vsix)
-- **Breaking change**: _File encoding_ parameter is now used when reading and writing files. Previously it was only used when writing.
-- **Breaking change**: _File encoding_ doesn't support 'utf-32' and 'utf-32 (big endian)' anymore.
-- **Breaking change**: _Target files_ parameter now only uses the new line as a separator for multi-values (previously it used new-line and semi-colon).
-- Removed required _Root directory_, an empty value is equivalent to $(System.DefaultWorkingDirectory).
-
-**New in 1.4.1**
-- Fix missing method issue with new xplat agent (2.104.1)
-
-**New in 1.4.0**
-- Add variables expansion in variable values.
-- Escape token prefix and suffix in regex pattern.
-
-**New in 1.3.1**
-- Fix wrong encoding constructors parameters.
-
-**New in 1.3.0**
-- Replaced parameter _Fail on missing_ with _Action_ in _Missing variables_ group.
-- Add _Keep token_ parameter in 'Missing variables' group.
-- Fix issue on empty file.
-
-**New in 1.2.0**
-- Add _Root directory_ task parameter to configure file search root directory (contributed by Jesse Houwing).
-- Update _Target files_ task parameter to support newline-separator (contributed by Jesse Houwing).
