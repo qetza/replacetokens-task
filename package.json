@@ -21,11 +21,24 @@
     "type": "git",
     "url": "git+https://github.com/qetza/replacetokens-task.git"
   },
+  "scripts": {
+    "build": "npm run build-v3 && npm run build-v4 && npm run build-v5",
+    "build-v3": "tsc --project tasks/ReplaceTokensV3/tsconfig.json",
+    "build-v4": "tsc --project tasks/ReplaceTokensV4/tsconfig.json",
+    "build-v5": "tsc --project tasks/ReplaceTokensV5/tsconfig.json",
+    "test": "npm run test-v3 && npm run test-v4 && npm run test-v5",
+    "test-v3": "mocha tasks/ReplaceTokensV3/dist/tests/L0.js",
+    "test-v4": "mocha tasks/ReplaceTokensV4/dist/tests/L0.js",
+    "test-v5": "mocha tasks/ReplaceTokensV5/dist/tests/L0.js",
+    "package": "node scripts/package.js",
+    "package-public": "node scripts/package.js --public"
+  },
   "devDependencies": {
     "@types/js-yaml": "^4.0.0",
     "@types/node": "^10.17.0",
     "@types/q": "0.0.32",
     "@types/uuid": "^8.3.0",
+    "@vercel/ncc": "^0.38.1",
     "minimist": "~1.2.6",
     "mocha": "^10.3.0",
     "semver": "~5.6.0",

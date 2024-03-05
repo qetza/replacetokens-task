@@ -10,7 +10,7 @@ Please refer to the [release page](https://github.com/qetza/replacetokens-task/r
 ```yaml
 - task: qetza.replacetokens.replacetokens-task.replacetokens@3
   inputs:
-    # The root path to use for relative paths in sources.
+    # The root path to use when reading files with a relative path.
     #
     # Optional. Default: $(System.DefaultWorkingDirectory)
     rootDirectory: ''

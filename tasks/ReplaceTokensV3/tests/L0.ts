@@ -1,15 +1,17 @@
 import * as path from 'path';
 import * as ttm from 'azure-pipelines-task-lib/mock-test';
-import fs = require('fs');
-import chai = require('chai');
-var should = chai.should();
+import * as fs from 'fs';
+import * as crypto from 'crypto';
 
-import crypto = require('crypto');
+require('chai').should();
+
+const data = path.join(__dirname, '../../tests/_data');
+const tmp = path.join(__dirname, '_tmp');
 
 describe('ReplaceTokens v3 L0 suite', function() {
     this.timeout(5000);
 
-    function runValidation(validator, tr, done) {
+    function runValidation(validator: () => void, tr: ttm.MockTestRunner, done: Mocha.Done) {
         try {
             validator();
             done();
@@ -24,7 +26,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
         }
     };
 
-    function removeFolder(p) {
+    function removeFolder(p: string) {
         if (fs.existsSync(p)) {
             fs.readdirSync(p).forEach((file, index) => {
                 const newPath = path.join(p, file);
@@ -37,19 +39,33 @@ describe('ReplaceTokens v3 L0 suite', function() {
         }
     }
 
+    function copyData(source: string, dest: string): string {
+        dest = path.join(tmp, dest);
+        fs.copyFileSync(path.join(data, source), dest);
+
+        return path.resolve(dest);
+    }
+
+    function assertFilesEqual(actual: string, expected: string, message?: string) {
+        const a = fs.readFileSync(actual, 'utf8');
+        const e = fs.readFileSync(expected, 'utf8');
+
+        a.should.equal(e, message);
+    }
+
     before(() => {
         process.env['system_servertype'] = 'server';
         process.env['system_collectionid'] = 'col01';
         process.env['system_teamprojectid'] = 'project01';
         process.env['system_definitionid'] = 'def01';
 
-        const testTmpPath = path.join(__dirname, 'test_tmp');
-        if (fs.existsSync(testTmpPath))
-            removeFolder(testTmpPath);
-        fs.mkdirSync(testTmpPath);
+        if (fs.existsSync(tmp))
+            removeFolder(tmp);
+
+        fs.mkdirSync(tmp);
     });
 
-    this.afterEach(() => {
+    afterEach(() => {
         // clean env
         delete process.env['__inputpath__']
         delete process.env['__inputpath1__']
@@ -67,7 +83,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
         delete process.env['__usedefaultvalue__'];
     });
 
-    describe('#telemetry', function() {
+    describe('telemetry', function() {
         it('should not call telemetry when disabled by input', function(done: Mocha.Done) {
             // arrange
             let tp: string = path.join(__dirname, 'telemetry', 'L0_TelemetryDisabledByInput.js');
@@ -78,9 +94,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             // assert
             runValidation(
-                () => {
-                    tr.stdout.should.not.include('sent usage telemetry:');
-                },
+                () => { tr.stdout.should.not.include('sent usage telemetry:'); },
                 tr,
                 done);
         });
@@ -95,9 +109,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             // assert
             runValidation(
-                () => {
-                    tr.stdout.should.not.include('sent usage telemetry:');
-                },
+                () => { tr.stdout.should.not.include('sent usage telemetry:'); },
                 tr,
                 done);
         });
@@ -126,10 +138,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'telemetry', 'L0_TelemetryOnSuccess.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_telemetryonsuccess.json');
-            fs.copyFileSync(
-                path.join(__dirname, 'test_data', 'default.json'),
-                process.env['__inputpath__']);
+            process.env['__inputpath__'] = copyData('default.json', 'default_telemetryonsuccess.json')
 
             // act
             tr.run();
@@ -146,16 +155,13 @@ describe('ReplaceTokens v3 L0 suite', function() {
         });
     });
 
-    describe('#target files', function() {
+    describe('target files', function() {
         it('should replace inline when no output path', function(done: Mocha.Done) {
             // arrange
             let tp = path.join(__dirname, 'targetFiles', 'L0_InlineReplace.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_inlinereplace.json');
-            fs.copyFileSync(
-                path.join(__dirname, 'test_data', 'default.json'),
-                process.env['__inputpath__']);
+            process.env['__inputpath__'] = copyData('default.json', 'default_inlinereplace.json');
 
             // act
             tr.run();
@@ -165,9 +171,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
                 () => {
                     tr.succeeded.should.equal(true, 'task succeeded');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'default.expected.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
                 },
                 tr,
                 done);
@@ -178,14 +182,8 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'targetFiles', 'L0_MultipleInlineReplace.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath1__'] = path.join(__dirname, 'test_tmp', 'default_inlinereplace1.json');
-            process.env['__inputpath2__'] = path.join(__dirname, 'test_tmp', 'default_inlinereplace2.json');
-            fs.copyFileSync(
-                path.join(__dirname, 'test_data', 'default.json'),
-                process.env['__inputpath1__']);
-            fs.copyFileSync(
-                path.join(__dirname, 'test_data', 'default.json'),
-                process.env['__inputpath2__']);
+            process.env['__inputpath1__'] = copyData('default.json', 'default_inlinereplace1.json');
+            process.env['__inputpath2__'] = copyData('default.json', 'default_inlinereplace2.json');
 
             // act
             tr.run();
@@ -195,13 +193,8 @@ describe('ReplaceTokens v3 L0 suite', function() {
                 () => {
                     tr.succeeded.should.equal(true, 'task succeeded');
 
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'default.expected.json'), 'utf8');
-
-                    let actual: string = fs.readFileSync(process.env['__inputpath1__'], 'utf8');
-                    actual.should.equal(expected, 'replaced output in first file');
-
-                    actual = fs.readFileSync(process.env['__inputpath2__'], 'utf8');
-                    actual.should.equal(expected, 'replaced output in second file');
+                    assertFilesEqual(process.env['__inputpath1__'], path.join(data, 'default.expected.json'), 'replaced output in first file');
+                    assertFilesEqual(process.env['__inputpath2__'], path.join(data, 'default.expected.json'), 'replaced output in second file');
                 },
                 tr,
                 done);
@@ -212,13 +205,8 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'targetFiles', 'L0_OutputReplace.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_relativeoutputreplace.json');
+            process.env['__inputpath__'] = copyData('default.json', 'default_relativeoutputreplace.json');
             process.env['__outputpath__'] = path.join('output', 'default_relativeoutputreplace.output.json');
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
 
             // act
             tr.run();
@@ -228,13 +216,8 @@ describe('ReplaceTokens v3 L0 suite', function() {
                 () => {
                     tr.succeeded.should.equal(true, 'task succeeded');
 
-                    let actual: string = fs.readFileSync(path.join(__dirname, 'test_tmp', process.env['__outputpath__']), 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'default.expected.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
-
-                    let input: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let original: string = fs.readFileSync(dataPath, 'utf8');
-                    input.should.equal(original, 'input');
+                    assertFilesEqual(path.join(tmp, process.env['__outputpath__']), path.join(data, 'default.expected.json'), 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.json'), 'input');
                 },
                 tr,
                 done);
@@ -245,13 +228,8 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'targetFiles', 'L0_OutputReplace.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_absoluteoutputreplace.json');
-            process.env['__outputpath__'] = path.join(__dirname, 'test_tmp', 'output', 'default_absoluteoutputreplace.output.json');
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
+            process.env['__inputpath__'] = copyData('default.json', 'default_absoluteoutputreplace.json');
+            process.env['__outputpath__'] = path.join(tmp, 'output', 'default_absoluteoutputreplace.output.json');
 
             // act
             tr.run();
@@ -261,13 +239,8 @@ describe('ReplaceTokens v3 L0 suite', function() {
                 () => {
                     tr.succeeded.should.equal(true, 'task succeeded');
 
-                    let actual: string = fs.readFileSync(process.env['__outputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'default.expected.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
-
-                    let input: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let original: string = fs.readFileSync(dataPath, 'utf8');
-                    input.should.equal(original, 'input');
+                    assertFilesEqual(process.env['__outputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.json'), 'input');
                 },
                 tr,
                 done);
@@ -279,13 +252,8 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
             process.env['__input__'] = 'default_wildcardreplace.*.json';
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_wildcardreplace.dev.json');
+            process.env['__inputpath__'] = copyData('default.json', 'default_wildcardreplace.dev.json');
             process.env['__outputpath__'] = path.join('output', 'default_wildcardreplace.*.output.json');
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
 
             // act
             tr.run();
@@ -295,32 +263,22 @@ describe('ReplaceTokens v3 L0 suite', function() {
                 () => {
                     tr.succeeded.should.equal(true, 'task succeeded');
 
-                    let actual: string = fs.readFileSync(path.join(__dirname, 'test_tmp', 'output', 'default_wildcardreplace.dev.output.json'), 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'default.expected.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
-
-                    let input: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let original: string = fs.readFileSync(dataPath, 'utf8');
-                    input.should.equal(original, 'input');
+                    assertFilesEqual(path.join(tmp, 'output', 'default_wildcardreplace.dev.output.json'), path.join(data, 'default.expected.json'), 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.json'), 'input');
                 },
                 tr,
                 done);
         });
     });
 
-    describe('#token pattern', function() {
+    describe('token pattern', function() {
         it('should replace when default pattern', function(done: Mocha.Done) {
             // arrange
             let tp = path.join(__dirname, 'tokenPattern', 'L0_TokenPattern.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_defaulttokenpattern.json');
+            process.env['__inputpath__'] = copyData('default.json', 'default_defaulttokenpattern.json');
             process.env['__tokenpattern__'] = 'default';
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
 
             // act
             tr.run();
@@ -330,9 +288,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
                 () => {
                     tr.succeeded.should.equal(true, 'task succeeded');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'default.expected.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
                 },
                 tr,
                 done);
@@ -343,12 +299,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'tokenPattern', 'L0_CustomTokenPattern.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_customtokenpattern.json');
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'default.custom.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
+            process.env['__inputpath__'] = copyData('default.custom.json', 'default_customtokenpattern.json');
 
             // act
             tr.run();
@@ -358,9 +309,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
                 () => {
                     tr.succeeded.should.equal(true, 'task succeeded');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'default.expected.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
                 },
                 tr,
                 done);
@@ -371,12 +320,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'tokenPattern', 'L0_LegacyTokenPattern.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_legacytokenpattern.json');
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
+            process.env['__inputpath__'] = copyData('default.json', 'default_legacytokenpattern.json');
 
             // act
             tr.run();
@@ -386,9 +330,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
                 () => {
                     tr.succeeded.should.equal(true, 'task succeeded');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'default.expected.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
                 },
                 tr,
                 done);
@@ -399,12 +341,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'tokenPattern', 'L0_LegacyTokenPattern.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_newtokenpattern.json');
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'default.newpattern.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
+            process.env['__inputpath__'] = copyData('default.json', 'default_newtokenpattern.json');
 
             // act
             tr.run();
@@ -414,28 +351,21 @@ describe('ReplaceTokens v3 L0 suite', function() {
                 () => {
                     tr.succeeded.should.equal(true, 'task succeeded');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'default.expected_noreplace.json'), 'utf8');
-                    actual.should.equal(expected, 'output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
                 },
                 tr,
                 done);
         });
     });
 
-    describe('#keep token', function() {
+    describe('keep token', function() {
         it('should replace with empty when not keeping token', function(done: Mocha.Done) {
             // arrange
             let tp = path.join(__dirname, 'keepToken', 'L0_KeepToken.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_nokeeptoken.json');
+            process.env['__inputpath__'] = copyData('default.json', 'default_nokeeptoken.json');
             process.env['__keeptoken__'] = 'false';
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
 
             // act
             tr.run();
@@ -445,9 +375,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
                 () => {
                     tr.succeeded.should.equal(true, 'task succeeded');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'default.expected_noreplace.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_noreplace.json'), 'replaced output');
                 },
                 tr,
                 done);
@@ -458,13 +386,8 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'keepToken', 'L0_KeepToken.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_nokeeptoken.json');
+            process.env['__inputpath__'] = copyData('default.json', 'default_nokeeptoken.json');
             process.env['__keeptoken__'] = 'true';
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
 
             // act
             tr.run();
@@ -474,28 +397,21 @@ describe('ReplaceTokens v3 L0 suite', function() {
                 () => {
                     tr.succeeded.should.equal(true, 'task succeeded');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(dataPath, 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.json'), 'replaced output');
                 },
                 tr,
                 done);
         });
     });
 
-    describe('#transforms', function() {
+    describe('transforms', function() {
         it('should uppercase replaced value with transform', function(done: Mocha.Done) {
             // arrange
             let tp = path.join(__dirname, 'transforms', 'L0_TransformValue.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'transform_upper.json');
+            process.env['__inputpath__'] = copyData('transform.upper.json', 'transform_upper.json');
             process.env['var1'] = 'var1_value';
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'transform.upper.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
 
             // act
             tr.run();
@@ -505,9 +421,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
                 () => {
                     tr.succeeded.should.equal(true, 'task succeeded');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'transform.upper.expected.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'transform.upper.expected.json'), 'replaced output');
                 },
                 tr,
                 done);
@@ -518,13 +432,8 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'transforms', 'L0_TransformValue.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'transform_lower.json');
+            process.env['__inputpath__'] = copyData('transform.lower.json', 'transform_lower.json');
             process.env['var1'] = 'VAR1_VALUE';
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'transform.lower.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
 
             // act
             tr.run();
@@ -534,9 +443,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
                 () => {
                     tr.succeeded.should.equal(true, 'task succeeded');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'transform.lower.expected.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'transform.lower.expected.json'), 'replaced output');
                 },
                 tr,
                 done);
@@ -547,13 +454,8 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'transforms', 'L0_TransformValue.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'transform_base64.json');
+            process.env['__inputpath__'] = copyData('transform.base64.json', 'transform_base64.json');
             process.env['var1'] = 'var1_value';
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'transform.base64.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
 
             // act
             tr.run();
@@ -563,9 +465,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
                 () => {
                     tr.succeeded.should.equal(true, 'task succeeded');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'transform.base64.expected.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'transform.base64.expected.json'), 'replaced output');
                 },
                 tr,
                 done);
@@ -576,13 +476,8 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'transforms', 'L0_TransformValue.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'transform_noescape.json');
+            process.env['__inputpath__'] = copyData('transform.noescape.json', 'transform_noescape.json');
             process.env['var1'] = '"var1_value"';
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'transform.noescape.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
 
             // act
             tr.run();
@@ -592,9 +487,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
                 () => {
                     tr.succeeded.should.equal(true, 'task succeeded');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'transform.noescape.expected.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'transform.noescape.expected.json'), 'replaced output');
                 },
                 tr,
                 done);
@@ -605,12 +498,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'transforms', 'L0_TransformPattern.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'transform_custom.json');
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'transform.custom.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
+            process.env['__inputpath__'] = copyData('transform.custom.json', 'transform_custom.json');
 
             // act
             tr.run();
@@ -620,9 +508,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
                 () => {
                     tr.succeeded.should.equal(true, 'task succeeded');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'transform.upper.expected.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'transform.upper.expected.json'), 'replaced output');
                 },
                 tr,
                 done);
@@ -633,13 +519,8 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'transforms', 'L0_TransformValue.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'transform_indent.yml');
+            process.env['__inputpath__'] = copyData('transform.indent.yml', 'transform_indent.yml');
             process.env['var1'] = 'line1\nline2\nline3';
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'transform.indent.yml');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
 
             // act
             tr.run();
@@ -649,28 +530,21 @@ describe('ReplaceTokens v3 L0 suite', function() {
                 () => {
                     tr.succeeded.should.equal(true, 'task succeeded');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'transform.indent.expected.yml'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'transform.indent.expected.yml'), 'replaced output');
                 },
                 tr,
                 done);
         });
     });
 
-    describe('#action on missing', function() {
+    describe('action on missing', function() {
         it('should display information on missing value when continue silently', function(done: Mocha.Done) {
             // arrange
             let tp = path.join(__dirname, 'actionOnMissing', 'L0_ActionOnMissing.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_continuemissingvar.json');
+            process.env['__inputpath__'] = copyData('default.json', 'default_continuemissingvar.json');
             process.env['__actiononmissing__'] = 'continue';
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
 
             // act
             tr.run();
@@ -691,13 +565,8 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'actionOnMissing', 'L0_ActionOnMissing.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_warnmissingvar.json');
+            process.env['__inputpath__'] = copyData('default.json', 'default_warnmissingvar.json');
             process.env['__actiononmissing__'] = 'warn';
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
 
             // act
             tr.run();
@@ -718,13 +587,8 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'actionOnMissing', 'L0_ActionOnMissing.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_failmissingvar.json');
+            process.env['__inputpath__'] = copyData('default.json', 'default_failmissingvar.json');
             process.env['__actiononmissing__'] = 'fail';
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
 
             // act
             tr.run();
@@ -741,18 +605,14 @@ describe('ReplaceTokens v3 L0 suite', function() {
         });
     });
 
-    describe('#logs', function() {
+    describe('logs', function() {
         it('should log minimal when normal', function(done: Mocha.Done) {
             // arrange
             let tp = path.join(__dirname, 'logs', 'L0_Verbosity.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_normalverbosity.json');
+            process.env['__inputpath__'] = copyData('default.json', 'default_normalverbosity.json');
             process.env['__verbosity__'] = 'normal';
-
-            fs.copyFileSync(
-                path.join(__dirname, 'test_data', 'default.json'),
-                process.env['__inputpath__']);
 
             // act
             tr.run();
@@ -778,12 +638,8 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'logs', 'L0_Verbosity.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_detailedverbosity.json');
+            process.env['__inputpath__'] = copyData('default.json', 'default_detailedverbosity.json');
             process.env['__verbosity__'] = 'detailed';
-
-            fs.copyFileSync(
-                path.join(__dirname, 'test_data', 'default.json'),
-                process.env['__inputpath__']);
 
             // act
             tr.run();
@@ -809,12 +665,8 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'logs', 'L0_Verbosity.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_offverbosity.json');
+            process.env['__inputpath__'] = copyData('default.json', 'default_offverbosity.json');
             process.env['__verbosity__'] = 'off';
-
-            fs.copyFileSync(
-                path.join(__dirname, 'test_data', 'default.json'),
-                process.env['__inputpath__']);
 
             // act
             tr.run();
@@ -840,15 +692,8 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'logs', 'L0_Logs.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath1__'] = path.join(__dirname, 'test_tmp', 'default_logs1.json');
-            process.env['__inputpath2__'] = path.join(__dirname, 'test_tmp', 'default_logs2.json');
-
-            fs.copyFileSync(
-                path.join(__dirname, 'test_data', 'logs.json'),
-                process.env['__inputpath1__']);
-            fs.copyFileSync(
-                path.join(__dirname, 'test_data', 'logs.json'),
-                process.env['__inputpath2__']);
+            process.env['__inputpath1__'] = copyData('logs.json', 'default_logs1.json');
+            process.env['__inputpath2__'] = copyData('logs.json', 'default_logs2.json');
 
             // act
             tr.run();
@@ -865,19 +710,15 @@ describe('ReplaceTokens v3 L0 suite', function() {
         });
     });
 
-    describe('#escape characters', function() {
+    describe('escape characters', function() {
         it('should escape json when auto on .json', function(done: Mocha.Done) {
             // arrange
             let tp = path.join(__dirname, 'escapeChars', 'L0_EscapeType.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_autoescape.json');
+            process.env['__inputpath__'] = copyData('default.json', 'default_autoescape.json');
             process.env['__escapetype__'] = 'auto';
             process.env['var1'] = '"var\\1\n\r\tvalue\b\f';
-
-            fs.copyFileSync(
-                path.join(__dirname, 'test_data', 'default.json'),
-                process.env['__inputpath__']);
 
             // act
             tr.run();
@@ -887,9 +728,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
                 () => {
                     tr.succeeded.should.equal(true, 'task succeeded');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'default.expected_escape.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_escape.json'), 'replaced output');
                 },
                 tr,
                 done);
@@ -900,13 +739,9 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'escapeChars', 'L0_EscapeType.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_autoescape.xml');
+            process.env['__inputpath__'] = copyData('default.xml', 'default_autoescape.xml');
             process.env['__escapetype__'] = 'auto';
             process.env['var1'] = '"var\'1&<value>';
-
-            fs.copyFileSync(
-                path.join(__dirname, 'test_data', 'default.xml'),
-                process.env['__inputpath__']);
 
             // act
             tr.run();
@@ -916,9 +751,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
                 () => {
                     tr.succeeded.should.equal(true, 'task succeeded');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'default.expected_escape.xml'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_escape.xml'), 'replaced output');
                 },
                 tr,
                 done);
@@ -929,13 +762,9 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'escapeChars', 'L0_EscapeType.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_noneescape.json');
+            process.env['__inputpath__'] = copyData('default.json', 'default_noneescape.json');
             process.env['__escapetype__'] = 'none';
             process.env['var1'] = '"var\\1\n\r\tvalue\b\f';
-
-            fs.copyFileSync(
-                path.join(__dirname, 'test_data', 'default.json'),
-                process.env['__inputpath__']);
 
             // act
             tr.run();
@@ -945,9 +774,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
                 () => {
                     tr.succeeded.should.equal(true, 'task succeeded');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'default.expected_noescape.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_noescape.json'), 'replaced output');
                 },
                 tr,
                 done);
@@ -958,13 +785,9 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'escapeChars', 'L0_EscapeType.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_jsonescape.config');
+            process.env['__inputpath__'] = copyData('default_json.config', 'default_jsonescape.config');
             process.env['__escapetype__'] = 'json';
             process.env['var1'] = '"var\\1\n\r\tvalue\b\f';
-
-            fs.copyFileSync(
-                path.join(__dirname, 'test_data', 'default_json.config'),
-                process.env['__inputpath__']);
 
             // act
             tr.run();
@@ -974,9 +797,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
                 () => {
                     tr.succeeded.should.equal(true, 'task succeeded');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'default.expected_escape.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_escape.json'), 'replaced output');
                 },
                 tr,
                 done);
@@ -987,13 +808,9 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'escapeChars', 'L0_EscapeType.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_xmlescape.config');
+            process.env['__inputpath__'] = copyData('default_xml.config', 'default_xmlescape.config');
             process.env['__escapetype__'] = 'xml';
             process.env['var1'] = '"var\'1&<value>';
-
-            fs.copyFileSync(
-                path.join(__dirname, 'test_data', 'default_xml.config'),
-                process.env['__inputpath__']);
 
             // act
             tr.run();
@@ -1003,9 +820,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
                 () => {
                     tr.succeeded.should.equal(true, 'task succeeded');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'default.expected_escape.xml'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_escape.xml'), 'replaced output');
                 },
                 tr,
                 done);
@@ -1016,11 +831,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'escapeChars', 'L0_CustomEscapeType.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_customescape.json');
-
-            fs.copyFileSync(
-                path.join(__dirname, 'test_data', 'default.json'),
-                process.env['__inputpath__']);
+            process.env['__inputpath__'] = copyData('default.json', 'default_customescape.json');
 
             // act
             tr.run();
@@ -1030,16 +841,14 @@ describe('ReplaceTokens v3 L0 suite', function() {
                 () => {
                     tr.succeeded.should.equal(true, 'task succeeded');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'default.expected_customescape.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_customescape.json'), 'replaced output');
                 },
                 tr,
                 done);
         });
     });
 
-    describe('#action on no file', function() {
+    describe('action on no file', function() {
         it('should display information on no file when continue silently', function(done: Mocha.Done) {
             // arrange
             let tp = path.join(__dirname, 'actionOnNoFile', 'L0_ActionOnNoFile.js');
@@ -1104,19 +913,14 @@ describe('ReplaceTokens v3 L0 suite', function() {
         });
     });
 
-    describe('#empty value', function() {
+    describe('empty value', function() {
         it('should replace empty value when legacy', function(done: Mocha.Done) {
             // arrange
             let tp = path.join(__dirname, 'emptyValue', 'L0_LegacyEmptyValue.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_legacyempty.json');
+            process.env['__inputpath__'] = copyData('default.json', 'default_legacyempty.json');
             process.env['var1'] = '';
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
 
             // act
             tr.run();
@@ -1128,9 +932,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
                     tr.stdout.should.not.include('##vso[task.debug]  variable not found: var1');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'default.expected_empty.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_empty.json'), 'replaced output');
                 },
                 tr,
                 done);
@@ -1141,12 +943,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'emptyValue', 'L0_EmptyValue.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_empty.json');
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
+            process.env['__inputpath__'] = copyData('default.json', 'default_empty.json');
 
             // act
             tr.run();
@@ -1158,9 +955,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
                     tr.stdout.should.not.include('##vso[task.debug]  variable not found: var1');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'default.expected_empty.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_empty.json'), 'replaced output');
                 },
                 tr,
                 done);
@@ -1171,13 +966,8 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'emptyValue', 'L0_EmptyValue.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_empty.json');
+            process.env['__inputpath__'] = copyData('default.json', 'default_empty.json');
             process.env['var1'] = '(empty)';
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
 
             // act
             tr.run();
@@ -1189,28 +979,21 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
                     tr.stdout.should.not.include('##vso[task.debug]  variable not found: var1');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'default.expected_emptytoken.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_emptytoken.json'), 'replaced output');
                 },
                 tr,
                 done);
         });
     });
 
-    describe('#default value', function() {
+    describe('default value', function() {
         it('should not replace when legacy and no default', function(done: Mocha.Done) {
             // arrange
             let tp = path.join(__dirname, 'defaultValue', 'L0_LegacyDefaultValue.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_legacynodefault.json');
+            process.env['__inputpath__'] = copyData('default.json', 'default_legacynodefault.json');
             process.env['__defaultvalue__'] = '';
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
 
             // act
             tr.run();
@@ -1222,9 +1005,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
                     tr.stdout.should.include('##vso[task.issue type=warning;]  variable not found: var1');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'default.expected_noreplace.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_noreplace.json'), 'replaced output');
                 },
                 tr,
                 done);
@@ -1235,13 +1016,8 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'defaultValue', 'L0_LegacyDefaultValue.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_legacydefault.json');
+            process.env['__inputpath__'] = copyData('default.json', 'default_legacydefault.json');
             process.env['__defaultvalue__'] = '[default]';
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
 
             // act
             tr.run();
@@ -1253,9 +1029,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
                     tr.stdout.should.include('##vso[task.debug]  var1: [default] (default value)');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'default.expected_default.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_default.json'), 'replaced output');
                 },
                 tr,
                 done);
@@ -1266,13 +1040,8 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'defaultValue', 'L0_LegacyDefaultValue.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_legacyemptydefault.json');
+            process.env['__inputpath__'] = copyData('default.json', 'default_legacyemptydefault.json');
             process.env['__defaultvalue__'] = '(empty)';
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
 
             // act
             tr.run();
@@ -1284,9 +1053,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
                     tr.stdout.should.include('##vso[task.debug]  var1:  (default value)');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'default.expected_empty.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_empty.json'), 'replaced output');
                 },
                 tr,
                 done);
@@ -1297,14 +1064,9 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'defaultValue', 'L0_DefaultValue.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_nodefault.json');
+            process.env['__inputpath__'] = copyData('default.json', 'default_nodefault.json');
             process.env['__usedefaultvalue__'] = 'false';
             process.env['__defaultvalue__'] = '';
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
 
             // act
             tr.run();
@@ -1316,9 +1078,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
                     tr.stdout.should.include('##vso[task.issue type=warning;]  variable not found: var1');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'default.expected_noreplace.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_noreplace.json'), 'replaced output');
                 },
                 tr,
                 done);
@@ -1329,14 +1089,9 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'defaultValue', 'L0_DefaultValue.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_default.json');
+            process.env['__inputpath__'] = copyData('default.json', 'default_default.json');
             process.env['__usedefaultvalue__'] = 'true';
             process.env['__defaultvalue__'] = '[default]';
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
 
             // act
             tr.run();
@@ -1348,9 +1103,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
                     tr.stdout.should.include('##vso[task.debug]  var1: [default] (default value)');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'default.expected_default.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_default.json'), 'replaced output');
                 },
                 tr,
                 done);
@@ -1361,14 +1114,9 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'defaultValue', 'L0_DefaultValue.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_emptydefault.json');
+            process.env['__inputpath__'] = copyData('default.json', 'default_emptydefault.json');
             process.env['__usedefaultvalue__'] = 'true';
             process.env['__defaultvalue__'] = '';
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
 
             // act
             tr.run();
@@ -1380,27 +1128,20 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
                     tr.stdout.should.include('##vso[task.debug]  var1:  (default value)');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'default.expected_empty.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_empty.json'), 'replaced output');
                 },
                 tr,
                 done);
         });
     });
 
-    describe('#recursion', function() {
+    describe('recursion', function() {
         it('should not replace recursively when recursion disabled', function(done: Mocha.Done) {
             // arrange
             let tp = path.join(__dirname, 'recursion', 'L0_DisabledRecursion.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_disabledrecursion.json');
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
+            process.env['__inputpath__'] = copyData('default.json', 'default_disabledrecursion.json');
 
             // act
             tr.run();
@@ -1410,9 +1151,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
                 () => {
                     tr.succeeded.should.equal(true, 'task succeeded');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'default.expected_disabledrecursion.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_disabledrecursion.json'), 'replaced output');
                 },
                 tr,
                 done);
@@ -1423,12 +1162,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'recursion', 'L0_Recursion.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_recursion.json');
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
+            process.env['__inputpath__'] = copyData('default.json', 'default_recursion.json');
 
             // act
             tr.run();
@@ -1438,9 +1172,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
                 () => {
                     tr.succeeded.should.equal(true, 'task succeeded');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'default.expected.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
                 },
                 tr,
                 done);
@@ -1451,12 +1183,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'recursion', 'L0_CycleRecursion.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_cyclerecursion.json');
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
+            process.env['__inputpath__'] = copyData('default.json', 'default_cyclerecursion.json');
 
             // act
             tr.run();
@@ -1473,16 +1200,13 @@ describe('ReplaceTokens v3 L0 suite', function() {
         });
     });
 
-    describe('#misc', function() {
+    describe('misc', function() {
         it('should not replace when binary file', function(done: Mocha.Done) {
             // arrange
             let tp = path.join(__dirname, 'targetFiles', 'L0_InlineReplace.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'binary.jpg');
-            fs.copyFileSync(
-                path.join(__dirname, 'test_data', 'binary.jpg'),
-                process.env['__inputpath__']);
+            process.env['__inputpath__'] = copyData('binary.jpg', 'binary.jpg');
 
             // act
             tr.run();
@@ -1497,7 +1221,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
                     hash.update(buffer);
                     let actual: string = hash.digest('hex');
 
-                    buffer = fs.readFileSync(path.join(__dirname, 'test_data', 'binary.jpg'));
+                    buffer = fs.readFileSync(path.join(data, 'binary.jpg'));
                     hash = crypto.createHash('sha256');
                     hash.update(buffer);
                     let expected: string = hash.digest('hex');
@@ -1515,12 +1239,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'externalVariables', 'L0_InlineVariablesSingleDocument.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'inlinevariables_singledocument.json');
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'variables.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
+            process.env['__inputpath__'] = copyData('variables.json', 'inlinevariables_singledocument.json');
 
             // act
             tr.run();
@@ -1530,9 +1249,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
                 () => {
                     tr.succeeded.should.equal(true, 'task succeeded');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'variables.expected.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.expected.json'), 'replaced output');
                 },
                 tr,
                 done);
@@ -1543,12 +1260,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'externalVariables', 'L0_InlineVariablesMultipleDocuments.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'inlinevariables_multipledocuments.json');
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'variables.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
+            process.env['__inputpath__'] = copyData('variables.json', 'inlinevariables_multipledocuments.json');
 
             // act
             tr.run();
@@ -1558,9 +1270,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
                 () => {
                     tr.succeeded.should.equal(true, 'task succeeded');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'variables.expected.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.expected.json'), 'replaced output');
                 },
                 tr,
                 done);
@@ -1571,13 +1281,8 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'externalVariables', 'L0_SingleFile.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'variablefiles_json.json');
-            process.env['__variablespath__'] = path.join(__dirname, 'test_data', 'externalvariables.json');
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'variables.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
+            process.env['__inputpath__'] = copyData('variables.json', 'variablefiles_json.json');
+            process.env['__variablespath__'] = path.join(data, 'externalvariables.json');
 
             // act
             tr.run();
@@ -1587,9 +1292,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
                 () => {
                     tr.succeeded.should.equal(true, 'task succeeded');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'variables.expected.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.expected.json'), 'replaced output');
                 },
                 tr,
                 done);
@@ -1600,13 +1303,8 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'externalVariables', 'L0_SingleFile.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'variablefiles_json.json');
-            process.env['__variablespath__'] = path.join(__dirname, 'test_data', 'externalvariables_comments.jsonc');
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'variables.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
+            process.env['__inputpath__'] = copyData('variables.json', 'variablefiles_json.json');
+            process.env['__variablespath__'] = path.join(data, 'externalvariables_comments.jsonc');
 
             // act
             tr.run();
@@ -1616,9 +1314,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
                 () => {
                     tr.succeeded.should.equal(true, 'task succeeded');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'variables.expected.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.expected.json'), 'replaced output');
                 },
                 tr,
                 done);
@@ -1629,14 +1325,9 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'externalVariables', 'L0_MultipleFiles.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'variablefiles_json.json');
-            process.env['__variablespath1__'] = path.join(__dirname, 'test_data', 'externalvariables1.json');
-            process.env['__variablespath2__'] = path.join(__dirname, 'test_data', 'externalvariables2.json');
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'variables.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
+            process.env['__inputpath__'] = copyData('variables.json', 'variablefiles_json.json');
+            process.env['__variablespath1__'] = path.join(data, 'externalvariables1.json');
+            process.env['__variablespath2__'] = path.join(data, 'externalvariables2.json');
 
             // act
             tr.run();
@@ -1646,9 +1337,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
                 () => {
                     tr.succeeded.should.equal(true, 'task succeeded');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'variables.expected.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.expected.json'), 'replaced output');
                 },
                 tr,
                 done);
@@ -1659,13 +1348,8 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'externalVariables', 'L0_SingleFile.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'variablefiles_json.json');
-            process.env['__variablespath__'] = path.join(__dirname, 'test_data', 'externalvariables_single.yml');
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'variables.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
+            process.env['__inputpath__'] = copyData('variables.json', 'variablefiles_json.json');
+            process.env['__variablespath__'] = path.join(data, 'externalvariables_single.yml');
 
             // act
             tr.run();
@@ -1675,9 +1359,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
                 () => {
                     tr.succeeded.should.equal(true, 'task succeeded');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'variables.expected.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.expected.json'), 'replaced output');
                 },
                 tr,
                 done);
@@ -1688,13 +1370,8 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tp = path.join(__dirname, 'externalVariables', 'L0_SingleFile.js');
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-            process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'variablefiles_json.json');
-            process.env['__variablespath__'] = path.join(__dirname, 'test_data', 'externalvariables_multiple.yml');
-
-            let dataPath: string = path.join(__dirname, 'test_data', 'variables.json');
-            fs.copyFileSync(
-                dataPath,
-                process.env['__inputpath__']);
+            process.env['__inputpath__'] = copyData('variables.json', 'variablefiles_json.json');
+            process.env['__variablespath__'] = path.join(data, 'externalvariables_multiple.yml');
 
             // act
             tr.run();
@@ -1704,9 +1381,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
                 () => {
                     tr.succeeded.should.equal(true, 'task succeeded');
 
-                    let actual: string = fs.readFileSync(process.env['__inputpath__'], 'utf8');
-                    let expected: string = fs.readFileSync(path.join(__dirname, 'test_data', 'variables.expected.json'), 'utf8');
-                    actual.should.equal(expected, 'replaced output');
+                    assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.expected.json'), 'replaced output');
                 },
                 tr,
                 done);

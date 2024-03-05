@@ -13,7 +13,7 @@ Please refer to the dedicated README for the [v3](https://github.com/qetza/repla
 ```yaml
 - task: qetza.replacetokens.replacetokens-task.replacetokens@5
   inputs:
-    # The root path to use for relative paths in sources.
+    # The root path to use when reading files with a relative path.
     #
     # Optional. Default: $(System.DefaultWorkingDirectory)
     rootDirectory: ''
