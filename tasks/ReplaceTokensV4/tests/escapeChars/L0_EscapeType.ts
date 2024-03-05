@@ -13,18 +13,17 @@ tmr.setInput('targetFiles', 'input.json');
 tmr.setInput('writeBOM', 'true');
 tmr.setInput('escapeType', process.env['__escapetype__']);
 
-
 // sdk answers
 let answers = {
-    'checkPath': {},
-    'findMatch': {
-        'input.json': [process.env['__inputpath__']],
-    },
-    'stats': {},
-    'exist': {},
-}
+  checkPath: {},
+  findMatch: {
+    'input.json': [process.env['__inputpath__']]
+  },
+  stats: {},
+  exist: {}
+};
 answers['stats'][process.env['__inputpath__']] = {
-    'isDirectory': false
+  isDirectory: false
 };
 answers['exist'][process.env['__inputpath__']] = true;
 

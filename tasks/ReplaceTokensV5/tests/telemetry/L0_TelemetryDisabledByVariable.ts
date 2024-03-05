@@ -11,19 +11,17 @@ tmr.setInput('enableTelemetry', 'true');
 tmr.setInput('rootDirectory', '/rootDirectory');
 
 // variables
-process.env['REPLACETOKENS_DISABLE_TELEMETRY'] = 'true'
+process.env['REPLACETOKENS_DISABLE_TELEMETRY'] = 'true';
 
 // http requests
-nock('https://dc.services.visualstudio.com')
-    .post('/v2/track')
-    .reply(418);
+nock('https://dc.services.visualstudio.com').post('/v2/track').reply(418);
 
 // sdk answers
 let answers = {
-    'checkPath': {
-        '/rootDirectory': false
-    }
-}
+  checkPath: {
+    '/rootDirectory': false
+  }
+};
 tmr.setAnswers(answers);
 
 // act

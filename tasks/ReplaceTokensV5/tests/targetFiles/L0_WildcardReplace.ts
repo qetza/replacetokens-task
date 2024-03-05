@@ -15,14 +15,14 @@ tmr.setInput('writeBOM', 'true');
 
 // sdk answers
 let answers = {
-    'checkPath': {},
-    'findMatch': {},
-    'stats': {},
-    'exist': {},
-}
+  checkPath: {},
+  findMatch: {},
+  stats: {},
+  exist: {}
+};
 answers['findMatch'][process.env['__input__']] = [process.env['__inputpath__']];
 answers['stats'][process.env['__inputpath__']] = {
-    'isDirectory': false
+  isDirectory: false
 };
 answers['exist'][process.env['__inputpath__']] = true;
 

@@ -9,27 +9,27 @@ const tmr: tmrm.TaskMockRunner = new tmrm.TaskMockRunner(taskPath);
 tmr.setInput('enableTelemetry', 'false');
 tmr.setInput('targetFiles', 'input.json');
 tmr.setInput('writeBOM', 'true');
-tmr.setInput('variableFiles', "variables1.ext\nvariables2.ext");
+tmr.setInput('variableFiles', 'variables1.ext\nvariables2.ext');
 
 // sdk answers
 let answers = {
-    'checkPath': {},
-    'findMatch': {
-        'input.json': [process.env['__inputpath__']],
-        'variables1.ext': [process.env['__variablespath1__']],
-        'variables2.ext': [process.env['__variablespath2__']],
-    },
-    'stats': {},
-    'exist': {},
-}
+  checkPath: {},
+  findMatch: {
+    'input.json': [process.env['__inputpath__']],
+    'variables1.ext': [process.env['__variablespath1__']],
+    'variables2.ext': [process.env['__variablespath2__']]
+  },
+  stats: {},
+  exist: {}
+};
 answers['stats'][process.env['__inputpath__']] = {
-    'isDirectory': false
+  isDirectory: false
 };
 answers['stats'][process.env['__variablespath1__']] = {
-    'isDirectory': false
+  isDirectory: false
 };
 answers['stats'][process.env['__variablespath2__']] = {
-    'isDirectory': false
+  isDirectory: false
 };
 answers['exist'][process.env['__inputpath__']] = true;
 answers['exist'][process.env['__variablespath1__']] = true;

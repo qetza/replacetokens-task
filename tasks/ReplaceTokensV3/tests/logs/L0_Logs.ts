@@ -22,19 +22,19 @@ tmr.setInput('enableTransforms', 'true');
 
 // sdk answers
 let answers = {
-    'checkPath': {},
-    'findMatch': {
-        'input1.json': [process.env['__inputpath1__']],
-        'input2.json': [process.env['__inputpath2__']],
-    },
-    'stats': {},
-    'exist': {},
-}
+  checkPath: {},
+  findMatch: {
+    'input1.json': [process.env['__inputpath1__']],
+    'input2.json': [process.env['__inputpath2__']]
+  },
+  stats: {},
+  exist: {}
+};
 answers['stats'][process.env['__inputpath1__']] = {
-    'isDirectory': false
+  isDirectory: false
 };
 answers['stats'][process.env['__inputpath2__']] = {
-    'isDirectory': false
+  isDirectory: false
 };
 answers['exist'][process.env['__inputpath1__']] = true;
 answers['exist'][process.env['__inputpath2__']] = true;

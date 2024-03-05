@@ -31,7 +31,9 @@
     "test-v4": "mocha tasks/ReplaceTokensV4/dist/tests/L0.js",
     "test-v5": "mocha tasks/ReplaceTokensV5/dist/tests/L0.js",
     "package": "node scripts/package.js",
-    "package-public": "node scripts/package.js --public"
+    "package-public": "node scripts/package.js --public",
+    "format": "prettier --write **/*.ts",
+    "format-check": "prettier --check **/*.ts"
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.0",
@@ -41,6 +43,7 @@
     "@vercel/ncc": "^0.38.1",
     "minimist": "~1.2.6",
     "mocha": "^10.3.0",
+    "prettier": "^3.2.5",
     "semver": "~5.6.0",
     "shelljs": "^0.8.5",
     "tfx-cli": "^0.12.0",

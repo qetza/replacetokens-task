@@ -16,21 +16,19 @@ tmr.setInput('targetFiles', 'input.json');
 tmr.setInput('writeBOM', 'true');
 
 // http requests
-nock('https://dc.services.visualstudio.com')
-    .post('/v2/track')
-    .reply(418);
+nock('https://dc.services.visualstudio.com').post('/v2/track').reply(418);
 
 // sdk answers
 let answers = {
-    'checkPath': {},
-    'findMatch': {
-        'input.json': [process.env['__inputpath__']],
-    },
-    'stats': {},
-    'exist': {},
-}
+  checkPath: {},
+  findMatch: {
+    'input.json': [process.env['__inputpath__']]
+  },
+  stats: {},
+  exist: {}
+};
 answers['stats'][process.env['__inputpath__']] = {
-    'isDirectory': false
+  isDirectory: false
 };
 answers['exist'][process.env['__inputpath__']] = true;
 

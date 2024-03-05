@@ -15,13 +15,13 @@ tmr.setInput('actionOnNoFiles', process.env['__actiononnofiles__']);
 
 // sdk answers
 let answers = {
-    'checkPath': {},
-    'findMatch': {
-        'input.json': [],
-    },
-    'stats': {},
-    'exist': {},
-}
+  checkPath: {},
+  findMatch: {
+    'input.json': []
+  },
+  stats: {},
+  exist: {}
+};
 
 tmr.setAnswers(answers);
 
