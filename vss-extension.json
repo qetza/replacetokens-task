@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "id": "replacetokens",
   "name": "Replace Tokens",
-  "version": "4.6.0",
+  "version": "5.0.0",
   "public": true,
   "publisher": "qetza",
   "targets": [
@@ -24,14 +24,14 @@
   ],
   "links": {
     "support": {
-      "uri": "https://github.com/qetza/vsts-replacetokens-task/issues"
+      "uri": "https://github.com/qetza/replacetokens-task/issues"
     }
   },
   "icons": {
     "default": "images/extension-icon.png"
   },
   "branding": {
-    "color": "#1C3272",
+    "color": "#6F42C1",
     "theme": "dark"
   },
   "screenshots": [
@@ -41,14 +41,14 @@
   ],
   "repository": {
     "type": "git",
-    "uri": "https://github.com/qetza/vsts-replacetokens-task"
+    "uri": "https://github.com/qetza/replacetokens-task"
   },
   "content": {
     "details": {
       "path": "README.md"
     },
     "license": {
-      "path": "LICENSE.txt"
+      "path": "LICENSE"
     }
   },
   "files": [

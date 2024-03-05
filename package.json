@@ -1,15 +1,15 @@
 {
-  "name": "qetza.vsts-replacetokens-task",
-  "version": "0.1.0",
-  "description": "Build task for VS Team Services that can run replace tokens in files.",
-  "author": "Guillaume Rouchon",
+  "name": "replacetokens-task",
+  "version": "1.0.0",
+  "description": "An Azure Pipelines task to replace tokens in text files with variable values.",
+  "author": "Guillaume ROUCHON",
   "license": "MIT",
-  "homepage": "https://github.com/qetza/vsts-replacetokens-task#readme",
+  "homepage": "https://github.com/qetza/replacetokens-task#readme",
   "bugs": {
-    "url": "https://github.com/qetza/vsts-replacetokens-task/issues"
+    "url": "https://github.com/qetza/replacetokens-task/issues"
   },
   "keywords": [
-    "VSTS",
+    "azure pipelines",
     "release",
     "build",
     "token",
@@ -19,7 +19,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/qetza/vsts-replacetokens-task.git"
+    "url": "git+https://github.com/qetza/replacetokens-task.git"
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.0",
@@ -27,6 +27,7 @@
     "@types/q": "0.0.32",
     "@types/uuid": "^8.3.0",
     "minimist": "~1.2.6",
+    "mocha": "^10.3.0",
     "semver": "~5.6.0",
     "shelljs": "^0.8.5",
     "tfx-cli": "^0.12.0",

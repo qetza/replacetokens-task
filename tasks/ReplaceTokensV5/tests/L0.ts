@@ -750,7 +750,7 @@ describe('ReplaceTokens v5 L0 suite', function() {
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
             process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'transform_indent.yml');
-            process.env['var1'] = 'line1\r\nline2\r\nline3';
+            process.env['var1'] = 'line1\nline2\nline3';
 
             let dataPath: string = path.join(__dirname, 'test_data', 'transform.indent.yml');
             fs.copyFileSync(

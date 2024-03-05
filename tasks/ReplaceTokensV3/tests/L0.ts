@@ -128,7 +128,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_telemetryonsuccess.json');
             fs.copyFileSync(
-                path.join(__dirname, 'test_data', 'default.json'), 
+                path.join(__dirname, 'test_data', 'default.json'),
                 process.env['__inputpath__']);
 
             // act
@@ -154,7 +154,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_inlinereplace.json');
             fs.copyFileSync(
-                path.join(__dirname, 'test_data', 'default.json'), 
+                path.join(__dirname, 'test_data', 'default.json'),
                 process.env['__inputpath__']);
 
             // act
@@ -181,10 +181,10 @@ describe('ReplaceTokens v3 L0 suite', function() {
             process.env['__inputpath1__'] = path.join(__dirname, 'test_tmp', 'default_inlinereplace1.json');
             process.env['__inputpath2__'] = path.join(__dirname, 'test_tmp', 'default_inlinereplace2.json');
             fs.copyFileSync(
-                path.join(__dirname, 'test_data', 'default.json'), 
+                path.join(__dirname, 'test_data', 'default.json'),
                 process.env['__inputpath1__']);
             fs.copyFileSync(
-                path.join(__dirname, 'test_data', 'default.json'), 
+                path.join(__dirname, 'test_data', 'default.json'),
                 process.env['__inputpath2__']);
 
             // act
@@ -217,7 +217,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -250,7 +250,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -284,7 +284,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -319,7 +319,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -347,7 +347,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'default.custom.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -375,7 +375,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -403,7 +403,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'default.newpattern.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -434,7 +434,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -463,7 +463,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -494,7 +494,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'transform.upper.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -523,7 +523,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'transform.lower.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -552,7 +552,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'transform.base64.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -581,7 +581,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'transform.noescape.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -609,7 +609,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'transform.custom.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -634,11 +634,11 @@ describe('ReplaceTokens v3 L0 suite', function() {
             let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
             process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'transform_indent.yml');
-            process.env['var1'] = 'line1\r\nline2\r\nline3';
+            process.env['var1'] = 'line1\nline2\nline3';
 
             let dataPath: string = path.join(__dirname, 'test_data', 'transform.indent.yml');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -669,7 +669,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -696,7 +696,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -723,7 +723,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -751,7 +751,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
             process.env['__verbosity__'] = 'normal';
 
             fs.copyFileSync(
-                path.join(__dirname, 'test_data', 'default.json'), 
+                path.join(__dirname, 'test_data', 'default.json'),
                 process.env['__inputpath__']);
 
             // act
@@ -782,7 +782,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
             process.env['__verbosity__'] = 'detailed';
 
             fs.copyFileSync(
-                path.join(__dirname, 'test_data', 'default.json'), 
+                path.join(__dirname, 'test_data', 'default.json'),
                 process.env['__inputpath__']);
 
             // act
@@ -813,7 +813,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
             process.env['__verbosity__'] = 'off';
 
             fs.copyFileSync(
-                path.join(__dirname, 'test_data', 'default.json'), 
+                path.join(__dirname, 'test_data', 'default.json'),
                 process.env['__inputpath__']);
 
             // act
@@ -844,10 +844,10 @@ describe('ReplaceTokens v3 L0 suite', function() {
             process.env['__inputpath2__'] = path.join(__dirname, 'test_tmp', 'default_logs2.json');
 
             fs.copyFileSync(
-                path.join(__dirname, 'test_data', 'logs.json'), 
+                path.join(__dirname, 'test_data', 'logs.json'),
                 process.env['__inputpath1__']);
             fs.copyFileSync(
-                path.join(__dirname, 'test_data', 'logs.json'), 
+                path.join(__dirname, 'test_data', 'logs.json'),
                 process.env['__inputpath2__']);
 
             // act
@@ -876,7 +876,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
             process.env['var1'] = '"var\\1\n\r\tvalue\b\f';
 
             fs.copyFileSync(
-                path.join(__dirname, 'test_data', 'default.json'), 
+                path.join(__dirname, 'test_data', 'default.json'),
                 process.env['__inputpath__']);
 
             // act
@@ -905,7 +905,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
             process.env['var1'] = '"var\'1&<value>';
 
             fs.copyFileSync(
-                path.join(__dirname, 'test_data', 'default.xml'), 
+                path.join(__dirname, 'test_data', 'default.xml'),
                 process.env['__inputpath__']);
 
             // act
@@ -934,7 +934,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
             process.env['var1'] = '"var\\1\n\r\tvalue\b\f';
 
             fs.copyFileSync(
-                path.join(__dirname, 'test_data', 'default.json'), 
+                path.join(__dirname, 'test_data', 'default.json'),
                 process.env['__inputpath__']);
 
             // act
@@ -963,7 +963,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
             process.env['var1'] = '"var\\1\n\r\tvalue\b\f';
 
             fs.copyFileSync(
-                path.join(__dirname, 'test_data', 'default_json.config'), 
+                path.join(__dirname, 'test_data', 'default_json.config'),
                 process.env['__inputpath__']);
 
             // act
@@ -992,7 +992,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
             process.env['var1'] = '"var\'1&<value>';
 
             fs.copyFileSync(
-                path.join(__dirname, 'test_data', 'default_xml.config'), 
+                path.join(__dirname, 'test_data', 'default_xml.config'),
                 process.env['__inputpath__']);
 
             // act
@@ -1019,7 +1019,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
             process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'default_customescape.json');
 
             fs.copyFileSync(
-                path.join(__dirname, 'test_data', 'default.json'), 
+                path.join(__dirname, 'test_data', 'default.json'),
                 process.env['__inputpath__']);
 
             // act
@@ -1115,7 +1115,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -1145,7 +1145,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -1176,7 +1176,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -1209,7 +1209,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -1240,7 +1240,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -1271,7 +1271,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -1303,7 +1303,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -1335,7 +1335,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -1367,7 +1367,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -1399,7 +1399,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -1427,7 +1427,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -1455,7 +1455,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'default.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -1481,7 +1481,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             process.env['__inputpath__'] = path.join(__dirname, 'test_tmp', 'binary.jpg');
             fs.copyFileSync(
-                path.join(__dirname, 'test_data', 'binary.jpg'), 
+                path.join(__dirname, 'test_data', 'binary.jpg'),
                 process.env['__inputpath__']);
 
             // act
@@ -1519,7 +1519,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'variables.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -1547,7 +1547,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'variables.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -1576,7 +1576,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'variables.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -1605,7 +1605,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'variables.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -1635,7 +1635,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'variables.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -1664,7 +1664,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'variables.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act
@@ -1693,7 +1693,7 @@ describe('ReplaceTokens v3 L0 suite', function() {
 
             let dataPath: string = path.join(__dirname, 'test_data', 'variables.json');
             fs.copyFileSync(
-                dataPath, 
+                dataPath,
                 process.env['__inputpath__']);
 
             // act

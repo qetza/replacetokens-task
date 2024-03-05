@@ -248,7 +248,7 @@ var updateTaskTelemetry = function (telemetryPath, options) {
 var copyExtensionResources = function (extensionPath, outputPath) {
     const resources = [
         '*.md',
-        '*.txt',
+        'LICENSE',
         'vss-extension.json',
         'images/*.png'
     ];
