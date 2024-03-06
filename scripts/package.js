@@ -114,27 +114,29 @@ versions.forEach(version => {
 
   run(`ncc build ${binTaskDir}/index.js -o ${packageTaskDir}`);
 
-  ['icon.png','task.json'].forEach(p => {
+  ['task.json'].forEach(p => {
     p = path.join(taskDir, p);
   
     cp('-Rf', p, `${packageTaskDir}/`);
   });
+
+  cp('-Rf', path.join(__dirname, '..', 'images', 'task-icon.png'), path.join(packageTaskDir, 'icon.png'));
 });
 
 // copy extension resources
 console.log();
 console.log('bundle extension:');
 
-['README.md','LICENSE','vss-extension.json','images/*.png'].forEach(p => {
-  var out = p.indexOf('/') === -1
-      ? packageDir
-      : path.join(packageDir, p.substring(0, p.lastIndexOf('/')));
+['README.md','LICENSE','vss-extension.json'].forEach(p => {
   p = path.join(__dirname, '..', p);
 
-  if (!test('-d', out)) mkdir('-p', out);
-
-  cp('-Rf', p, out);
+  cp('-Rf', p, packageDir);
 });
+
+var packageImagesDir = path.join(packageDir, 'images');
+mkdir('-p', packageImagesDir);
+cp('-Rf', path.join(__dirname, '..', 'images', 'extension-icon.png'), path.join(packageImagesDir, 'icon.png'));
+cp('-Rf', path.join(__dirname, '..', 'images', 'screenshot*.png'), `${packageImagesDir}/`);
 
 // update metadata
 var public = process.argv.includes('--public');

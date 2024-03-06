@@ -28,7 +28,7 @@
     }
   },
   "icons": {
-    "default": "images/extension-icon.png"
+    "default": "images/icon.png"
   },
   "branding": {
     "color": "#6F42C1",
@@ -36,7 +36,7 @@
   },
   "screenshots": [
     {
-      "path": "images/screenshot-01.png"
+      "path": "images/screenshot01.png"
     }
   ],
   "repository": {
