@@ -270,4 +270,47 @@ steps:
 ```
 
 ## Data/Telemetry
-The Replace Tokens task for Azure Pipelines collects anonymous usage data and sends them to its author to help improve the product by default. If you don’t wish to send usage data, you can change your telemetry settings through _Send anonymous usage telemetry_ parameter or by setting a variable or environment variable `REPLACETOKENS_DISABLE_TELEMETRY` to `true`.
+The Replace Tokens task for Azure Pipelines collects **anonymous** usage data and sends them to its author to help improve the product by default. If you don’t wish to send usage data, you can change your telemetry settings through _Send anonymous usage telemetry_ parameter or by setting a variable or environment variable `REPLACETOKENS_DISABLE_TELEMETRY` to `true`.
+
+The following **anonymous** data is send:
+- the task version
+- the **hash** of your organization name/collection id
+- the **hash** of your project id and pipeline definition id
+- the pipeline type (`build` or `release`)
+- the hosting (`server` or `services`)
+- the input values for
+  - _actionOnMissing_
+  - _charsToEscape_
+  - _emptyValue_
+  - _encoding_
+  - _escapeChar_
+  - _escapeType_
+  - _keepToken_
+  - _tokenPrefix_
+  - _tokenSuffix_
+  - _variableSeparator_
+  - _verbosity_
+  - _writeBOM_
+  - _useLegacyPattern_
+  - _enableTransforms_
+  - _transformPrefix_
+  - _transformSuffix_
+  - _defaultValue_
+  - _tokenPattern_
+  - _actionOnNoFiles_
+  - _enableRecursion_
+  - _useLegacyEmptyFeature_
+  - _useDefaultValue_
+- the generated token pattern regular expression
+- the generated tranforms pattern regular expression
+- the **number of** _targetFiles_ entries
+- the **number of** _targetFiles_ entries having a wildcard in the input
+- the **number of** _targetFiles_ entries having a negative pattern
+- the **number of** _targetFiles_ entries having an output pattern
+- the **number of** _variableFiles_ entries
+- the **number of** _inlineVariables_ entries
+- the task result (`succeeded` or `failed`)
+- the task execution duration
+- the outputs (_defaultValueCount_, _fileProcessedCount_, _tokenReplacedCount_, _tokenFoundCount_ and _transformExecutedCount_)
+
+You can see the JSON serialized telemetry data sent in debug logs.
