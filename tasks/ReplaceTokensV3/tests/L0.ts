@@ -38,7 +38,8 @@ describe('ReplaceTokens v3 L0 suite', function () {
 
   function copyData(source: string, dest: string): string {
     dest = path.join(tmp, dest);
-    fs.copyFileSync(path.join(data, source), dest);
+    source = path.join(data, source);
+    fs.writeFileSync(dest, fs.readFileSync(source)); // copyFileSync not supported in node 6.x
 
     return path.resolve(dest);
   }

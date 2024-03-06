@@ -736,7 +736,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
         () => {
           tr.succeeded.should.equal(true, 'task succeeded');
 
-          tr.stdout.should.include('##vso[task.issue type=warning;]  variable not found: var1');
+          tr.stdout.should.include('##vso[task.issue type=warning;source=TaskInternal;]  variable not found: var1');
         },
         tr,
         done
@@ -759,7 +759,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
         () => {
           tr.succeeded.should.equal(false, 'task succeeded');
 
-          tr.stdout.should.include('##vso[task.issue type=error;]  variable not found: var1');
+          tr.stdout.should.include('##vso[task.issue type=error;source=TaskInternal;]  variable not found: var1');
         },
         tr,
         done
@@ -1098,7 +1098,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
         () => {
           tr.succeeded.should.equal(true, 'task succeeded');
 
-          tr.stdout.should.include('##vso[task.issue type=warning;]found no files to process');
+          tr.stdout.should.include('##vso[task.issue type=warning;source=TaskInternal;]found no files to process');
         },
         tr,
         done
@@ -1120,7 +1120,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
         () => {
           tr.succeeded.should.equal(false, 'task succeeded');
 
-          tr.stdout.should.include('##vso[task.issue type=error;]found no files to process');
+          tr.stdout.should.include('##vso[task.issue type=error;source=TaskInternal;]found no files to process');
         },
         tr,
         done
@@ -1233,7 +1233,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
         () => {
           tr.succeeded.should.equal(true, 'task succeeded');
 
-          tr.stdout.should.include('##vso[task.issue type=warning;]  variable not found: var1');
+          tr.stdout.should.include('##vso[task.issue type=warning;source=TaskInternal;]  variable not found: var1');
 
           assertFilesEqual(
             process.env['__inputpath__'],
@@ -1321,7 +1321,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
         () => {
           tr.succeeded.should.equal(true, 'task succeeded');
 
-          tr.stdout.should.include('##vso[task.issue type=warning;]  variable not found: var1');
+          tr.stdout.should.include('##vso[task.issue type=warning;source=TaskInternal;]  variable not found: var1');
 
           assertFilesEqual(
             process.env['__inputpath__'],
@@ -1459,7 +1459,10 @@ describe('ReplaceTokens v5 L0 suite', function () {
         () => {
           tr.succeeded.should.equal(false, 'task succeeded');
 
-          tr.stdout.should.include("##vso[task.issue type=error;]recursion cycle with token 'var1'.");
+          tr.stdout.should.include(
+            "##vso[task.issue type=error;source=TaskInternal;]recursion cycle with token 'var1'."
+          );
+          tr.stdout.should.include("##vso[task.complete result=Failed;]recursion cycle with token 'var1'.");
         },
         tr,
         done

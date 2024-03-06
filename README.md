@@ -20,7 +20,7 @@ Please refer to the dedicated README for the [v3](https://github.com/qetza/repla
 
     # A multiline or comma-separated list of files to replace tokens in.
     # Each entry supports:
-    #   - multiple globbing patterns separated by a semi-colon ';' using fast-glob syntax 
+    #   - multiple glob patterns separated by a semi-colon ';' using fast-glob syntax 
     #     (you must always use forward slash '/' as a directory separator)
     #   - outputing the result in another file adding the output path after an arrow '=>' 
     #     (if the output path is a relative path, it will be relative to the input file)
