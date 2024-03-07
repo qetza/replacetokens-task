@@ -4,6 +4,8 @@ import * as yaml from 'js-yaml';
 import * as fg from 'fast-glob';
 import * as rt from '@qetza/replacetokens';
 import stripJsonComments from './strip-json-comments';
+import * as telemetry from './telemetry';
+import { SpanStatusCode } from '@opentelemetry/api';
 
 async function run() {
   const _debug = console.debug;
@@ -12,6 +14,16 @@ async function run() {
   const _error = console.error;
   const _group = console.group;
   const _groupEnd = console.groupEnd;
+
+  if (tl.getBoolInput('telemetry') && process.env['REPLACETOKENS_DISABLE_TELEMETRY'] !== 'true') {
+    telemetry.useApplicationInsightsExporter(tl.getHttpProxyConfiguration()?.proxyUrl);
+  }
+
+  const telemetryEvent = telemetry.startSpan(
+    'run',
+    tl.getVariable('system.collectionid'),
+    tl.getVariable('system.teamprojectid') + tl.getVariable('system.definitionid'),
+    tl.getVariable('System.ServerType'));
 
   try {
     // read and validate inputs
@@ -65,8 +77,37 @@ async function run() {
       await parseVariables(tl.getInput('additionalVariables'), options.root)
     );
 
+    const ifNoFilesFound = tl.getInput('ifNoFilesFound') || 'ignore';
+    const logLevelStr = tl.getInput('logLevel') || 'info';
+
+    // set telemetry attributes
+    telemetryEvent.setAttributes({
+      'sources': sources.length,
+      'add-bom': options.addBOM,
+      'chars-to-escape': options.escape.chars,
+      'encoding': options.encoding,
+      'escape': options.escape.type,
+      'escape-char': options.escape.escapeChar,
+      'if-no-files-found': ifNoFilesFound,
+      'log-level': logLevelStr,
+      'missing-var-action': options.missing.action,
+      'missing-var-default': options.missing.default,
+      'missing-var-log': options.missing.log,
+      'recusrive': options.recursive,
+      'separator': options.separator,
+      'token-pattern': options.token.pattern,
+      'token-prefix': options.token.prefix,
+      'token-suffix': options.token.suffix,
+      'transforms': options.transforms.enabled,
+      'transforms-prefix': options.transforms.prefix,
+      'transforms-suffix': options.transforms.suffix,
+      'variable-files': variableFilesCount,
+      'variable-envs': variablesEnvCount,
+      'inline-variables': inlineVariablesCount,
+    });
+
     // override console logs
-    const logLevel = parseLogLevel(tl.getInput('logLevel') || 'info');
+    const logLevel = parseLogLevel(logLevelStr);
     console.debug = function (...args: any[]) {
       tl.debug(args.join(' ')); // always debug to core
 
@@ -93,7 +134,7 @@ async function run() {
 
     if (result.files === 0) {
       (msg => {
-        switch (tl.getInput('ifNoFilesFound') || 'ignore') {
+        switch (ifNoFilesFound) {
           case 'warn':
             console.warn(msg);
             break;
@@ -113,9 +154,23 @@ async function run() {
     tl.setVariable('replaced', `${result.replaced}`);
     tl.setVariable('tokens', `${result.tokens}`);
     tl.setVariable('transforms', `${result.transforms}`);
+
+    telemetryEvent.setAttributes({
+      'output-defaults': result.defaults,
+      'output-files': result.files,
+      'output-replaced': result.replaced,
+      'output-tokens': result.tokens,
+      'output-transforms': result.transforms,
+    });
+
+    telemetryEvent.setStatus({ code: SpanStatusCode.OK });
   } catch (error) {
+    telemetryEvent.setStatus({ code: SpanStatusCode.ERROR });
+
     tl.setResult(tl.TaskResult.Failed, error);
   } finally {
+    telemetryEvent.end();
+
     // restore console logs
     console.debug = _debug;
     console.info = _info;
@@ -149,6 +204,7 @@ var parseVariables = async function (input: string, root: string): Promise<{ [ke
   }
 };
 
+var variableFilesCount = 0;
 var loadVariablesFromFile = async function (name: string, root: string): Promise<{ [key: string]: any }> {
   var files = await fg.glob(
     name.split(';').map(v => v.trim()),
@@ -174,17 +230,23 @@ var loadVariablesFromFile = async function (name: string, root: string): Promise
     } else {
       vars.push(JSON.parse(stripJsonComments(content)));
     }
+
+    ++variableFilesCount;
   }
 
   return rt.merge(...vars);
 };
 
+var variablesEnvCount = 0;
 var loadVariablesFromEnv = function (name: string): { [key: string]: any } {
   tl.debug(`loading variables from environment variable '${name}'`);
+
+  ++variablesEnvCount;
 
   return JSON.parse(stripJsonComments(process.env[name] || '{}'));
 };
 
+var inlineVariablesCount = 0;
 var loadVariablesFromYaml = async function (input: string, root: string): Promise<{ [key: string]: any }> {
   const variables = yaml.load(input);
   const load = async (v: any) => {
@@ -200,6 +262,8 @@ var loadVariablesFromYaml = async function (input: string, root: string): Promis
           throw new Error("Unsupported value for: additionalVariables\nString values must starts with '@' (file path) or '$' (environment variable)");
       }
     }
+
+    inlineVariablesCount += Object.keys(v).length;
 
     return v;
   };

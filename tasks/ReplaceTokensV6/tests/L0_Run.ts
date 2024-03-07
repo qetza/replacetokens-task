@@ -20,7 +20,7 @@ if (process.env['__missingVarLog__']) tmr.setInput('missingVarLog', process.env[
 if (process.env['__recursive__']) tmr.setInput('recursive', process.env['__recursive__']);
 if (process.env['__root__']) tmr.setInput('root', process.env['__root__']);
 if (process.env['__separator__']) tmr.setInput('separator', process.env['__separator__']);
-if (process.env['__telemetry__']) tmr.setInput('root', process.env['__telemetry__']);
+if (process.env['__telemetry__']) tmr.setInput('telemetry', process.env['__telemetry__']);
 if (process.env['__tokenPattern__']) tmr.setInput('tokenPattern', process.env['__tokenPattern__']);
 if (process.env['__tokenPrefix__']) tmr.setInput('tokenPrefix', process.env['__tokenPrefix__']);
 if (process.env['__tokenSuffix__']) tmr.setInput('tokenSuffix', process.env['__tokenSuffix__']);

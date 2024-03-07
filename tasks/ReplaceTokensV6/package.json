@@ -5,6 +5,9 @@
     "test": "jest"
   },
   "dependencies": {
+    "@opentelemetry/api": "^1.8.0",
+    "@opentelemetry/sdk-trace-base": "^1.22.0",
+    "@opentelemetry/semantic-conventions": "^1.22.0",
     "@qetza/replacetokens": "^1.1.0",
     "azure-pipelines-task-lib": "^4.1.0",
     "fast-glob": "^3.3.2",
