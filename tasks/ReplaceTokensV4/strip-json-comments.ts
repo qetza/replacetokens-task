@@ -88,12 +88,7 @@ export default function stripJsonComments(jsonString, { whitespace = true, trail
           buffer = '';
           offset = index;
           commaIndex = -1;
-        } else if (
-          currentCharacter !== ' ' &&
-          currentCharacter !== '\t' &&
-          currentCharacter !== '\r' &&
-          currentCharacter !== '\n'
-        ) {
+        } else if (currentCharacter !== ' ' && currentCharacter !== '\t' && currentCharacter !== '\r' && currentCharacter !== '\n') {
           // Hit non-whitespace following a comma; comma is not trailing
           buffer += jsonString.slice(offset, index);
           offset = index;

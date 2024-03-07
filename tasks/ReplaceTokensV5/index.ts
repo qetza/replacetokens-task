@@ -201,12 +201,7 @@ var getEncoding = function (filePath: string): string {
   }
 };
 
-var loadVariablesFromJson = function (
-  value: any,
-  name: string,
-  separator: string,
-  variables: { [name: string]: string }
-): number {
+var loadVariablesFromJson = function (value: any, name: string, separator: string, variables: { [name: string]: string }): number {
   let count: number = 0;
   let type: string = typeof value;
 
@@ -307,16 +302,7 @@ var replaceTokensInString = function (
 
       // apply recursion on non-empty value (never apply escape)
       if (value && options.enableRecursion)
-        value = replaceTokensInString(
-          value,
-          regex,
-          transformRegex,
-          options,
-          false,
-          escapeType,
-          counter,
-          names.concat(name)
-        );
+        value = replaceTokensInString(value, regex, transformRegex, options, false, escapeType, counter, names.concat(name));
 
       // apply transformation
       if (transformName) {
@@ -416,13 +402,7 @@ var replaceTokensInString = function (
   return content;
 };
 
-var replaceTokensInFile = function (
-  filePath: string,
-  outputPath: string,
-  regex: RegExp,
-  transformRegex: RegExp,
-  options: Options
-): void {
+var replaceTokensInFile = function (filePath: string, outputPath: string, regex: RegExp, transformRegex: RegExp, options: Options): void {
   logger.info('##[group]replacing tokens in: ' + filePath);
 
   try {
@@ -472,10 +452,7 @@ var replaceTokensInFile = function (
     // write file & log
     if (localCounter.Tokens) {
       // always write if tokens found
-      fs.writeFileSync(
-        outputPath,
-        iconv.encode(content, encoding, { addBOM: options.writeBOM, stripBOM: null, defaultEncoding: null })
-      );
+      fs.writeFileSync(outputPath, iconv.encode(content, encoding, { addBOM: options.writeBOM, stripBOM: null, defaultEncoding: null }));
     } else if (filePath !== outputPath) {
       // copy original file if output is different (not using copyFileSync to support node 6.x)
       fs.writeFileSync(outputPath, fs.readFileSync(filePath));
@@ -515,9 +492,7 @@ var mapLogLevel = function (level: string): LogLevel {
 };
 
 var normalize = function (p: string): string {
-  return os.platform() === 'win32'
-    ? p.replace(POSIX_DIRECTORY_SEPARATOR, '\\')
-    : p.replace(WIN32_DIRECTORY_SEPARATOR, '/');
+  return os.platform() === 'win32' ? p.replace(POSIX_DIRECTORY_SEPARATOR, '\\') : p.replace(WIN32_DIRECTORY_SEPARATOR, '/');
 };
 
 async function run() {
@@ -533,8 +508,7 @@ async function run() {
   try {
     const startTime: Date = new Date();
     const serverType = tl.getVariable('System.ServerType');
-    telemetryEnabled =
-      tl.getBoolInput('enableTelemetry', false) && tl.getVariable('REPLACETOKENS_DISABLE_TELEMETRY') !== 'true';
+    telemetryEnabled = tl.getBoolInput('enableTelemetry', false) && tl.getVariable('REPLACETOKENS_DISABLE_TELEMETRY') !== 'true';
 
     telemetryEvent.account = crypto.createHash('sha256').update(tl.getVariable('system.collectionid')).digest('hex');
     telemetryEvent.pipeline = crypto
@@ -703,13 +677,7 @@ async function run() {
     const escapedTokenSuffix: string = tokenSuffix.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
     const pattern = useLegacyPattern
       ? escapedTokenPrefix + '((?:(?!' + escapedTokenSuffix + ').)*)' + escapedTokenSuffix
-      : escapedTokenPrefix +
-        '\\s*((?:(?!' +
-        escapedTokenPrefix +
-        ')(?!\\s*' +
-        escapedTokenSuffix +
-        ').)*)\\s*' +
-        escapedTokenSuffix;
+      : escapedTokenPrefix + '\\s*((?:(?!' + escapedTokenPrefix + ')(?!\\s*' + escapedTokenSuffix + ').)*)\\s*' + escapedTokenSuffix;
     const regex: RegExp = new RegExp(pattern, 'gm');
     logger.debug('pattern: ' + regex.source);
 
@@ -780,10 +748,7 @@ async function run() {
             const inputBasename: string = path.basename(rule.inputPatterns[0]);
             const inputWildcardIndex = inputBasename.indexOf('*');
             const fileBasename: string = path.basename(filePath);
-            const token: string = fileBasename.substring(
-              inputWildcardIndex,
-              fileBasename.length - (inputBasename.length - inputWildcardIndex - 1)
-            );
+            const token: string = fileBasename.substring(inputWildcardIndex, fileBasename.length - (inputBasename.length - inputWildcardIndex - 1));
 
             outputPath = outputPath.replace(OUTPUT_WILDCARD, token);
           }

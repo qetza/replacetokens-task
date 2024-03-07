@@ -1,4 +1,4 @@
-# ReplaceTokens
+# ReplaceTokens v6
 [![mit license](https://img.shields.io/badge/license-MIT-green)](https://github.com/qetza/replacetokens-action/blob/main/LICENSE) [![donate](https://img.shields.io/badge/donate-paypal-blue)](https://www.paypal.com/donate/?hosted_button_id=CCEAVYA8DUFD8)
 
 This Azure Pipelines task replaces tokens in text files with variable values.
@@ -283,9 +283,9 @@ The task was completely rewritten to use the npm package [@qetza/replacetokens](
   inputs:
     sources: '**/*.json'
     additionalVariables: |
-      - '@**/vars.(json|yml|yaml)'
-      - '$ENV_VARS',
-      - 
+      - '@**/vars.(json|yml|yaml)'      # read from files
+      - '$ENV_VARS',                    # read from env
+      -                                 # inline key/value paris
         var1: '${{ parameters.var1 }}'
         var2: '${{ parameters.var2 }}'
 ```

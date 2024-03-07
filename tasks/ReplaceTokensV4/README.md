@@ -32,7 +32,7 @@ Please refer to the [release page](https://github.com/qetza/replacetokens-task/r
     # Required. Default: **/*.config
     targetFiles: ''
 
-    # Encoding to read and write all files.
+    # The encoding to read and write all files.
     #
     # Accepted values:
     #   - auto: detect encoding using js-chardet
@@ -52,7 +52,7 @@ Please refer to the [release page](https://github.com/qetza/replacetokens-task/r
     # Required. Default: true
     writeBOM: ''
 
-    # Character escape type to apply on each value.
+    # The character escape type to apply on each value.
     #
     # Accepted values:
     #  - auto: automatically apply JSON or XML escape based on file extension
@@ -214,7 +214,7 @@ Please refer to the [release page](https://github.com/qetza/replacetokens-task/r
     # Required. Default: false
     enableRecursion: ''
 
-    # Enable seding anonymous usage data for analytics.
+    # Enable sending anonymous usage data for analytics.
     #
     # Required. Default: true
     enableTelemetry: ''
@@ -243,8 +243,7 @@ Please refer to the [release page](https://github.com/qetza/replacetokens-task/r
 ```yaml
 - task: qetza.replacetokens.replacetokens-task.replacetokens@4
   inputs:
-    targetFiles: |
-      **/*.json
+    targetFiles: '**/*.json'
     variableFiles: |
       **/vars.json
       **/vars.yml

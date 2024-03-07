@@ -1,0 +1,281 @@
+{
+  "id": "A8515EC8-7254-4FFD-912C-86772E2B5962",
+  "name": "replacetokens",
+  "friendlyName": "Replace Tokens",
+  "description": "Replace tokens in files",
+  "helpMarkDown": "[Learn more about this task](https://github.com/qetza/replacetokens-task/blob/master/tasks/ReplaceTokensV6/README.md)",
+  "category": "Utility",
+  "visibility": [
+    "Build",
+    "Release"
+  ],
+  "author": "Guillaume ROUCHON",
+  "version": {
+    "Major": 6,
+    "Minor": 0,
+    "Patch": 0
+  },
+  "releaseNotes": "breaking changes, see [changelog](https://github.com/qetza/replacetokens-task/blob/master/tasks/ReplaceTokensV6/CHANGELOG.md)",
+  "instanceNameFormat": "Replace tokens",
+  "minimumAgentVersion": "2.144.0",
+  "groups": [],
+  "inputs": [
+    {
+      "name": "root",
+      "type": "filePath",
+      "required": false,
+      "defaultValue": "",
+      "label": "Root",
+      "helpMarkDown": "The root path to use when reading files with a relative path. Default: $(System.DefaultWorkingDirectory)"
+    },
+    {
+      "name": "sources",
+      "type": "multiLine",
+      "required": true,
+      "defaultValue": "",
+      "label": "Source files",
+      "helpMarkDown": "A multiline list of files to replace tokens in."
+    },
+    {
+      "name": "tokenPattern",
+      "type": "pickList",
+      "required": false,
+      "defaultValue": "default",
+      "options": {
+        "default": "#{ ... }#",
+        "azpipelines": "$( ... )",
+        "doublebraces": "{{ ... }}",
+        "doubleunderscores": "__ ... __",
+        "githubactions": "${{ ... }}",
+        "octopus": "#{ ... }",
+        "custom": "custom"
+      },
+      "label": "Token pattern",
+      "helpMarkDown": "The token pattern to use, use custom to specify your own prefix and suffix. Default: default"
+    },
+    {
+      "name": "tokenPrefix",
+      "type": "string",
+      "required": false,
+      "visibleRule": "tokenPattern == custom",
+      "label": "Token prefix",
+      "helpMarkDown": "The token prefix when using 'custom' token pattern."
+    },
+    {
+      "name": "tokenSuffix",
+      "type": "string",
+      "required": false,
+      "visibleRule": "tokenPattern == custom",
+      "label": "Token suffix",
+      "helpMarkDown": "The token suffix when using 'custom' token pattern."
+    },
+    {
+      "name": "encoding",
+      "type": "pickList",
+      "required": false,
+      "defaultValue": "auto",
+      "options": {
+        "auto": "auto",
+        "ascii": "ascii",
+        "utf-7": "utf-7",
+        "utf-8": "utf-8",
+        "utf-16le": "utf-16",
+        "utf-16be": "utf-16 (big endian)",
+        "windows1252": "windows 1252",
+        "iso88591": "iso 8859-1"
+      },
+      "label": "Files encoding",
+      "helpMarkDown": "The encoding to read and write all files. Default: auto"
+    },
+    {
+      "name": "addBom",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": false,
+      "visibleRule": "encoding != ascii && encoding != windows1252 && encoding != iso88591",
+      "label": "Add BOM",
+      "helpMarkDown": "Add BOM when writing files. Default: false"
+    },
+    {
+      "name": "additionalVariables",
+      "type": "multiLine",
+      "required": false,
+      "defaultValue": "",
+      "label": "Additional variables (YAML)",
+      "helpMarkDown": "A YAML formatted string containing additional variables or file or environment variable references."
+    },
+    {
+      "name": "separator",
+      "type": "string",
+      "defaultValue": ".",
+      "required": false,
+      "visibleRule": "additionalVariables != \"\"",
+      "label": "Separator",
+      "helpMarkDown": "The separtor to use when flattening keys in variables."
+    },
+    {
+      "name": "escape",
+      "type": "pickList",
+      "required": false,
+      "defaultValue": "auto",
+      "options": {
+        "auto": "auto",
+        "off": "no escaping",
+        "json": "json",
+        "xml": "xml",
+        "custom": "custom"
+      },
+      "label": "Escape values",
+      "helpMarkDown": "The character escape type to apply on each value. Default: auto"
+    },
+    {
+      "name": "escapeChar",
+      "type": "string",
+      "required": false,
+      "visibleRule": "escape == custom",
+      "label": "Escape character",
+      "helpMarkDown": "The escape character to use when using 'custom' escape."
+    },
+    {
+      "name": "charsToEscape",
+      "type": "string",
+      "required": false,
+      "visibleRule": "escape == custom",
+      "label": "Characters to escape",
+      "helpMarkDown": "The characters to escape when using 'custom' escape."
+    },
+    {
+      "name": "logLevel",
+      "type": "pickList",
+      "required": false,
+      "defaultValue": "info",
+      "options": {
+        "debug": "debug",
+        "info": "info",
+        "warn": "warn",
+        "error": "error"
+      },
+      "label": "Log level",
+      "helpMarkDown": "The log level. Default: info"
+    },
+    {
+      "name": "missingVarAction",
+      "type": "pickList",
+      "required": false,
+      "defaultValue": "none",
+      "options": {
+        "none": "replace with empty and log",
+        "keep": "keep token and log",
+        "replace": "replace with default"
+      },
+      "label": "Behavior on missing variable",
+      "helpMarkDown": "The behavior if variable is not found. Default: none"
+    },
+    {
+      "name": "missingVarDefault",
+      "type": "string",
+      "required": false,
+      "defaultValue": "",
+      "visibleRule": "missingVarAction == replace",
+      "label": "Default value",
+      "helpMarkDown": "The default value to use when a key is not found. Default: empty string"
+    },
+    {
+      "name": "missingVarLog",
+      "type": "pickList",
+      "required": false,
+      "defaultValue": "warn",
+      "options": {
+        "off": "no log",
+        "warn": "warning",
+        "error": "error and fail task"
+      },
+      "visibleRule": "missingVarAction != replace",
+      "label": "Missing variable log level",
+      "helpMarkDown": "The level to log key not found messages. Default: warn"
+    },
+    {
+      "name": "ifNoFilesFound",
+      "type": "pickList",
+      "required": false,
+      "defaultValue": "ignore",
+      "options": {
+        "ignore": "silently continue",
+        "warn": "log warning",
+        "error": "fail task"
+      },
+      "label": "Behavior on no file",
+      "helpMarkDown": "The behavior if no files are found. Default: ignore"
+    },
+    {
+      "name": "recursive",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": false,
+      "label": "Enable recursion in values",
+      "helpMarkDown": "Enable token replacements in values recusively. Default: false"
+    },
+    {
+      "name": "transforms",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": false,
+      "label": "Enable transforms",
+      "helpMarkDown": "Enable transforms on values. Default: false"
+    },
+    {
+      "name": "transformsPrefix",
+      "type": "string",
+      "required": false,
+      "defaultValue": "(",
+      "visibleRule": "transforms == true",
+      "label": "Transforms prefix",
+      "helpMarkDown": "The tranforms prefix when using transforms. Default: ("
+    },
+    {
+      "name": "transformsSuffix",
+      "type": "string",
+      "required": false,
+      "defaultValue": ")",
+      "visibleRule": "transforms == true",
+      "label": "Transforms suffix",
+      "helpMarkDown": "The tranforms suffix when using transforms. Default: )"
+    },
+    {
+      "name": "telemetry",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": true,
+      "label": "Send anonymous usage telemetry",
+      "helpMarkDown": "Allow sending anonymous usage data for analytics. Default: true"
+    }
+  ],
+  "outputVariables": [
+    {
+      "name": "defaults",
+      "description": "The number of tokens replaced with the default value if one was specified."
+    },
+    {
+      "name": "files",
+      "description": "The number of source files parsed."
+    },
+    {
+      "name": "replaced",
+      "description": "The number of values replaced by a value different than the default value."
+    },
+    {
+      "name": "tokens",
+      "description": "The number of tokens found in all files."
+    },
+    {
+      "name": "transforms",
+      "description": "The number of transforms applied."
+    }
+  ],
+  "execution": {
+    "Node16": {
+      "target": "index.js",
+      "argumentFormat": ""
+    }
+  }
+}

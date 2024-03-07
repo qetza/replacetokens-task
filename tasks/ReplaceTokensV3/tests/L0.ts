@@ -201,16 +201,8 @@ describe('ReplaceTokens v3 L0 suite', function () {
         () => {
           tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(
-            process.env['__inputpath1__'],
-            path.join(data, 'default.expected.json'),
-            'replaced output in first file'
-          );
-          assertFilesEqual(
-            process.env['__inputpath2__'],
-            path.join(data, 'default.expected.json'),
-            'replaced output in second file'
-          );
+          assertFilesEqual(process.env['__inputpath1__'], path.join(data, 'default.expected.json'), 'replaced output in first file');
+          assertFilesEqual(process.env['__inputpath2__'], path.join(data, 'default.expected.json'), 'replaced output in second file');
         },
         tr,
         done
@@ -233,11 +225,7 @@ describe('ReplaceTokens v3 L0 suite', function () {
         () => {
           tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(
-            path.join(tmp, process.env['__outputpath__']),
-            path.join(data, 'default.expected.json'),
-            'replaced output'
-          );
+          assertFilesEqual(path.join(tmp, process.env['__outputpath__']), path.join(data, 'default.expected.json'), 'replaced output');
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.json'), 'input');
         },
         tr,
@@ -286,11 +274,7 @@ describe('ReplaceTokens v3 L0 suite', function () {
         () => {
           tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(
-            path.join(tmp, 'output', 'default_wildcardreplace.dev.output.json'),
-            path.join(data, 'default.expected.json'),
-            'replaced output'
-          );
+          assertFilesEqual(path.join(tmp, 'output', 'default_wildcardreplace.dev.output.json'), path.join(data, 'default.expected.json'), 'replaced output');
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.json'), 'input');
         },
         tr,
@@ -407,11 +391,7 @@ describe('ReplaceTokens v3 L0 suite', function () {
         () => {
           tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(
-            process.env['__inputpath__'],
-            path.join(data, 'default.expected_noreplace.json'),
-            'replaced output'
-          );
+          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_noreplace.json'), 'replaced output');
         },
         tr,
         done
@@ -459,11 +439,7 @@ describe('ReplaceTokens v3 L0 suite', function () {
         () => {
           tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(
-            process.env['__inputpath__'],
-            path.join(data, 'transform.upper.expected.json'),
-            'replaced output'
-          );
+          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'transform.upper.expected.json'), 'replaced output');
         },
         tr,
         done
@@ -486,11 +462,7 @@ describe('ReplaceTokens v3 L0 suite', function () {
         () => {
           tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(
-            process.env['__inputpath__'],
-            path.join(data, 'transform.lower.expected.json'),
-            'replaced output'
-          );
+          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'transform.lower.expected.json'), 'replaced output');
         },
         tr,
         done
@@ -513,11 +485,7 @@ describe('ReplaceTokens v3 L0 suite', function () {
         () => {
           tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(
-            process.env['__inputpath__'],
-            path.join(data, 'transform.base64.expected.json'),
-            'replaced output'
-          );
+          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'transform.base64.expected.json'), 'replaced output');
         },
         tr,
         done
@@ -540,11 +508,7 @@ describe('ReplaceTokens v3 L0 suite', function () {
         () => {
           tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(
-            process.env['__inputpath__'],
-            path.join(data, 'transform.noescape.expected.json'),
-            'replaced output'
-          );
+          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'transform.noescape.expected.json'), 'replaced output');
         },
         tr,
         done
@@ -566,11 +530,7 @@ describe('ReplaceTokens v3 L0 suite', function () {
         () => {
           tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(
-            process.env['__inputpath__'],
-            path.join(data, 'transform.upper.expected.json'),
-            'replaced output'
-          );
+          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'transform.upper.expected.json'), 'replaced output');
         },
         tr,
         done
@@ -593,11 +553,7 @@ describe('ReplaceTokens v3 L0 suite', function () {
         () => {
           tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(
-            process.env['__inputpath__'],
-            path.join(data, 'transform.indent.expected.yml'),
-            'replaced output'
-          );
+          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'transform.indent.expected.yml'), 'replaced output');
         },
         tr,
         done
@@ -777,9 +733,7 @@ describe('ReplaceTokens v3 L0 suite', function () {
         () => {
           tr.succeeded.should.equal(true, 'task succeeded');
 
-          tr.stdout.should.include(
-            'replaced 8 tokens out of 8 (using 2 default value(s)) and running 2 functions in 2 file(s)'
-          );
+          tr.stdout.should.include('replaced 8 tokens out of 8 (using 2 default value(s)) and running 2 functions in 2 file(s)');
         },
         tr,
         done
@@ -805,11 +759,7 @@ describe('ReplaceTokens v3 L0 suite', function () {
         () => {
           tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(
-            process.env['__inputpath__'],
-            path.join(data, 'default.expected_escape.json'),
-            'replaced output'
-          );
+          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_escape.json'), 'replaced output');
         },
         tr,
         done
@@ -833,11 +783,7 @@ describe('ReplaceTokens v3 L0 suite', function () {
         () => {
           tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(
-            process.env['__inputpath__'],
-            path.join(data, 'default.expected_escape.xml'),
-            'replaced output'
-          );
+          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_escape.xml'), 'replaced output');
         },
         tr,
         done
@@ -861,11 +807,7 @@ describe('ReplaceTokens v3 L0 suite', function () {
         () => {
           tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(
-            process.env['__inputpath__'],
-            path.join(data, 'default.expected_noescape.json'),
-            'replaced output'
-          );
+          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_noescape.json'), 'replaced output');
         },
         tr,
         done
@@ -889,11 +831,7 @@ describe('ReplaceTokens v3 L0 suite', function () {
         () => {
           tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(
-            process.env['__inputpath__'],
-            path.join(data, 'default.expected_escape.json'),
-            'replaced output'
-          );
+          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_escape.json'), 'replaced output');
         },
         tr,
         done
@@ -917,11 +855,7 @@ describe('ReplaceTokens v3 L0 suite', function () {
         () => {
           tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(
-            process.env['__inputpath__'],
-            path.join(data, 'default.expected_escape.xml'),
-            'replaced output'
-          );
+          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_escape.xml'), 'replaced output');
         },
         tr,
         done
@@ -943,11 +877,7 @@ describe('ReplaceTokens v3 L0 suite', function () {
         () => {
           tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(
-            process.env['__inputpath__'],
-            path.join(data, 'default.expected_customescape.json'),
-            'replaced output'
-          );
+          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_customescape.json'), 'replaced output');
         },
         tr,
         done
@@ -1042,11 +972,7 @@ describe('ReplaceTokens v3 L0 suite', function () {
 
           tr.stdout.should.not.include('##vso[task.debug]  variable not found: var1');
 
-          assertFilesEqual(
-            process.env['__inputpath__'],
-            path.join(data, 'default.expected_empty.json'),
-            'replaced output'
-          );
+          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_empty.json'), 'replaced output');
         },
         tr,
         done
@@ -1070,11 +996,7 @@ describe('ReplaceTokens v3 L0 suite', function () {
 
           tr.stdout.should.not.include('##vso[task.debug]  variable not found: var1');
 
-          assertFilesEqual(
-            process.env['__inputpath__'],
-            path.join(data, 'default.expected_empty.json'),
-            'replaced output'
-          );
+          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_empty.json'), 'replaced output');
         },
         tr,
         done
@@ -1099,11 +1021,7 @@ describe('ReplaceTokens v3 L0 suite', function () {
 
           tr.stdout.should.not.include('##vso[task.debug]  variable not found: var1');
 
-          assertFilesEqual(
-            process.env['__inputpath__'],
-            path.join(data, 'default.expected_emptytoken.json'),
-            'replaced output'
-          );
+          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_emptytoken.json'), 'replaced output');
         },
         tr,
         done
@@ -1130,11 +1048,7 @@ describe('ReplaceTokens v3 L0 suite', function () {
 
           tr.stdout.should.include('##vso[task.issue type=warning;]  variable not found: var1');
 
-          assertFilesEqual(
-            process.env['__inputpath__'],
-            path.join(data, 'default.expected_noreplace.json'),
-            'replaced output'
-          );
+          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_noreplace.json'), 'replaced output');
         },
         tr,
         done
@@ -1159,11 +1073,7 @@ describe('ReplaceTokens v3 L0 suite', function () {
 
           tr.stdout.should.include('##vso[task.debug]  var1: [default] (default value)');
 
-          assertFilesEqual(
-            process.env['__inputpath__'],
-            path.join(data, 'default.expected_default.json'),
-            'replaced output'
-          );
+          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_default.json'), 'replaced output');
         },
         tr,
         done
@@ -1188,11 +1098,7 @@ describe('ReplaceTokens v3 L0 suite', function () {
 
           tr.stdout.should.include('##vso[task.debug]  var1:  (default value)');
 
-          assertFilesEqual(
-            process.env['__inputpath__'],
-            path.join(data, 'default.expected_empty.json'),
-            'replaced output'
-          );
+          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_empty.json'), 'replaced output');
         },
         tr,
         done
@@ -1218,11 +1124,7 @@ describe('ReplaceTokens v3 L0 suite', function () {
 
           tr.stdout.should.include('##vso[task.issue type=warning;]  variable not found: var1');
 
-          assertFilesEqual(
-            process.env['__inputpath__'],
-            path.join(data, 'default.expected_noreplace.json'),
-            'replaced output'
-          );
+          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_noreplace.json'), 'replaced output');
         },
         tr,
         done
@@ -1248,11 +1150,7 @@ describe('ReplaceTokens v3 L0 suite', function () {
 
           tr.stdout.should.include('##vso[task.debug]  var1: [default] (default value)');
 
-          assertFilesEqual(
-            process.env['__inputpath__'],
-            path.join(data, 'default.expected_default.json'),
-            'replaced output'
-          );
+          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_default.json'), 'replaced output');
         },
         tr,
         done
@@ -1278,11 +1176,7 @@ describe('ReplaceTokens v3 L0 suite', function () {
 
           tr.stdout.should.include('##vso[task.debug]  var1:  (default value)');
 
-          assertFilesEqual(
-            process.env['__inputpath__'],
-            path.join(data, 'default.expected_empty.json'),
-            'replaced output'
-          );
+          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_empty.json'), 'replaced output');
         },
         tr,
         done
@@ -1306,11 +1200,7 @@ describe('ReplaceTokens v3 L0 suite', function () {
         () => {
           tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(
-            process.env['__inputpath__'],
-            path.join(data, 'default.expected_disabledrecursion.json'),
-            'replaced output'
-          );
+          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_disabledrecursion.json'), 'replaced output');
         },
         tr,
         done

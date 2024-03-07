@@ -1,0 +1,45 @@
+# Changelog
+
+## 6.0.0
+- **Breaking changes**: the task was completely rewritten to use the npm package [@qetza/replacetokens](https://www.npmjs.com/package/@qetza/replacetokens) and be more similar with the new [ReplaceTokens GitHub Actions](https://github.com/marketplace/actions/replacetokens):
+  - support only node 16
+  - renamed input _targetFiles_ to _sources_ 
+  - removed support for comma-separated paths in _targetFiles_
+  - renamed _encoding_ value `win1252` to `windows1252`
+  - merged inputs _variableFiles_ and _inlineVariables_ in _additionalVariables_
+  - renamed input _variableSeparator_ to _separator_
+  - renamed input _enableRecursion_ to _recursive_
+  - renamed input _rootDirectory_ to _root_
+  - renamed _tokenPattern_ value `azpipelines` to `azurepipelines`
+  - renamed _tokenPattern_ value `rm` to `doubleunderscores`
+  - renamed input _writeBOM_ to _addBom_ 
+  - changed _writeBOM_ default value to `false`
+  - renamed input _verbosity_ to _logLevel_
+    - renamed _verbosity_ value `detailed` to `debug`
+    - renamed _verbosity_ value `normal` to `info`
+    - removed _verbosity_ value `off` (see new supported values for replacement)
+  - renamed input _actionOnMissing_ to _missingVarLog_
+    - renamed _actionOnMissing_ value `continue` to `off`
+    - renamed _actionOnMissing_ value `fail` to `error`
+  - replaced _keepToken_ with _missingVarAction_ with value `keep`
+  - renamed input _actionOnNoFiles_ to _ifNoFilesFound_
+    - renamed _actionOnNoFiles_ value `continue` to `ignore`
+    - renamed _actionOnNoFiles_ value `fail` to `error`
+  - renamed input _enableTransforms_ to _transforms_
+    - renamed transform `noescape` to `raw`
+  - renamed input _transformPrefix_ to _transformsPrefix_
+  - renamed input _transformSuffix_ to _transformsSuffix_
+  - removed input _useLegacyPattern_
+  - removed input _useLegacyEmptyFeature_
+  - replaced input _useDefaultValue_ with _missingVarAction_ with value `replace`
+  - removed input _emptyValue_
+  - renamed input _defaultValue_ to _missingVarDefault_
+  - removed input _enableTelemetry_ to _telemetry_
+  - renamed output _tokenReplacedCount_ to _replaced_
+  - renamed output _tokenFoundCount_ to _tokens_
+  - renamed output _fileProcessedCount_ to _files_
+  - renamed output _transformExecutedCount_ to _transforms_
+  - renamed output _defaultValueCount_ to _defaults_
+- Add new token pattern `githubactions`.
+- Add new log levels `warn` and `error`.
+- Add support in _additionalVariables_ for JSON encoded environment variables.

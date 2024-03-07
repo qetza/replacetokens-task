@@ -92,7 +92,7 @@ var generateVersion = function (major) {
 }
 
 // globals
-var versions = ['3','4','5'];
+var versions = ['3','4','5','6'];
 
 // ensure clean output
 console.log('clean:');
