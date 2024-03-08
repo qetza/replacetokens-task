@@ -1,7 +1,7 @@
 # ReplaceTokens
 [![mit license](https://img.shields.io/badge/license-MIT-green)](https://github.com/qetza/replacetokens-action/blob/main/LICENSE) [![donate](https://img.shields.io/badge/donate-paypal-blue)](https://www.paypal.com/donate/?hosted_button_id=CCEAVYA8DUFD8)
 
-This Azure Pipelines task replaces tokens in text files with variable values.
+This Azure Pipelines task replaces tokens in text based files with variable values.
 
 ## What's new
 Please refer to the [release page](https://github.com/qetza/replacetokens-task/releases) for the latest release notes.
