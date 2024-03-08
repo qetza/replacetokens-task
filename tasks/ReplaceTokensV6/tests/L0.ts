@@ -53,13 +53,13 @@ describe('ReplaceTokens v6 L0 suite', function () {
     process.env['VSTS_PUBLIC_VARIABLES'] = JSON.stringify(Object.keys(variables));
 
     for (const name of Object.keys(variables)) {
-      process.env[name] = variables[name];
+      process.env[name.toUpperCase()] = variables[name];
     }
   }
 
   function cleanVariables(names: string[]) {
     for (const name of names) {
-      delete process.env[name];
+      delete process.env[name.toUpperCase()];
     }
   }
 
@@ -67,13 +67,13 @@ describe('ReplaceTokens v6 L0 suite', function () {
     process.env['VSTS_SECRET_VARIABLES'] = JSON.stringify(Object.keys(secrets));
 
     for (const name of Object.keys(secrets)) {
-      process.env[`SECRET_${name}`] = secrets[name];
+      process.env[`SECRET_${name.toUpperCase()}`] = secrets[name];
     }
   }
 
   function cleanSecrets(names: string[]) {
     for (const name of names) {
-      delete process.env[`SECRET_${name}`];
+      delete process.env[`SECRET_${name.toUpperCase()}`];
     }
   }
 
@@ -220,10 +220,10 @@ describe('ReplaceTokens v6 L0 suite', function () {
     addSecrets(secrets);
 
     process.env['__sources__'] = '**/*.json\r\n**/*.xml\r\n**/*.yml';
-    process.env['system_servertype'] = 'hosted';
-    process.env['system_collectionid'] = 'col01';
-    process.env['system_teamprojectid'] = 'project01';
-    process.env['system_definitionid'] = 'def01';
+    process.env['SYSTEM_SERVERTYPE'] = 'hosted';
+    process.env['SYSTEM_COLLECTIONID'] = 'col01';
+    process.env['SYSTEM_TEAMPROJECTID'] = 'project01';
+    process.env['SYSTEM_DEFINITIONID'] = 'def01';
 
     try {
       // act
@@ -239,10 +239,10 @@ describe('ReplaceTokens v6 L0 suite', function () {
         );
       }, tr);
     } finally {
-      delete process.env['system_servertype'];
-      delete process.env['system_collectionid'];
-      delete process.env['system_teamprojectid'];
-      delete process.env['system_definitionid'];
+      delete process.env['SYSTEM_SERVERTYPE'];
+      delete process.env['SYSTEM_COLLECTIONID'];
+      delete process.env['SYSTEM_TEAMPROJECTID'];
+      delete process.env['SYSTEM_DEFINITIONID'];
 
       cleanVariables(Object.keys(vars));
       cleanSecrets(Object.keys(secrets));
@@ -259,10 +259,10 @@ describe('ReplaceTokens v6 L0 suite', function () {
     addVariables(vars);
     addSecrets(secrets);
 
-    process.env['system_servertype'] = 'hosted';
-    process.env['system_collectionid'] = 'col01';
-    process.env['system_teamprojectid'] = 'project01';
-    process.env['system_definitionid'] = 'def01';
+    process.env['SYSTEM_SERVERTYPE'] = 'hosted';
+    process.env['SYSTEM_COLLECTIONID'] = 'col01';
+    process.env['SYSTEM_TEAMPROJECTID'] = 'project01';
+    process.env['SYSTEM_DEFINITIONID'] = 'def01';
 
     try {
       // act
@@ -278,10 +278,10 @@ describe('ReplaceTokens v6 L0 suite', function () {
         );
       }, tr);
     } finally {
-      delete process.env['system_servertype'];
-      delete process.env['system_collectionid'];
-      delete process.env['system_teamprojectid'];
-      delete process.env['system_definitionid'];
+      delete process.env['SYSTEM_SERVERTYPE'];
+      delete process.env['SYSTEM_COLLECTIONID'];
+      delete process.env['SYSTEM_TEAMPROJECTID'];
+      delete process.env['SYSTEM_DEFINITIONID'];
 
       cleanVariables(Object.keys(vars));
       cleanSecrets(Object.keys(secrets));

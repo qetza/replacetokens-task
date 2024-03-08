@@ -74,6 +74,7 @@ async function run() {
       }
     };
 
+    console.log(tl.getVariables());
     const variables = rt.merge(
       tl.getVariables().reduce((map, current) => {
         map[current.name] = current.value;

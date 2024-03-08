@@ -51,10 +51,10 @@ describe('ReplaceTokens v5 L0 suite', function () {
   }
 
   before(() => {
-    process.env['system_servertype'] = 'server';
-    process.env['system_collectionid'] = 'col01';
-    process.env['system_teamprojectid'] = 'project01';
-    process.env['system_definitionid'] = 'def01';
+    process.env['SYSTEM_SERVERTYPE'] = 'server';
+    process.env['SYSTEM_COLLECTIONID'] = 'col01';
+    process.env['SYSTEM_TEAMPROJECTID'] = 'project01';
+    process.env['SYSTEM_DEFINITIONID'] = 'def01';
 
     if (fs.existsSync(tmp)) removeFolder(tmp);
 
@@ -62,10 +62,10 @@ describe('ReplaceTokens v5 L0 suite', function () {
   });
 
   after(() => {
-    delete process.env['system_servertype'];
-    delete process.env['system_collectionid'];
-    delete process.env['system_teamprojectid'];
-    delete process.env['system_definitionid'];
+    delete process.env['SYSTEM_SERVERTYPE'];
+    delete process.env['SYSTEM_COLLECTIONID'];
+    delete process.env['SYSTEM_TEAMPROJECTID'];
+    delete process.env['SYSTEM_DEFINITIONID'];
   });
 
   afterEach(() => {
@@ -77,7 +77,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
     delete process.env['__input__'];
     delete process.env['__tokenpattern__'];
     delete process.env['__keeptoken__'];
-    delete process.env['var1'];
+    delete process.env['VAR1'];
     delete process.env['__actiononmissing__'];
     delete process.env['__verbosity__'];
     delete process.env['__escapetype__'];
@@ -556,7 +556,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
       process.env['__inputpath__'] = copyData('transform.upper.json', 'transform_upper.json');
-      process.env['var1'] = 'var1_value';
+      process.env['VAR1'] = 'var1_value';
 
       // act
       tr.run();
@@ -579,7 +579,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
       process.env['__inputpath__'] = copyData('transform.lower.json', 'transform_lower.json');
-      process.env['var1'] = 'VAR1_VALUE';
+      process.env['VAR1'] = 'VAR1_VALUE';
 
       // act
       tr.run();
@@ -602,7 +602,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
       process.env['__inputpath__'] = copyData('transform.base64.json', 'transform_base64.json');
-      process.env['var1'] = 'var1_value';
+      process.env['VAR1'] = 'var1_value';
 
       // act
       tr.run();
@@ -625,7 +625,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
       process.env['__inputpath__'] = copyData('transform.noescape.json', 'transform_noescape.json');
-      process.env['var1'] = '"var1_value"';
+      process.env['VAR1'] = '"var1_value"';
 
       // act
       tr.run();
@@ -670,7 +670,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
       process.env['__inputpath__'] = copyData('transform.indent.yml', 'transform_indent.yml');
-      process.env['var1'] = 'line1\nline2\nline3';
+      process.env['VAR1'] = 'line1\nline2\nline3';
 
       // act
       tr.run();
@@ -882,7 +882,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
       process.env['__inputpath__'] = copyData('default.json', 'default_autoescape.json');
       process.env['__escapetype__'] = 'auto';
-      process.env['var1'] = '"var\\1\n\r\tvalue\b\f';
+      process.env['VAR1'] = '"var\\1\n\r\tvalue\b\f';
 
       // act
       tr.run();
@@ -906,7 +906,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
       process.env['__inputpath__'] = copyData('default.xml', 'default_autoescape.xml');
       process.env['__escapetype__'] = 'auto';
-      process.env['var1'] = '"var\'1&<value>';
+      process.env['VAR1'] = '"var\'1&<value>';
 
       // act
       tr.run();
@@ -930,7 +930,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
       process.env['__inputpath__'] = copyData('default.json', 'default_noneescape.json');
       process.env['__escapetype__'] = 'none';
-      process.env['var1'] = '"var\\1\n\r\tvalue\b\f';
+      process.env['VAR1'] = '"var\\1\n\r\tvalue\b\f';
 
       // act
       tr.run();
@@ -954,7 +954,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
       process.env['__inputpath__'] = copyData('default_json.config', 'default_jsonescape.config');
       process.env['__escapetype__'] = 'json';
-      process.env['var1'] = '"var\\1\n\r\tvalue\b\f';
+      process.env['VAR1'] = '"var\\1\n\r\tvalue\b\f';
 
       // act
       tr.run();
@@ -978,7 +978,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
       process.env['__inputpath__'] = copyData('default_xml.config', 'default_xmlescape.config');
       process.env['__escapetype__'] = 'xml';
-      process.env['var1'] = '"var\'1&<value>';
+      process.env['VAR1'] = '"var\'1&<value>';
 
       // act
       tr.run();
@@ -1093,7 +1093,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
       process.env['__inputpath__'] = copyData('default.json', 'default_legacyempty.json');
-      process.env['var1'] = '';
+      process.env['VAR1'] = '';
 
       // act
       tr.run();
@@ -1142,7 +1142,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
       process.env['__inputpath__'] = copyData('default.json', 'default_empty.json');
-      process.env['var1'] = '(empty)';
+      process.env['VAR1'] = '(empty)';
 
       // act
       tr.run();

@@ -6,10 +6,10 @@ const taskPath = path.join(__dirname, '..', '..', 'index.js');
 const tmr: tmrm.TaskMockRunner = new tmrm.TaskMockRunner(taskPath);
 
 // variables
-process.env['var'] = 'var1';
-process.env['var1'] = '#{var2}#_#{var3}#';
-process.env['var2'] = '#{var}#';
-process.env['var3'] = 'value';
+process.env['VAR'] = 'var1';
+process.env['VAR1'] = '#{var2}#_#{var3}#';
+process.env['VAR2'] = '#{var}#';
+process.env['VAR3'] = 'value';
 
 // inputs
 tmr.setInput('enableTelemetry', 'false');

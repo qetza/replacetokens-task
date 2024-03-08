@@ -122,11 +122,6 @@ export function useApplicationInsightsExporter(proxy?: string) {
 }
 
 export function startSpan(name: string, account: string, pipeline: string, host: string) {
-  console.log(`name: ${name}`);
-  console.log(`account: ${account}`);
-  console.log(`pipeline: ${pipeline}`);
-  console.log(`host: ${host}`);
-
   return tracer.startSpan(name, {
     attributes: {
       account: crypto
