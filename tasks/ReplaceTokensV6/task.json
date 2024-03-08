@@ -242,12 +242,12 @@
       "helpMarkDown": "The tranforms suffix when using transforms. Default: )"
     },
     {
-      "name": "telemetry",
+      "name": "telemetryOptout",
       "type": "boolean",
       "required": false,
-      "defaultValue": true,
-      "label": "Send anonymous usage telemetry",
-      "helpMarkDown": "Allow sending anonymous usage data for analytics. Default: true"
+      "defaultValue": false,
+      "label": "Opt out of anonymous telemetry",
+      "helpMarkDown": "Opt out of the anonymous telemetry feature. Default: false"
     }
   ],
   "outputVariables": [

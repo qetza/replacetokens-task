@@ -509,7 +509,9 @@ async function run() {
   try {
     const startTime: Date = new Date();
     const serverType = tl.getVariable('System.ServerType');
-    telemetryEnabled = tl.getBoolInput('enableTelemetry', false) && tl.getVariable('REPLACETOKENS_DISABLE_TELEMETRY') !== 'true';
+    telemetryEnabled =
+      tl.getBoolInput('enableTelemetry', false) &&
+      ['true', '1'].indexOf(process.env['REPLACETOKENS_TELEMETRY_OPTOUT'] || process.env['REPLACETOKENS_DISABLE_TELEMETRY']) === -1;
 
     telemetryEvent.account = crypto.createHash('sha256').update(tl.getVariable('system.collectionid')).digest('hex');
     telemetryEvent.pipeline = crypto
@@ -517,7 +519,7 @@ async function run() {
       .update(tl.getVariable('system.teamprojectid') + tl.getVariable('system.definitionid'))
       .digest('hex');
     telemetryEvent.pipelineType = tl.getVariable('release.releaseid') ? 'release' : 'build';
-    telemetryEvent.serverType = !serverType || serverType.toLowerCase() !== 'hosted' ? 'server' : 'services';
+    telemetryEvent.serverType = !serverType || serverType.toLowerCase() !== 'hosted' ? 'server' : 'cloud';
 
     // load inputs
     const root: string = tl.getPathInput('rootDirectory', false, true);
@@ -678,7 +680,7 @@ async function run() {
     telemetryEvent.escapeType = options.escapeType;
     telemetryEvent.keepToken = options.keepToken;
     telemetryEvent.pattern = regex.source;
-    telemetryEvent.result = 'succeeded';
+    telemetryEvent.result = 'succeed';
     telemetryEvent.rules = rules.length;
     telemetryEvent.rulesWithInputWildcard = ruleUsingInputWildcardCount;
     telemetryEvent.rulesWithNegativePattern = ruleUsingNegativeInputPattern;
@@ -769,7 +771,7 @@ async function run() {
   } finally {
     if (telemetryEnabled) {
       const trackedData = trackEvent(telemetryEvent, proxyUrl);
-      tl.debug('sent usage telemetry: ' + JSON.stringify(trackedData));
+      tl.debug('sent usage telemetry: ' + trackedData);
     }
   }
 }

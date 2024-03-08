@@ -230,7 +230,7 @@ Please refer to the [release page](https://github.com/qetza/replacetokens-task/r
 ```
 
 ## Data/Telemetry
-The Replace Tokens task for Azure Pipelines collects **anonymous** usage data and sends them by default to its author to help improve the product. If you don't wish to send usage data, you can change your telemetry settings through _enableTelemetry_ parameter or by setting a variable or environment variable `REPLACETOKENS_DISABLE_TELEMETRY` to `true`.
+The Replace Tokens task for Azure Pipelines collects **anonymous** usage data and sends them by default to its author to help improve the product. If you don't wish to send usage data, you can change your telemetry settings through the _enableTelemetry_ parameter or by setting a variable or environment variable `REPLACETOKENS_DISABLE_TELEMETRY` to `true`.
 
 The following **anonymous** data is send:
 - the task version
@@ -268,7 +268,7 @@ The following **anonymous** data is send:
 - the **number of** _targetFiles_ entries having an output pattern
 - the **number of** _variableFiles_ entries
 - the **number of** _inlineVariables_ entries
-- the task result (`succeeded` or `failed`)
+- the task result (`succeed` or `failed`)
 - the task execution duration
 - the **number of** tokens replaced with the default value
 - the **number of** files parsed

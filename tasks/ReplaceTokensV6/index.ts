@@ -15,15 +15,20 @@ async function run() {
   const _group = console.group;
   const _groupEnd = console.groupEnd;
 
-  if (tl.getBoolInput('telemetry') && process.env['REPLACETOKENS_DISABLE_TELEMETRY'] !== 'true') {
+  if (
+    !tl.getBoolInput('telemetryOptout') &&
+    !['true', '1'].includes(process.env['REPLACETOKENS_TELEMETRY_OPTOUT'] || process.env['REPLACETOKENS_DISABLE_TELEMETRY'])
+  ) {
     telemetry.useApplicationInsightsExporter(tl.getHttpProxyConfiguration()?.proxyUrl);
   }
 
+  const serverType = tl.getVariable('System.ServerType');
   const telemetryEvent = telemetry.startSpan(
     'run',
     tl.getVariable('system.collectionid'),
-    tl.getVariable('system.teamprojectid') + tl.getVariable('system.definitionid'),
-    tl.getVariable('System.ServerType'));
+    `${tl.getVariable('system.teamprojectid')}${tl.getVariable('system.definitionid')}`,
+    !serverType || serverType.toLowerCase() !== 'hosted' ? 'server' : 'cloud'
+  );
 
   try {
     // read and validate inputs
@@ -82,28 +87,28 @@ async function run() {
 
     // set telemetry attributes
     telemetryEvent.setAttributes({
-      'sources': sources.length,
+      sources: sources.length,
       'add-bom': options.addBOM,
       'chars-to-escape': options.escape.chars,
-      'encoding': options.encoding,
-      'escape': options.escape.type,
+      encoding: options.encoding,
+      escape: options.escape.type,
       'escape-char': options.escape.escapeChar,
       'if-no-files-found': ifNoFilesFound,
       'log-level': logLevelStr,
       'missing-var-action': options.missing.action,
       'missing-var-default': options.missing.default,
       'missing-var-log': options.missing.log,
-      'recusrive': options.recursive,
-      'separator': options.separator,
+      recusrive: options.recursive,
+      separator: options.separator,
       'token-pattern': options.token.pattern,
       'token-prefix': options.token.prefix,
       'token-suffix': options.token.suffix,
-      'transforms': options.transforms.enabled,
+      transforms: options.transforms.enabled,
       'transforms-prefix': options.transforms.prefix,
       'transforms-suffix': options.transforms.suffix,
       'variable-files': variableFilesCount,
       'variable-envs': variablesEnvCount,
-      'inline-variables': inlineVariablesCount,
+      'inline-variables': inlineVariablesCount
     });
 
     // override console logs
@@ -160,7 +165,7 @@ async function run() {
       'output-files': result.files,
       'output-replaced': result.replaced,
       'output-tokens': result.tokens,
-      'output-transforms': result.transforms,
+      'output-transforms': result.transforms
     });
 
     telemetryEvent.setStatus({ code: SpanStatusCode.OK });

@@ -24,5 +24,15 @@ rtClone.replaceTokens = function (sources, variables, options) {
 
 tmr.registerMock('@qetza/replacetokens', rtClone);
 
+const axiosClone = Object.assign({}, require('axios'));
+axiosClone.default = Object.assign({}, axiosClone.default);
+axiosClone.default.post = function () {
+  console.log('telemetry sent');
+
+  return Promise.resolve();
+};
+
+tmr.registerMock('axios', axiosClone);
+
 // act
 tmr.run();

@@ -34,7 +34,7 @@
   - replaced input _useDefaultValue_ with _missingVarAction_ with value `replace`
   - removed input _emptyValue_
   - renamed input _defaultValue_ to _missingVarDefault_
-  - removed input _enableTelemetry_ to _telemetry_
+  - removed input _enableTelemetry_ to _telemetryOptout_ and inverse meaning
   - renamed output _tokenReplacedCount_ to _replaced_
   - renamed output _tokenFoundCount_ to _tokens_
   - renamed output _fileProcessedCount_ to _files_
@@ -43,3 +43,4 @@
 - Add new token pattern `githubactions`.
 - Add new log levels `warn` and `error`.
 - Add support in _additionalVariables_ for JSON encoded environment variables.
+- Add support for `REPLACETOKENS_TELEMETRY_OPTOUT` environment variable.

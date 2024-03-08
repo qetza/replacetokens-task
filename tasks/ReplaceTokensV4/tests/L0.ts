@@ -62,6 +62,13 @@ describe('ReplaceTokens v4 L0 suite', function () {
     fs.mkdirSync(tmp);
   });
 
+  after(() => {
+    delete process.env['system_servertype'];
+    delete process.env['system_collectionid'];
+    delete process.env['system_teamprojectid'];
+    delete process.env['system_definitionid'];
+  });
+
   afterEach(() => {
     // clean env
     delete process.env['__inputpath__'];
@@ -78,6 +85,8 @@ describe('ReplaceTokens v4 L0 suite', function () {
     delete process.env['__actiononnofiles__'];
     delete process.env['__defaultvalue__'];
     delete process.env['__usedefaultvalue__'];
+    delete process.env['REPLACETOKENS_DISABLE_TELEMETRY'];
+    delete process.env['REPLACETOKENS_TELEMETRY_OPTOUT'];
   });
 
   describe('telemetry', function () {
@@ -99,10 +108,12 @@ describe('ReplaceTokens v4 L0 suite', function () {
       );
     });
 
-    it('should not call telemetry when disabled by variable', function (done: Mocha.Done) {
+    it('should not call telemetry when disabled by REPLACETOKENS_DISABLE_TELEMETRY', function (done: Mocha.Done) {
       // arrange
       let tp = path.join(__dirname, 'telemetry', 'L0_TelemetryDisabledByVariable.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
+
+      process.env['REPLACETOKENS_DISABLE_TELEMETRY'] = 'true';
 
       // act
       tr.run();
@@ -110,6 +121,28 @@ describe('ReplaceTokens v4 L0 suite', function () {
       // assert
       runValidation(
         () => {
+          tr.stdout.should.not.include('telemetry sent');
+          tr.stdout.should.not.include('sent usage telemetry:');
+        },
+        tr,
+        done
+      );
+    });
+
+    it('should not call telemetry when disabled by REPLACETOKENS_TELEMETRY_OPTOUT', function (done: Mocha.Done) {
+      // arrange
+      let tp = path.join(__dirname, 'telemetry', 'L0_TelemetryDisabledByVariable.js');
+      let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
+
+      process.env['REPLACETOKENS_TELEMETRY_OPTOUT'] = 'true';
+
+      // act
+      tr.run();
+
+      // assert
+      runValidation(
+        () => {
+          tr.stdout.should.not.include('telemetry sent');
           tr.stdout.should.not.include('sent usage telemetry:');
         },
         tr,
@@ -129,8 +162,10 @@ describe('ReplaceTokens v4 L0 suite', function () {
       runValidation(
         () => {
           tr.succeeded.should.equal(false, 'task succeeded');
+
+          tr.stdout.should.include('telemetry sent');
           tr.stdout.should.match(
-            /{\\"name\\":\\"Microsoft\.ApplicationInsights\.Dev\.\*+\.Event\\",\\"time\\":\\"[^"]+\\",\\"iKey\\":\\"\*+\\",\\"tags\\":{\\"ai\.application\.ver\\":\\"4\.\d+\.\d+\\",\\"ai\.cloud\.role\\":\\"server\\",\\"ai\.internal\.sdkVersion\\":\\"replacetokens:1\.0\.0\\",\\"ai\.operation\.id\\":\\"([^"]+)\\",\\"ai\.operation\.name\\":\\"replacetokens\\",\\"ai\.operation\.parentId\\":\\"\|\1\\",\\"ai\.user\.accountId\\":\\"494d0aad9d06c4ddb51d5300620122ce55366a9382b3cc2835ed5f0e2e67b4d0\\",\\"ai\.user\.authUserId\\":\\"b98ed03d3eec376dcc015365c1a944e3ebbcc33d30e3261af3f4e4abb107aa82\\"},\\"data\\":{\\"baseType\\":\\"EventData\\",\\"baseData\\":{\\"ver\\":\\"2\\",\\"name\\":\\"token\.replaced\\",\\"properties\\":{\\"preview\\":false,\\"pipelineType\\":\\"build\\",\\"result\\":\\"failed\\"}}}}/g
+            /\{"name":"Microsoft\.ApplicationInsights\.Dev\.\*+\.Event","time":"[^"]+","iKey":"\*+","tags":\{"ai\.application\.ver":"4\.\d+\.\d+","ai\.cloud\.role":"server","ai\.internal\.sdkVersion":"replacetokens:1\.0\.0","ai\.operation\.id":"([^"]+)","ai\.operation\.name":"replacetokens-task","ai\.operation\.parentId":"\|\1","ai\.user\.accountId":"494d0aad9d06c4ddb51d5300620122ce55366a9382b3cc2835ed5f0e2e67b4d0","ai\.user\.authUserId":"b98ed03d3eec376dcc015365c1a944e3ebbcc33d30e3261af3f4e4abb107aa82"},"data":\{"baseType":"EventData","baseData":\{"ver":"2","name":"tokens\.replaced","properties":\{"preview":false,"pipelineType":"build","result":"failed"}}}}/
           );
         },
         tr,
@@ -152,8 +187,10 @@ describe('ReplaceTokens v4 L0 suite', function () {
       runValidation(
         () => {
           tr.succeeded.should.equal(true, 'task succeeded');
+
+          tr.stdout.should.include('telemetry sent');
           tr.stdout.should.match(
-            /{\\"name\\":\\"Microsoft\.ApplicationInsights\.Dev\.\*+\.Event\\",\\"time\\":\\"[^"]+\\",\\"iKey\\":\\"\*+\\",\\"tags\\":{\\"ai\.application\.ver\\":\\"4\.\d+\.\d+\\",\\"ai\.cloud\.role\\":\\"server\\",\\"ai\.internal\.sdkVersion\\":\\"replacetokens:1\.0\.0\\",\\"ai\.operation\.id\\":\\"([^"]+)\\",\\"ai\.operation\.name\\":\\"replacetokens\\",\\"ai\.operation\.parentId\\":\\"\|\1\\",\\"ai\.user\.accountId\\":\\"494d0aad9d06c4ddb51d5300620122ce55366a9382b3cc2835ed5f0e2e67b4d0\\",\\"ai\.user\.authUserId\\":\\"b98ed03d3eec376dcc015365c1a944e3ebbcc33d30e3261af3f4e4abb107aa82\\"},\\"data\\":{\\"baseType\\":\\"EventData\\",\\"baseData\\":{\\"ver\\":\\"2\\",\\"name\\":\\"token\.replaced\\",\\"properties\\":{\\"preview\\":false,\\"pipelineType\\":\\"build\\",\\"result\\":\\"succeeded\\",\\"tokenPrefix\\":\\"#{\\",\\"tokenSuffix\\":\\"}#\\",\\"pattern\\":\\"#\\\\\\\\{\\\\\\\\s\*\(\(\?:\(\?!#\\\\\\\\{\)\(\?!\\\\\\\\s\*\\\\\\\\}#\)\.\)\*\)\\\\\\\\s\*\\\\\\\\}#\\",\\"encoding\\":\\"auto\\",\\"keepToken\\":false,\\"actionOnMissing\\":\\"warn\\",\\"writeBOM\\":true,\\"verbosity\\":\\"normal\\",\\"variableFiles\\":0,\\"rules\\":1,\\"rulesWithInputWildcard\\":0,\\"rulesWithOutputPattern\\":0,\\"rulesWithNegativePattern\\":0,\\"duration\\":\d+(?:\.\d+)?,\\"tokenReplaced\\":1,\\"tokenFound\\":1,\\"fileProcessed\\":1,\\"useLegacyPattern\\":false,\\"enableTransforms\\":false,\\"transformPrefix\\":\\"\(\\",\\"transformSuffix\\":\\"\)\\",\\"transformPattern\\":\\"\\\\\\\\s\*\(\.\*\)\\\\\\\\\(\\\\\\\\s\*\(\(\?:\(\?!\\\\\\\\\(\)\(\?!\\\\\\\\s\*\\\\\\\\\)\)\.\)\*\)\\\\\\\\s\*\\\\\\\\\)\\\\\\\\s\*\\",\\"transformExecuted\\":0,\\"defaultValue\\":\\"\\",\\"defaultValueReplaced\\":0,\\"tokenPattern\\":\\"default\\",\\"actionOnNoFiles\\":\\"continue\\",\\"inlineVariables\\":0,\\"enableRecursion\\":false,\\"useLegacyEmptyFeature\\":false,\\"useDefaultValue\\":false}}}}/g
+            /\{"name":"Microsoft\.ApplicationInsights\.Dev\.\*+\.Event","time":"[^"]+","iKey":"\*+","tags":\{"ai\.application\.ver":"4\.\d+\.\d+","ai\.cloud\.role":"server","ai\.internal\.sdkVersion":"replacetokens:1\.0\.0","ai\.operation\.id":"([^"]+)","ai\.operation\.name":"replacetokens-task","ai\.operation\.parentId":"\|\1","ai\.user\.accountId":"494d0aad9d06c4ddb51d5300620122ce55366a9382b3cc2835ed5f0e2e67b4d0","ai\.user\.authUserId":"b98ed03d3eec376dcc015365c1a944e3ebbcc33d30e3261af3f4e4abb107aa82"},"data":\{"baseType":"EventData","baseData":\{"ver":"2","name":"tokens\.replaced","properties":\{"preview":false,"pipelineType":"build","result":"succeed","tokenPrefix":"#{","tokenSuffix":"}#","pattern":"#\\\\{\\\\s\*\(\(\?:\(\?!#\\\\{\)\(\?!\\\\s\*\\\\}#\)\.\)\*\)\\\\s\*\\\\}#","encoding":"auto","keepToken":false,"actionOnMissing":"warn","writeBOM":true,"verbosity":"normal","variableFiles":0,"rules":1,"rulesWithInputWildcard":0,"rulesWithOutputPattern":0,"rulesWithNegativePattern":0,"duration":\d+(?:\.\d+)?,"tokenReplaced":1,"tokenFound":1,"fileProcessed":1,"useLegacyPattern":false,"enableTransforms":false,"transformPrefix":"\(","transformSuffix":"\)","transformPattern":"\\\\s\*\(\.\*\)\\\\\(\\\\s\*\(\(\?:\(\?!\\\\\(\)\(\?!\\\\s\*\\\\\)\)\.\)\*\)\\\\s\*\\\\\)\\\\s\*","transformExecuted":0,"defaultValue":"","defaultValueReplaced":0,"tokenPattern":"default","actionOnNoFiles":"continue","inlineVariables":0,"enableRecursion":false,"useLegacyEmptyFeature":false,"useDefaultValue":false}}}}/
           );
         },
         tr,

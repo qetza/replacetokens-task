@@ -3,13 +3,13 @@ import url = require('url');
 import http = require('http');
 import https = require('https');
 
-const instrumentationKey = '99bddd1b-7049-4f4a-b45c-5c6ffbb48a2e';
+const instrumentationKey = 'e18a8793-c093-46f9-8c3b-433c9553eb7f';
 const preview = false;
 const version = '5.0.0';
 const sdkVersion = 'replacetokens:1.0.0';
-const operationName = 'replacetokens';
-const eventName = 'token.replaced';
-const telemetryUrl = 'https://dc.services.visualstudio.com/v2/track';
+const application = 'replacetokens-task';
+const eventName = 'tokens.replaced';
+const telemetryUrl = 'https://westeurope-5.in.applicationinsights.azure.com/v2/track';
 const timeout = 3000;
 
 export default function trackEvent(event: TelemetryEvent, proxyUrl?: string): string | undefined {
@@ -25,7 +25,7 @@ export default function trackEvent(event: TelemetryEvent, proxyUrl?: string): st
         'ai.cloud.role': event.serverType,
         'ai.internal.sdkVersion': sdkVersion,
         'ai.operation.id': operationId,
-        'ai.operation.name': operationName,
+        'ai.operation.name': application,
         'ai.operation.parentId': '|' + operationId,
         'ai.user.accountId': event.account,
         'ai.user.authUserId': event.pipeline
@@ -114,10 +114,11 @@ export default function trackEvent(event: TelemetryEvent, proxyUrl?: string): st
 
     let request = proxyUrl ? http.request(options) : https.request(options);
 
-    request.setTimeout(timeout, () => {
-      request.abort();
-    });
-    request.on('error', e => {});
+    request
+      .setTimeout(timeout, () => {
+        request.abort();
+      })
+      .on('error', e => {});
 
     request.write(JSON.stringify(body));
     request.end();

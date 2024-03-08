@@ -2,6 +2,7 @@
 
 ## 4.4.0
 - Add support for `indent` transformation with indent size and indent first line parameters ([326](https://github.com/qetza/vsts-replacetokens-task/issues/326)).
+- Add support for `REPLACETOKENS_TELEMETRY_OPTOUT` environment variable.
 
 ## 4.3.0
 - Fix recursion cycle detection ([#308](https://github.com/qetza/vsts-replacetokens-task/issues/308)) (contributed by Chad Smith).

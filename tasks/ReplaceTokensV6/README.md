@@ -39,7 +39,7 @@ The task was completely rewritten to use the npm package [@qetza/replacetokens](
   - replaced input _useDefaultValue_ with _missingVarAction_ with value `replace`
   - removed input _emptyValue_
   - renamed input _defaultValue_ to _missingVarDefault_
-  - removed input _enableTelemetry_ to _telemetry_
+  - removed input _enableTelemetry_ to _telemetryOptout_ and inverse meaning
   - renamed output _tokenReplacedCount_ to _replaced_
   - renamed output _tokenFoundCount_ to _tokens_
   - renamed output _fileProcessedCount_ to _files_
@@ -199,10 +199,12 @@ The task was completely rewritten to use the npm package [@qetza/replacetokens](
     # Optional. Default: .
     separator: ''
 
-    # Enable sending anonymous usage data for analytics.
+    # Opt out of the anonymous telemetry feature.
+    # You can also set the REPLACETOKENS_TELEMETRY_OPTOUT environment variable to '1' or 
+    # 'true'.
     #
-    # Optional. Default: true
-    telemetry: ''
+    # Optional. Default: false
+    telemetryOptout: ''
 
     # The token pattern to use.
     # Use 'custom' to provide your own prefix and suffix.
@@ -285,7 +287,7 @@ The task was completely rewritten to use the npm package [@qetza/replacetokens](
     additionalVariables: |
       - '@**/vars.(json|yml|yaml)'      # read from files
       - '$ENV_VARS',                    # read from env
-      -                                 # inline key/value paris
+      -                                 # inline key/value pairs
         var1: '${{ parameters.var1 }}'
         var2: '${{ parameters.var2 }}'
 ```
@@ -306,13 +308,12 @@ steps:
 ```
 
 ## Data/Telemetry
-The Replace Tokens task for Azure Pipelines collects **anonymous** usage data and sends them by default to its author to help improve the product. If you don't wish to send usage data, you can change your telemetry settings through _telemetry_ parameter or by setting a variable or environment variable `REPLACETOKENS_DISABLE_TELEMETRY` to `true`.
+The Replace Tokens task for Azure Pipelines collects **anonymous** usage data and sends them by default to its author to help improve the product. If you don't wish to send usage data, you can change your telemetry settings through the _telemetryOptout_ parameter or by setting the `REPLACETOKENS_TELEMETRY_OPTOUT` environment variable to `1` or `true`.
 
 The following **anonymous** data is send:
-- the **hash** of your organization name/collection id
+- the **hash** of your collection id
 - the **hash** of your project id and pipeline definition id
-- the pipeline type (`build` or `release`)
-- the hosting (`server` or `services`)
+- the hosting (`server` or `cloud`)
 - the inputs values for
   - _addBOM_
   - _charsToEscape_
@@ -336,7 +337,7 @@ The following **anonymous** data is send:
 - the **number of** _additionalVariables_ entries referencing file
 - the **number of** _additionalVariables_ entries referencing environment variables
 - the **number of** _additionalVariables_ inline entries
-- the task result (`succeeded` or `failed`)
+- the task result (`succeed` or `failed`)
 - the task execution duration
 - the outputs (defaults, files, replaced, tokens and transforms)
 

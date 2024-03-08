@@ -33,7 +33,7 @@ jobs:
           npm --prefix tasks/ReplaceTokensV5 ci
 
       - name: Check code format
-        run: npm run format-check
+        run: npm run format:check
 
       - name: Build
         run: npm run build

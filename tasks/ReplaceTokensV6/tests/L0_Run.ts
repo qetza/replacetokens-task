@@ -20,7 +20,7 @@ if (process.env['__missingVarLog__']) tmr.setInput('missingVarLog', process.env[
 if (process.env['__recursive__']) tmr.setInput('recursive', process.env['__recursive__']);
 if (process.env['__root__']) tmr.setInput('root', process.env['__root__']);
 if (process.env['__separator__']) tmr.setInput('separator', process.env['__separator__']);
-if (process.env['__telemetry__']) tmr.setInput('telemetry', process.env['__telemetry__']);
+if (process.env['__telemetryOptout__']) tmr.setInput('telemetryOptout', process.env['__telemetryOptout__']);
 if (process.env['__tokenPattern__']) tmr.setInput('tokenPattern', process.env['__tokenPattern__']);
 if (process.env['__tokenPrefix__']) tmr.setInput('tokenPrefix', process.env['__tokenPrefix__']);
 if (process.env['__tokenSuffix__']) tmr.setInput('tokenSuffix', process.env['__tokenSuffix__']);
@@ -29,8 +29,7 @@ if (process.env['__transformsPrefix__']) tmr.setInput('transformsPrefix', proces
 if (process.env['__transformsSuffix__']) tmr.setInput('transformsSuffix', process.env['__transformsSuffix__']);
 
 // mocks
-const rt = require('@qetza/replacetokens');
-const rtClone = Object.assign({}, rt);
+const rtClone = Object.assign({}, require('@qetza/replacetokens'));
 rtClone.replaceTokens = function (sources, variables, options) {
   console.log(`sources: ${JSON.stringify(sources)}`);
   console.log(`variables: ${JSON.stringify(variables)}`);
@@ -40,6 +39,16 @@ rtClone.replaceTokens = function (sources, variables, options) {
 };
 
 tmr.registerMock('@qetza/replacetokens', rtClone);
+
+const axiosClone = Object.assign({}, require('axios'));
+axiosClone.default = Object.assign({}, axiosClone.default);
+axiosClone.default.post = function () {
+  console.log('telemetry sent');
+
+  return Promise.resolve();
+};
+
+tmr.registerMock('axios', axiosClone);
 
 // act
 tmr.run();

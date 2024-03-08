@@ -141,7 +141,7 @@ cp('-Rf', path.join(__dirname, '..', 'images', 'screenshot*.png'), `${packageIma
 // update metadata
 var public = process.argv.includes('--public');
 var taskId = public ? undefined : '0664FF86-F509-4392-A33C-B2D9239B9AE5';
-var instrumentationKey = public ? undefined : '6c5a849a-a333-4eee-9fd0-fa4597251c5c';
+var application = public ? undefined : 'replacetokens-task-dev';
 
 versions.forEach(version => {
   console.log();
@@ -176,10 +176,10 @@ versions.forEach(version => {
   fs.writeFileSync(path.join(packageTaskDir, 'task.json'), JSON.stringify(manifest, null, 2));
 
   var script = fs.readFileSync(path.join(packageTaskDir, 'index.js'), { encoding: 'utf8' });
-  if (instrumentationKey) {
-    script = script.replace(/const\s+instrumentationKey\s*=\s*'[^']*'\s*;/, `const instrumentationKey = '${instrumentationKey}';`);
+  if (application) {
+    script = script.replace(/const\s+application\s*=\s*'[^']*'\s*;/, `const application = '${application}';`);
 
-    console.log(`> instrumentationKey: ${instrumentationKey}`);
+    console.log(`> application: ${application}`);
   }
 
   script = script.replace(/const\s+version\s*=\s*'[^']*'\s*;/, `const version = '${taskVersion}';`);

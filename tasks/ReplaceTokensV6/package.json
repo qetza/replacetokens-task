@@ -9,6 +9,7 @@
     "@opentelemetry/sdk-trace-base": "^1.22.0",
     "@opentelemetry/semantic-conventions": "^1.22.0",
     "@qetza/replacetokens": "^1.1.0",
+    "axios": "^1.6.7",
     "azure-pipelines-task-lib": "^4.1.0",
     "fast-glob": "^3.3.2",
     "js-yaml": "^4.1.0"

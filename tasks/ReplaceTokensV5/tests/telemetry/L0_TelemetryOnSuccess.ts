@@ -1,9 +1,9 @@
 import ma = require('azure-pipelines-task-lib/mock-answer');
 import tmrm = require('azure-pipelines-task-lib/mock-run');
 import path = require('path');
-import fs = require('fs');
+import http = require('http');
+import https = require('https');
 
-const nock = require('nock');
 const taskPath = path.join(__dirname, '..', '..', 'index.js');
 const tmr: tmrm.TaskMockRunner = new tmrm.TaskMockRunner(taskPath);
 
@@ -15,8 +15,34 @@ tmr.setInput('enableTelemetry', 'true');
 tmr.setInput('targetFiles', 'input.json');
 tmr.setInput('writeBOM', 'true');
 
-// http requests
-nock('https://dc.services.visualstudio.com').post('/v2/track').reply(418);
+// mocks
+const requestClone = Object.assign(Object.create(Object.getPrototypeOf(http.ClientRequest)), http.ClientRequest);
+requestClone.setTimeout = function () {
+  return requestClone;
+};
+requestClone.on = function () {
+  return requestClone;
+};
+requestClone.write = function () {
+  return true;
+};
+requestClone.end = function () {
+  console.log('telemetry sent');
+};
+
+const httpsClone = Object.assign({}, https);
+httpsClone.request = function () {
+  return requestClone;
+};
+
+tmr.registerMock('https', httpsClone);
+
+const httpClone = Object.assign({}, http);
+httpClone.request = function () {
+  return requestClone;
+};
+
+tmr.registerMock('http', httpClone);
 
 // sdk answers
 let answers = {
