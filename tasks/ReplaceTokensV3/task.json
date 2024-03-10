@@ -2,7 +2,7 @@
   "id": "A8515EC8-7254-4FFD-912C-86772E2B5962",
   "name": "replacetokens",
   "friendlyName": "Replace Tokens",
-  "description": "Replace tokens in text based files",
+  "description": "This version of the task is deprecated, use replacetokens@5 (node10) or replacetokens@6 (node16) task instead.",
   "helpMarkDown": "[Learn more about this task](https://github.com/qetza/replacetokens-task/blob/master/tasks/ReplaceTokensV3/README.md)",
   "category": "Utility",
   "visibility": [
@@ -17,6 +17,8 @@
   },
   "instanceNameFormat": "Replace tokens in $(targetFiles)",
   "minimumAgentVersion": "2.105.0",
+  "deprecated": true,
+  "deprecationMessage": "The replacetokens@3 task has been deprecated. Use replacetokens@5 (node10) or replacetokens@6 (node16) task instead.",
   "groups": [
     {
       "name": "validations",

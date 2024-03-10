@@ -1,5 +1,7 @@
-# ReplaceTokens v3
+# [DEPRECATED] ReplaceTokens v3
 [![mit license](https://img.shields.io/badge/license-MIT-green)](https://github.com/qetza/replacetokens-action/blob/main/LICENSE) [![donate](https://img.shields.io/badge/donate-paypal-blue)](https://www.paypal.com/donate/?hosted_button_id=CCEAVYA8DUFD8)
+
+This version of the task is deprecated, use [replacetokens@5](https://github.com/qetza/replacetokens-task/blob/main/tasks/ReplaceTokensV5/README.md) (node10) or [replacetokens@6](https://github.com/qetza/replacetokens-task/blob/main/tasks/ReplaceTokensV6/README.md) (node16) task instead.
 
 This Azure Pipelines task replaces tokens in text based files with variable values.
 
