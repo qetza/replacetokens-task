@@ -33,7 +33,7 @@
     "test:v5": "mocha tasks/ReplaceTokensV5/dist/tests/L0.js",
     "test:v6": "mocha tasks/ReplaceTokensV6/dist/tests/L0.js",
     "package": "node scripts/package.js",
-    "package-public": "node scripts/package.js --public",
+    "package:public": "node scripts/package.js --public",
     "format": "npm run format:v3 && npm run format:v4 && npm run format:v5 && npm run format:v6",
     "format:v3": "prettier --write tasks/ReplaceTokensV3/**/*.ts",
     "format:v4": "prettier --write tasks/ReplaceTokensV4/**/*.ts",
