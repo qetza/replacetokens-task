@@ -4,11 +4,12 @@
 This Azure Pipelines task replaces tokens in text based files with variable values.
 
 ## What's new
-Please refer to the [release page](https://github.com/qetza/replacetokens-task/releases) for the latest release notes.
+Please refer to the [release page](https://github.com/qetza/replacetokens-task/releases/latest) for the latest release notes.
 
 ## Breaking changes in v6
 The task was completely rewritten to use the npm package [@qetza/replacetokens](https://www.npmjs.com/package/@qetza/replacetokens) and be more similar with the new [ReplaceTokens GitHub Actions](https://github.com/marketplace/actions/replacetokens):
   - support only node 16
+  - updated to [fast-glob](https://github.com/mrmlnc/fast-glob) for glob pattern
   - renamed input _targetFiles_ to _sources_ 
   - removed support for comma-separated paths in _targetFiles_
   - renamed _encoding_ value `win1252` to `windows1252`
@@ -287,8 +288,7 @@ The task was completely rewritten to use the npm package [@qetza/replacetokens](
     additionalVariables: |
       - '@**/vars.(json|yml|yaml)'      # read from files
       - '$ENV_VARS',                    # read from env
-      -                                 # inline key/value pairs
-        var1: '${{ parameters.var1 }}'
+      - var1: '${{ parameters.var1 }}'  # inline key/value pairs
         var2: '${{ parameters.var2 }}'
 ```
 

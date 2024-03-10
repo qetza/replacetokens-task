@@ -4,6 +4,7 @@
 Task 6.0.0
 - **Breaking changes**: the task was completely rewritten to use the npm package [@qetza/replacetokens](https://www.npmjs.com/package/@qetza/replacetokens) and be more similar with the new [ReplaceTokens GitHub Actions](https://github.com/marketplace/actions/replacetokens):
   - support only node 16
+  - updated to [fast-glob](https://github.com/mrmlnc/fast-glob) for glob pattern
   - renamed input _targetFiles_ to _sources_ 
   - removed support for comma-separated paths in _targetFiles_
   - renamed _encoding_ value `win1252` to `windows1252`
@@ -11,7 +12,6 @@ Task 6.0.0
   - renamed input _variableSeparator_ to _separator_
   - renamed input _enableRecursion_ to _recursive_
   - renamed input _rootDirectory_ to _root_
-  - renamed _tokenPattern_ value `azpipelines` to `azurepipelines`
   - renamed _tokenPattern_ value `rm` to `doubleunderscores`
   - renamed input _writeBOM_ to _addBom_ 
   - changed _writeBOM_ default value to `false`

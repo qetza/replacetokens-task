@@ -74,13 +74,13 @@ async function run() {
       }
     };
 
-    console.log(tl.getVariables());
-    const variables = rt.merge(
-      tl.getVariables().reduce((map, current) => {
-        map[current.name] = current.value;
-        return map;
+    const variables = rt.flattenAndMerge(
+      options.separator,
+      tl.getVariables().reduce((result, current) => {
+        result[current.name] = current.value;
+        return result;
       }, {}),
-      await parseVariables(tl.getInput('additionalVariables'), options.root)
+      await parseVariables(tl.getInput('additionalVariables'), options.root, options.separator)
     );
 
     const ifNoFilesFound = tl.getInput('ifNoFilesFound') || 'ignore';
@@ -194,24 +194,24 @@ var getChoiceInput = function (name: string, choices: string[]): string {
   throw new Error(`Unsupported value for input: ${name}\nSupport input list: '${choices.join(' | ')}'`);
 };
 
-var parseVariables = async function (input: string, root: string): Promise<{ [key: string]: any }> {
+var parseVariables = async function (input: string, root: string, separator: string): Promise<{ [key: string]: any }> {
   input = input || '';
   if (!input) return {};
 
   switch (input[0]) {
     case '@': // single string referencing a file
-      return await loadVariablesFromFile(input.substring(1), root);
+      return await loadVariablesFromFile(input.substring(1), root, separator);
 
     case '$': // single string referencing environment variable
       return loadVariablesFromEnv(input.substring(1));
 
     default: // yaml format
-      return await loadVariablesFromYaml(input, root);
+      return await loadVariablesFromYaml(input, root, separator);
   }
 };
 
 var variableFilesCount = 0;
-var loadVariablesFromFile = async function (name: string, root: string): Promise<{ [key: string]: any }> {
+var loadVariablesFromFile = async function (name: string, root: string, separator: string): Promise<{ [key: string]: any }> {
   var files = await fg.glob(
     name.split(';').map(v => v.trim()),
     {
@@ -240,7 +240,7 @@ var loadVariablesFromFile = async function (name: string, root: string): Promise
     ++variableFilesCount;
   }
 
-  return rt.merge(...vars);
+  return rt.flattenAndMerge(separator, ...vars);
 };
 
 var variablesEnvCount = 0;
@@ -253,13 +253,13 @@ var loadVariablesFromEnv = function (name: string): { [key: string]: any } {
 };
 
 var inlineVariablesCount = 0;
-var loadVariablesFromYaml = async function (input: string, root: string): Promise<{ [key: string]: any }> {
+var loadVariablesFromYaml = async function (input: string, root: string, separator: string): Promise<{ [key: string]: any }> {
   const variables = yaml.load(input);
   const load = async (v: any) => {
     if (typeof v === 'string') {
       switch (v[0]) {
         case '@':
-          return await loadVariablesFromFile(v.substring(1), root);
+          return await loadVariablesFromFile(v.substring(1), root, separator);
 
         case '$':
           return loadVariablesFromEnv(v.substring(1));
@@ -281,7 +281,7 @@ var loadVariablesFromYaml = async function (input: string, root: string): Promis
       vars.push(await load(v));
     }
 
-    return rt.merge(...vars);
+    return rt.flattenAndMerge(separator, ...vars);
   }
 
   return await load(variables);
