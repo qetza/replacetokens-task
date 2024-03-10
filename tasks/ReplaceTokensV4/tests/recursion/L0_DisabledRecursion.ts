@@ -6,8 +6,8 @@ const taskPath = path.join(__dirname, '..', '..', 'index.js');
 const tmr: tmrm.TaskMockRunner = new tmrm.TaskMockRunner(taskPath);
 
 // variables
-process.env['var1'] = 'var1_#{var2}#';
-process.env['var2'] = 'value';
+process.env['VAR1'] = 'var1_#{var2}#';
+process.env['VAR2'] = 'value';
 
 // inputs
 tmr.setInput('enableTelemetry', 'false');
@@ -17,15 +17,15 @@ tmr.setInput('enableRecursion', 'false');
 
 // sdk answers
 let answers = {
-    'checkPath': {},
-    'findMatch': {
-        'input.json': [process.env['__inputpath__']],
-    },
-    'stats': {},
-    'exist': {},
-}
+  checkPath: {},
+  findMatch: {
+    'input.json': [process.env['__inputpath__']]
+  },
+  stats: {},
+  exist: {}
+};
 answers['stats'][process.env['__inputpath__']] = {
-    'isDirectory': false
+  isDirectory: false
 };
 answers['exist'][process.env['__inputpath__']] = true;
 

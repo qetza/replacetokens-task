@@ -2,14 +2,14 @@
   "id": "A8515EC8-7254-4FFD-912C-86772E2B5962",
   "name": "replacetokens",
   "friendlyName": "Replace Tokens",
-  "description": "Replace tokens in files",
-  "helpMarkDown": "[Learn more about this task](https://github.com/qetza/vsts-replacetokens-task/blob/master/tasks/ReplaceTokensV5/README.md)",
+  "description": "Replace tokens in text based files",
+  "helpMarkDown": "[Learn more about this task](https://github.com/qetza/replacetokens-task/blob/master/tasks/ReplaceTokensV5/README.md)",
   "category": "Utility",
   "visibility": [
     "Build",
     "Release"
   ],
-  "author": "Guillaume Rouchon",
+  "author": "Guillaume ROUCHON",
   "version": {
     "Major": 5,
     "Minor": 3,

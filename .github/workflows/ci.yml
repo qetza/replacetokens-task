@@ -1,0 +1,103 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup nodejs 16.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 16.x
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          npm --prefix tasks/ReplaceTokensV3 ci
+          npm --prefix tasks/ReplaceTokensV4 ci
+          npm --prefix tasks/ReplaceTokensV5 ci
+          npm --prefix tasks/ReplaceTokensV6 ci
+
+      - name: Check code format
+        run: npm run format:check
+
+      - name: Build
+        run: npm run build
+
+      - name: Package
+        run: npm run package
+
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        runs-on: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.runs-on }}
+    needs: build
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 'Hack: manual download of node6 (linux)'
+        if: runner.os == 'Linux'
+        run: |
+          mkdir -p $RUNNER_TEMP/node6/node-v6.17.1-linux-x64
+          curl https://nodejs.org/dist/v6.17.1/node-v6.17.1-linux-x64.tar.gz -o $RUNNER_TEMP/node6/node-v6.17.1-linux-x64.tar.gz
+          tar xz --strip 1 --warning=no-unknown-keyword --overwrite -C $RUNNER_TEMP/node6/node-v6.17.1-linux-x64 -f $RUNNER_TEMP/node6/node-v6.17.1-linux-x64.tar.gz
+          mkdir -p $HOME/azure-pipelines-task-lib/_download/node6/node-v6.17.1-linux-x64/bin
+          cp $RUNNER_TEMP/node6/node-v6.17.1-linux-x64/bin/node $HOME/azure-pipelines-task-lib/_download/node6/node-v6.17.1-linux-x64/bin
+          echo '' > $HOME/azure-pipelines-task-lib/_download/node6.completed
+
+      - name: 'Hack: manual download of node6 (macos)'
+        if: runner.os == 'macOS'
+        run: |
+          mkdir -p $RUNNER_TEMP/node6/node-v6.17.1-darwin-x64
+          curl https://nodejs.org/dist/v6.17.1/node-v6.17.1-darwin-x64.tar.gz -o $RUNNER_TEMP/node6/node-v6.17.1-darwin-x64.tar.gz
+          tar xz --strip 1 -C $RUNNER_TEMP/node6/node-v6.17.1-darwin-x64 -f $RUNNER_TEMP/node6/node-v6.17.1-darwin-x64.tar.gz
+          mkdir -p $HOME/azure-pipelines-task-lib/_download/node6/node-v6.17.1-darwin-x64/bin
+          cp $RUNNER_TEMP/node6/node-v6.17.1-darwin-x64/bin/node $HOME/azure-pipelines-task-lib/_download/node6/node-v6.17.1-darwin-x64/bin
+          echo '' > $HOME/azure-pipelines-task-lib/_download/node6.completed
+
+      - name: 'Hack: manual download of node6 (windows)'
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          mkdir $env:RUNNER_TEMP/node6 > $null
+          curl https://nodejs.org/dist/v6.17.1/win-x64/node.exe -o $env:RUNNER_TEMP/node6/node.exe
+          mkdir $env:USERPROFILE/azure-pipelines-task-lib/_download/node6 > $null
+          cp $env:RUNNER_TEMP/node6/node.exe $env:USERPROFILE/azure-pipelines-task-lib/_download/node6
+          echo '' > $env:USERPROFILE/azure-pipelines-task-lib/_download/node6.completed
+
+      - name: Setup nodejs 16.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 16.x
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          npm --prefix tasks/ReplaceTokensV3 ci
+          npm --prefix tasks/ReplaceTokensV4 ci
+          npm --prefix tasks/ReplaceTokensV5 ci
+          npm --prefix tasks/ReplaceTokensV6 ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm run test

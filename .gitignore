@@ -1,8 +1,7 @@
-node_modules/
-*.vsix
-_artifacts/
-typings/*
-!typings/customs/
-task/*.js
-.taskkey
 .local/
+.vscode/
+.taskkey
+_artifacts/
+dist/
+node_modules/
+tests/_tmp

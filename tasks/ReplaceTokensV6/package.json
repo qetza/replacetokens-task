@@ -1,0 +1,24 @@
+{
+  "name": "replacetokens-v6",
+  "author": "Guillaume ROUCHON",
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "@opentelemetry/api": "^1.8.0",
+    "@opentelemetry/sdk-trace-base": "^1.22.0",
+    "@opentelemetry/semantic-conventions": "^1.22.0",
+    "@qetza/replacetokens": "^1.2.0",
+    "axios": "^1.6.7",
+    "azure-pipelines-task-lib": "^4.1.0",
+    "fast-glob": "^3.3.2",
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.12",
+    "@types/js-yaml": "^4.0.9",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^16.11.39",
+    "chai": "^4.4.1"
+  }
+}

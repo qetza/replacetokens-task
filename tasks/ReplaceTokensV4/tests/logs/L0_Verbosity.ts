@@ -6,7 +6,7 @@ const taskPath = path.join(__dirname, '..', '..', 'index.js');
 const tmr: tmrm.TaskMockRunner = new tmrm.TaskMockRunner(taskPath);
 
 // variables
-process.env['var1'] = 'var1_value';
+process.env['VAR1'] = 'var1_value';
 
 // inputs
 tmr.setInput('enableTelemetry', 'false');
@@ -16,15 +16,15 @@ tmr.setInput('verbosity', process.env['__verbosity__']);
 
 // sdk answers
 let answers = {
-    'checkPath': {},
-    'findMatch': {
-        'input.json': [process.env['__inputpath__']],
-    },
-    'stats': {},
-    'exist': {},
-}
+  checkPath: {},
+  findMatch: {
+    'input.json': [process.env['__inputpath__']]
+  },
+  stats: {},
+  exist: {}
+};
 answers['stats'][process.env['__inputpath__']] = {
-    'isDirectory': false
+  isDirectory: false
 };
 answers['exist'][process.env['__inputpath__']] = true;
 

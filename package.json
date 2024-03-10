@@ -1,15 +1,15 @@
 {
-  "name": "qetza.vsts-replacetokens-task",
-  "version": "0.1.0",
-  "description": "Build task for VS Team Services that can run replace tokens in files.",
-  "author": "Guillaume Rouchon",
+  "name": "replacetokens-task",
+  "version": "1.0.0",
+  "description": "An Azure Pipelines task to replace tokens in text files with variable values.",
+  "author": "Guillaume ROUCHON",
   "license": "MIT",
-  "homepage": "https://github.com/qetza/vsts-replacetokens-task#readme",
+  "homepage": "https://github.com/qetza/replacetokens-task#readme",
   "bugs": {
-    "url": "https://github.com/qetza/vsts-replacetokens-task/issues"
+    "url": "https://github.com/qetza/replacetokens-task/issues"
   },
   "keywords": [
-    "VSTS",
+    "azure pipelines",
     "release",
     "build",
     "token",
@@ -19,17 +19,36 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/qetza/vsts-replacetokens-task.git"
+    "url": "git+https://github.com/qetza/replacetokens-task.git"
+  },
+  "scripts": {
+    "build": "npm run build:v3 && npm run build:v4 && npm run build:v5 && npm run build:v6",
+    "build:v3": "tsc --project tasks/ReplaceTokensV3/tsconfig.json",
+    "build:v4": "tsc --project tasks/ReplaceTokensV4/tsconfig.json",
+    "build:v5": "tsc --project tasks/ReplaceTokensV5/tsconfig.json",
+    "build:v6": "tsc --project tasks/ReplaceTokensV6/tsconfig.json",
+    "test": "mocha tasks/**/tests/L0.js",
+    "test:v3": "mocha tasks/ReplaceTokensV3/dist/tests/L0.js",
+    "test:v4": "mocha tasks/ReplaceTokensV4/dist/tests/L0.js",
+    "test:v5": "mocha tasks/ReplaceTokensV5/dist/tests/L0.js",
+    "test:v6": "mocha tasks/ReplaceTokensV6/dist/tests/L0.js",
+    "package": "node scripts/package.js",
+    "package-public": "node scripts/package.js --public",
+    "format": "npm run format:v3 && npm run format:v4 && npm run format:v5 && npm run format:v6",
+    "format:v3": "prettier --write tasks/ReplaceTokensV3/**/*.ts",
+    "format:v4": "prettier --write tasks/ReplaceTokensV4/**/*.ts",
+    "format:v5": "prettier --write tasks/ReplaceTokensV5/**/*.ts",
+    "format:v6": "prettier --write tasks/ReplaceTokensV6/**/*.ts",
+    "format:check": "prettier --check **/*.ts"
   },
   "devDependencies": {
-    "@types/js-yaml": "^4.0.0",
     "@types/node": "^10.17.0",
-    "@types/q": "0.0.32",
-    "@types/uuid": "^8.3.0",
-    "minimist": "~1.2.6",
-    "semver": "~5.6.0",
+    "@vercel/ncc": "^0.38.1",
+    "mocha": "^10.3.0",
+    "prettier": "^3.2.5",
+    "semver": "^7.6.0",
     "shelljs": "^0.8.5",
-    "tfx-cli": "^0.12.0",
-    "typescript": "~4.1.5"
+    "tfx-cli": "^0.16.0",
+    "typescript": "^4.8.4"
   }
 }

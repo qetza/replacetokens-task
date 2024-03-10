@@ -1,14 +1,17 @@
 {
   "name": "replacetokens-v5",
-  "author": "Guillaume Rouchon",
+  "author": "Guillaume ROUCHON",
   "dependencies": {
-    "@types/node": "^16.11.39",
     "azure-pipelines-task-lib": "^4.1.0",
     "iconv-lite": "^0.4.15",
     "js-yaml": "^4.0.0",
     "jschardet": "^2.2.1"
   },
   "devDependencies": {
-    "@types/mocha": "^9.1.0"
+    "@types/chai": "^4.3.12",
+    "@types/js-yaml": "^4.0.9",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^10.17.60",
+    "chai": "^4.4.1"
   }
 }

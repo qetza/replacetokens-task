@@ -1,272 +1,344 @@
-# Replace Tokens task
+# ReplaceTokens
 [![mit license](https://img.shields.io/badge/license-MIT-green)](https://github.com/qetza/replacetokens-action/blob/main/LICENSE) [![donate](https://img.shields.io/badge/donate-paypal-blue)](https://www.paypal.com/donate/?hosted_button_id=CCEAVYA8DUFD8)
 
-Azure Pipelines extension that replace tokens in **text** files with variable values.
+This Azure Pipelines task replaces tokens in text based files with variable values.
+
+## What's new
+Please refer to the [release page](https://github.com/qetza/replacetokens-task/releases/latest) for the latest release notes.
+
+## Breaking changes in v6
+The task was completely rewritten to use the npm package [@qetza/replacetokens](https://www.npmjs.com/package/@qetza/replacetokens) and be more similar with the new [ReplaceTokens GitHub Actions](https://github.com/marketplace/actions/replacetokens):
+  - support only node 16
+  - updated to [fast-glob](https://github.com/mrmlnc/fast-glob) for glob pattern
+  - renamed input _targetFiles_ to _sources_ 
+  - removed support for comma-separated paths in _targetFiles_
+  - renamed _encoding_ value `win1252` to `windows1252`
+  - merged inputs _variableFiles_ and _inlineVariables_ in _additionalVariables_
+  - renamed input _variableSeparator_ to _separator_
+  - renamed input _enableRecursion_ to _recursive_
+  - renamed input _rootDirectory_ to _root_
+  - renamed _tokenPattern_ value `rm` to `doubleunderscores`
+  - renamed input _writeBOM_ to _addBOM_ 
+  - changed _writeBOM_ default value to `false`
+  - renamed input _verbosity_ to _logLevel_
+    - renamed _verbosity_ value `detailed` to `debug`
+    - renamed _verbosity_ value `normal` to `info`
+    - removed _verbosity_ value `off` (see new supported values for replacement)
+  - renamed input _actionOnMissing_ to _missingVarLog_
+    - renamed _actionOnMissing_ value `continue` to `off`
+    - renamed _actionOnMissing_ value `fail` to `error`
+  - replaced _keepToken_ with _missingVarAction_ with value `keep`
+  - renamed input _actionOnNoFiles_ to _ifNoFilesFound_
+    - renamed _actionOnNoFiles_ value `continue` to `ignore`
+    - renamed _actionOnNoFiles_ value `fail` to `error`
+  - renamed input _enableTransforms_ to _transforms_
+    - renamed transform `noescape` to `raw`
+  - renamed input _transformPrefix_ to _transformsPrefix_
+  - renamed input _transformSuffix_ to _transformsSuffix_
+  - removed input _useLegacyPattern_
+  - removed input _useLegacyEmptyFeature_
+  - replaced input _useDefaultValue_ with _missingVarAction_ with value `replace`
+  - removed input _emptyValue_
+  - renamed input _defaultValue_ to _missingVarDefault_
+  - removed input _enableTelemetry_ to _telemetryOptout_ and inverse meaning
+  - renamed output _tokenReplacedCount_ to _replaced_
+  - renamed output _tokenFoundCount_ to _tokens_
+  - renamed output _fileProcessedCount_ to _files_
+  - renamed output _transformExecutedCount_ to _transforms_
+  - renamed output _defaultValueCount_ to _defaults_
 
 ## Usage
-If you are using the UI, add a new task, select **Replace Tokens** from the **Utility** category and configure it as needed:
-
-![Replace Tokens parameters](images/task-parameters.png)
-
-If your are using a YAML file, add a task with the following syntax:
+### Inputs
 ```yaml
-- task: qetza.replacetokens.replacetokens-task.replacetokens@3
-  displayName: 'Replace tokens'
+- task: qetza.replacetokens.replacetokens-task.replacetokens@6
   inputs:
-    targetFiles: |
-      **/*.config
-      **/*.json => outputs/*.json
+    # A multiline list of files to replace tokens in.
+    # Each line supports:
+    #   - multiple glob patterns separated by a semi-colon ';' using fast-glob syntax 
+    #     (you must always use forward slash '/' as a directory separator)
+    #   - outputing the result in another file adding the output path after an arrow '=>' 
+    #     (if the output path is a relative path, it will be relative to the input file)
+    #   - wildcard replacement in the output file name using an asterix '*' in the input 
+    #     and output file names
+    #
+    # Example: '**/*.json; !**/local/* => out/*.json' will match all files ending with 
+    # '.json' in all directories and sub directories except in `local` directory and the 
+    # output will be in a sub directory `out` relative to the input file keeping the file 
+    # name.
+    #
+    # Required.
+    sources: ''
+
+    # Add BOM when writing files.
+    #
+    # Optional. Default: false
+    addBOM: ''
+
+    # A YAML formatted string containing additional variable values.
+    # YAML can be:
+    #   - an object: properties will be parsed as key/value pairs
+    #   - a string starting with '@': value is parsed as multiple glob patterns separated 
+    #     by a semi-colon ';' using fast-glob syntax to JSON or YAML files
+    #   - a string starting with '$': value is parsed as an environment variable name 
+    #     containing JSON encoded key/value pairs
+    #   - an array: each item must be an object or a string and will be parsed as 
+    #     specified previously
+    #
+    # Multiple entries are merge into a single list of key/value pairs.
+    #
+    # Example:
+    # - '@**/*.json;**/*.yml;!**/local/*'
+    # - '$COMPUTER_VARS'
+    # -
+    #   var1: '${{ parameters.var1 }}'
+    #
+    # will add all variables from '.json' and '.yml' files except under 'local' directory, 
+    # from the environment variable 'COMPUTER_VARS' and the inline variable 'var1'
+    #
+    # Optional.
+    additionalVariables: ''
+
+    # The characters to escape when using 'custom' escape.
+    #
+    # Optional.
+    charsToEscape: ''
+
+    # The encoding to read and write all files.
+    #
+    # Accepted values:
+    #   - auto: detect encoding using js-chardet
+    #   - any value supported by iconv-lite
+    #
+    # Optional. Default: auto
+    encoding: ''
+
+    # The character escape type to apply on each value.
+    #
+    # Accepted values:
+    #  - auto: automatically apply JSON or XML escape based on file extension
+    #  - off: don't escape values
+    #  - json: JSON escape
+    #  - xml: XML escape
+    #  - custom: apply custom escape using escape-char and chars-to-escape
+    #
+    # Optional. Default: auto
+    escape: ''
+
+    # The escape character to use when using 'custom' escape.
+    #
+    # Optional.
+    escapeChar: ''
+
+    # The behavior if no files are found.
+    #
+    # Accepted values:
+    #   - ignore: do not output any message, the action do not fail
+    #   - warn: output a warning but do not fail the action
+    #   - error: fail the action with an error message
+    #
+    # Optional. Default: ignore
+    ifNoFilesFound: ''
+
+    # The log level.
+    #
+    # Accepted values:
+    #   - debug
+    #   - info
+    #   - warn
+    #   - error
+    #
+    # Debug messages will always be sent to the internal debug system.
+    # Error messages will always fail the action.
+    #
+    # Optional. Default: info
+    logLevel: ''
+
+    # The behavior if variable is not found.
+    #
+    # Accepted values:
+    #   - none: replace the token with an empty string and log a message
+    #   - keep: leave the token and log a message
+    #   - replace: replace with the value from missing-var-default and do not 
+    #     log a message
+    #
+    # Optional. Default: none
+    missingVarAction: ''
+
+    # The default value to use when a key is not found.
+    #
+    # Optional. Default: empty string
+    missingVarDefault: ''
+
+    # The level to log key not found messages.
+    #
+    # Accepted values:
+    #   - off
+    #   - warn
+    #   - error
+    #
+    # Optional. Default: warn
+    missingVarLog: ''
+
+    # Enable token replacements in values recusively.
+    #
+    # Example: '#{message}#' with variables '{"message":"hello #{name}#!","name":"world"}' 
+    # will result in 'hello world!'
+    #
+    # Optional. Default: false
+    recursive: ''
+
+    # The root path to use when reading files with a relative path.
+    #
+    # Optional. Default: $(System.DefaultWorkingDirectory)
+    root: ''
+
+    # The separtor to use when flattening keys in variables.
+    #
+    # Example: '{ "key": { "array": ["a1", "a2"], "sub": "s1" } }' will be flatten as 
+    # '{ "key.array.0": "a1", "key.array.1": "a2", "key.sub": "s1" }'
+    #
+    # Optional. Default: .
+    separator: ''
+
+    # Opt out of the anonymous telemetry feature.
+    # You can also set the REPLACETOKENS_TELEMETRY_OPTOUT environment variable to '1' or 
+    # 'true'.
+    #
+    # Optional. Default: false
+    telemetryOptout: ''
+
+    # The token pattern to use.
+    # Use 'custom' to provide your own prefix and suffix.
+    #
+    # Accepted values:
+    #   - default: #{ ... }#
+    #   - azurepipelines: $( ... )
+    #   - custom: token-prefix ... token-suffix
+    #   - doublebraces: {{ ... }}
+    #   - doubleunderscores: __ ... __
+    #   - githubactions: #{{ ... }}
+    #   - octopus: #{ ... }
+    #
+    # Optional. Default: default
+    tokenPattern: ''
+
+    # The token prefix when using 'custom' token pattern.
+    #
+    # Optional.
+    tokenPrefix: ''
+
+    # The token suffix when using 'custom' token pattern.
+    #
+    # Optional.
+    tokenSuffix: ''
+
+    # Enable transforms on values.
+    # The syntax to apply transform on a value is '#{<transform>(<name>[,<parameters>])}#'.
+    #
+    # Supported transforms:
+    #   - base64(name): base64 encode the value
+    #   - indent(name[, size, firstline]): indent lines in the value where size is the 
+    #     indent size (default is '2') and firstline specifies if the first line must be 
+    #     indented also (default is 'false')
+    #   - lower(name): lowercase the value
+    #   - raw(name): raw value (disable escaping)
+    #   - upper(name): uppercase the value
+    #
+    # Example: 'key=#{upper(KEY1)}#' with '{ "KEY1": "value1" }' will result in 
+    # 'key=VALUE1'
+    #
+    # Optional. Default: false
+    transforms: ''
+
+    # The tranforms prefix when using transforms.
+    #
+    # Optional. Default: (
+    transformsPrefix: ''
+
+    # The tranforms prefix when using transforms.
+    #
+    # Optional. Default: )
+    transformsSuffix: ''
 ```
 
-**Note:** the task will only work on text files, if you need to replace token in archive file you will need to first extract the files and after archive them back.
+### Output
+| Name | Description | Example |
+| - | - | - |
+| defaults | The number of tokens replaced with the default value if one was specified. | `1` |
+| files | The number of source files parsed. | `2` |
+| replaced | The number of values replaced by a value different than the default value. | `7` |
+| tokens | The number of tokens found in all files. | `8` |
+| transforms | The number of transforms applied. | `2` |
 
-### Parameters
-The parameters of the task are described bellow, in parenthesis is the YAML name:
+## Examples
+### Multiple target files
+```yaml
+- task: qetza.replacetokens.replacetokens-task.replacetokens@6
+  inputs:
+    sources: |
+      **/*.json;!**/*.dev.json;!**/vars.json => _tmp/*.json
+      **/*.yml
+```
 
-- **Root directory** (rootDirectory): the base directory for searching files. If not specified the default working directory will be used. _Default is empty string_
-- **Target files** (targetFiles): the absolute or relative newline-separated or comma-separated paths to the files to replace tokens. Wildcards can be used (eg: `**\*.config` for all _.config_ files in all sub folders). _Default is `**/*.config`_
-> **Syntax**: {file path}[ => {output path}]  
->
-> - `web.config` will replace tokens in _web.config_ and update the file.
-> - `web.tokenized.config => web.config` will replace tokens in _web.tokenized.config_ and save the result in _web.config_.
-> - `config\web.tokenized.config => c:\config\web.config` will replace tokens in _config\web.tokenized.config_ and save the result in _c:\\config\web.config_.
->
-> **Wildcard support**
-> - `*.tokenized.config => *.config` will replace tokens in all _{filename}.tokenized.config_ target files and save the result in _{filename}.config_.
-> - `**\*.tokenized.config => c:\tmp\*.config` will replace tokens in all _{filename}.tokenized.config_ target files and save the result in _c:\tmp\\{filename}.config_.
->
-> Only the wildcard _*_ in the target file name will be used for replacement in the output.\
-> Relative paths in the output pattern are relative to the target file path.\
->
-> **Negative pattern**\
-> If you want to use negative pattern in target file, use a semi-colon `;` to separate the including pattern and the negative patterns. When using output syntax, only the wildcard in the first pattern will be used for generating the output path.
-> - `**\*.tokenized.config;!**\dev\*.config => c:\tmp\*.config` will replace tokens in all _{filename}.tokenized.config_ target files except those under a _dev_ directory and save the result in _c:\tmp\\{filename}.config_.
+### Additional variables
+```yaml
+- task: qetza.replacetokens.replacetokens-task.replacetokens@6
+  inputs:
+    sources: '**/*.json'
+    additionalVariables: |
+      - '@**/vars.(json|yml|yaml)'      # read from files
+      - '$ENV_VARS',                    # read from env
+      - var1: '${{ parameters.var1 }}'  # inline key/value pairs
+        var2: '${{ parameters.var2 }}'
+```
 
-- **Files encoding** (encoding): the files encoding used for reading and writing. The 'auto' value will determine the encoding based on the Byte Order Mark (BOM) if present; otherwise it will use ascii. (allowed values: auto, ascii, utf-7, utf-8, utf-16le, utf-16be, win1252 and iso88591). _Default is `auto`_
-- **Write unicode BOM** (writeBOM): if checked writes an unicode Byte Order Mark (BOM). _Default is `true`_
-- **Escape type** (escapeType): specify how to escape variable values. Value `auto` uses the file extension (`.json` and `.xml`) to determine the escaping and `none` as fallback. _Default is `auto`_ (allowed values: auto, none, json, xml and custom)
-- **Escape character** (escapeChar): when using `custom` escape type, the escape character to use when escaping characters in the variable values.
-- **Characters to escape** (charsToEscape): when using `custom` escape type, characters in variable values to escape before replacing tokens.
-- **Verbosity** (verbosity): specify the level of log verbosity. _Default is `normal`_ (note: error and system debug are always on) (allowed values: normal, detailed and off)
-- **Action on missing variable** (actionOnMissing): specify the action to take on a missing variable. _Default is `warn`_
-  - _silently continue_ (continue): the task will continue without displaying any message.
-  - _log warning_ (warn): the task will continue but log a warning with the missing variable name.
-  - _fail_ (fail): the task will fail and log the missing variable name.
-- **Keep token for missing variable** (keepToken): if checked tokens with missing variables will not be replaced by empty string. _Default is `false`_
-- **Action on no file processed** (actionOnNoFiles):  specify the action when no file was processed. _Default is `continue`_ (allowed values: continue, warn, fail)
-- **Token pattern** (tokenPattern): specify the pattern of the tokens to search in the target files. _Default is `default`_ (allowed values: default, rm, octopus, azpipelines, doublebraces and custom)
-- **Token prefix** (tokenPrefix): when using `custom` token pattern, the prefix of the tokens to search in the target files. _Default is `#{`_
-- **Token suffix** (tokenSuffix): when using `custom` token pattern, the suffix of the tokens to search in the target files. _Default is `}#`_
-- **Use legacy pattern** (useLegacyPattern): if checked whitespaces between the token prefix/suffix and the variable name are not ignored. _Default is `false`_
-- **Use legacy empty/default feature** (useLegacyEmptyFeature): if check use the old empty & default values features. The new feature/code can now distinguish between an undefined variable and an defined empty variable without the use of a specific "empty" token (_Empty value_ parameter). _Default is `true`_
-- **Empty value** (emptyValue): with legacy empty/default feature: the variable value that will be replaced with an empty string. _Default is `(empty)`_
-- **Use default value** (useDefaultValue): with new empty/default feature: if check replace variable not found with a default value specified in _Default value_. _Default is `false`_
-- **Default value** (defaultValue): the value to be used if a variable is not found. With legacy empty/default feature: do not set to disable default value feature with the legacy feature; to replace with an empty string set the default value to the _Empty value_. _Default is an empty string_
-- **Enable transformations** (enableTransforms): if checked transformations can be applied on variable values.  _Default is `false`_. The following transformations are available:
-  - _lower_: make variable value lower case. Example: `#{lower(MyVar)}#`
-  - _upper_: make variable value upper case. Example: `#{upper(MyVar)}#`
-  - _noescape_: disable variable value escaping. (this can be used if you want to inject raw JSON or XML for example). Example: `#{noescape(MyVar)}#`
-  - _base64_: encode variable value in BASE64. Example `#{base64(MyVar)}#`
-  - _indent_: indent newlines with support of 2 parameters; the first parameter after the variable name is the indent size (default `2`) and the second is a boolean specifying if the first line must be indented also (default `false`). Examples `#{indent(MyVar)}#`, `#{indent(MyVar, 4, true)}#`
-- **Transform prefix** (transformPrefix): The prefix between transform name and token name. _Default is `(`_.
-- **Transform suffix** (transformSuffix): The suffix after the token name. _Default is `)`_.
-- **Variable files (JSON or YAML)** (variableFiles): the absolute or relative comma or newline-separated paths to the files containing additional variables. Wildcards can be used (eg: `vars\**\*.json` for all _.json_ files in all sub folders of _vars_). YAML files **must have** the `.yml`or `.yaml` extension otherwise the file is treated as JSON. Variables declared in files overrides variables defined in the pipeline.
-- **Inline variables (YAML syntax)** (inlineVariables): A YAML formatted string containing inline variables. Variables declared inline overrides variables defined in the pipeline and in files.
-- **Variable separator** (variableSeparator): the separtor to use in variable names for nested objects and arrays in inline variables or variable files. _Default is `.`_. Example: `{ 'My': { 'Value': ['Hello World!'] } }` will create a variable _My.Value.0_ with the value _Hello World!_.
-- **Enable recursion in values** (enableRecursion): if checked token replacement (with transformation) will be run on values.Example: "Say: #{value1}#" with value1 = "hello #{upper(value2)}#" and value2 = "world!" will result in "hello WORLD!". _Default is `false`_
-- **Send anonymous usage telemetry** (enableTelemetry): if checked anonymous usage data (hashed collection and pipeline id, no file parameter values, no variable values) will be sent to the task author only to analyze task usage. _Default is `true`_
-
-### Output variables
-The task creates the following as output variables:
-- **tokenReplacedCount**: the total number of tokens which were replaced by a variable.
-- **tokenFoundCount**: the total number of of tokens which were found.
-- **fileProcessedCount**: the total number of files which were processed.
-- **transformExecutedCount**: the total number of transformations which were executed.
-- **defaultValueCount**: the total number of default value used.
+### Access outputs
+```yaml
+steps:
+- task: qetza.replacetokens.replacetokens-task.replacetokens@6
+  name: replace-tokens
+  inputs:
+    sources: '**/*.json'
+- script: |
+    echo "defaults  : $(replace-tokens.defaults }}"
+    echo "files     : $(replace-tokens.files }}"
+    echo "replaced  : $(replace-tokens.replaced }}"
+    echo "tokens    : $(replace-tokens.tokens }}"
+    echo "transforms: $(replace-tokens.transforms }}"
+```
 
 ## Data/Telemetry
-The Replace Tokens task for Azure Pipelines collects anonymous usage data and sends them to its author to help improve the product by default. If you don’t wish to send usage data, you can change your telemetry settings through _Send anonymous usage telemetry_ parameter or by setting a variable or environment variable `REPLACETOKENS_DISABLE_TELEMETRY` to `true`.
+The Replace Tokens task for Azure Pipelines collects **anonymous** usage data and sends them by default to its author to help improve the product. If you don't wish to send usage data, you can change your telemetry settings through the _telemetryOptout_ parameter or by setting the `REPLACETOKENS_TELEMETRY_OPTOUT` environment variable to `1` or `true`.
 
-## Tips
-If you want to use tokens in XML based configuration files to be replaced during deployment and also have those files usable for local development you can combine the [Replace Tokens task](https://marketplace.visualstudio.com/items?itemName=qetza.replacetokens) with the [XDT tranform task](https://marketplace.visualstudio.com/items?itemName=qetza.xdttransform):
-- create an XDT transformation file containing your tokens
-- setup your configuration file with local developement values
-- at deployment time
-  - inject your tokens in the configuration file by using your transformation file
-  - replace tokens in your updated configuration file
+The following **anonymous** data is send:
+- the **hash** of your collection id
+- the **hash** of your project id and pipeline definition id
+- the hosting (`server` or `cloud`)
+- the inputs values for
+  - _addBOM_
+  - _charsToEscape_
+  - _encoding_
+  - _escape_
+  - _escapeChar_
+  - _ifNoFilesFound_
+  - _logLevel_
+  - _missingVarAction_
+  - _missingVarDefault_
+  - _missingVarLog_
+  - _recursive_
+  - _separator_
+  - _tokenPattern_
+  - _tokenPrefix_
+  - _tokenSuffix_
+  - _transforms_
+  - _transformsPrefix_
+  - _transformsSuffix_
+- the **number of** _sources_ entries
+- the **number of** _additionalVariables_ entries referencing file
+- the **number of** _additionalVariables_ entries referencing environment variables
+- the **number of** _additionalVariables_ inline entries
+- the task result (`succeed` or `failed`)
+- the task execution duration
+- the outputs (defaults, files, replaced, tokens and transforms)
 
-## Release notes
-**New in 4.6.0**
-- Task **5.3.0**
-  - Add support for `indent` transformation with indent size and indent first line parameters ([326](https://github.com/qetza/vsts-replacetokens-task/issues/326)).
-- Task **4.4.0**
-  - Add support for `indent` transformation with indent size and indent first line parameters ([326](https://github.com/qetza/vsts-replacetokens-task/issues/326)).
-- Task **3.12.0**
-  - Add support for `indent` transformation with indent size and indent first line parameters ([326](https://github.com/qetza/vsts-replacetokens-task/issues/326)).
-
-**New in 4.5.0**
-- Task **5.2.0**
-  - Fix recursion cycle detection ([#308](https://github.com/qetza/vsts-replacetokens-task/issues/308)) (contributed by Chad Smith).
-  - Add support for YAML multiple document files in variable files and inline variables ([#287](https://github.com/qetza/vsts-replacetokens-task/issues/287)).
-  - Add support for JSON with comments variable files ([#299](https://github.com/qetza/vsts-replacetokens-task/issues/299)).
-  - Add support for Node16 execution handler.
-- Task **4.3.0**
-  - Fix recursion cycle detection ([#308](https://github.com/qetza/vsts-replacetokens-task/issues/308)) (contributed by Chad Smith).
-  - Add support for YAML multiple document files in variable files and inline variables ([#287](https://github.com/qetza/vsts-replacetokens-task/issues/287)).
-  - Add support for JSON with comments variable files ([#299](https://github.com/qetza/vsts-replacetokens-task/issues/299)).
-- Task **3.11.0**
-  - Fix recursion cycle detection ([#308](https://github.com/qetza/vsts-replacetokens-task/issues/308)) (contributed by Chad Smith).
-  - Add support for YAML multiple document files in variable files and inline variables ([#287](https://github.com/qetza/vsts-replacetokens-task/issues/287)).
-  - Add support for JSON with comments variable files ([#299](https://github.com/qetza/vsts-replacetokens-task/issues/299)).
-
-**New in 4.4.1**
-- Task **4.2.1**
-  - Fix compatibility with node 5.10.1 ([#277](https://github.com/qetza/vsts-replacetokens-task/issues/277)).
-- Task **3.10.1**
-  - Fix compatibility with node 5.10.1 ([#277](https://github.com/qetza/vsts-replacetokens-task/issues/277)).
-
-**New in 4.4.0**
-- Task **5.1.0**
-  - Add support for inline variables ([#252](https://github.com/qetza/vsts-replacetokens-task/issues/252)).
-  - Add support for recursive token replacement in values ([#201](https://github.com/qetza/vsts-replacetokens-task/issues/201)).
-  - Add optional reworked feature to simplify empty and default values (this is a **breaking change** if enabled as the old _Empty value_ is not used anymore but replaced by an empty variable declaration).
-- Task **4.2.0**
-  - Add support for inline variables ([#252](https://github.com/qetza/vsts-replacetokens-task/issues/252)).
-  - Add support for recursive token replacement in values ([#201](https://github.com/qetza/vsts-replacetokens-task/issues/201)).
-  - Add optional reworked feature to simplify empty and default values (this is a **breaking change** if enabled as the old _Empty value_ is not used anymore but replaced by an empty variable declaration).
-- Task **3.10.0**
-  - Add support for inline variables ([#252](https://github.com/qetza/vsts-replacetokens-task/issues/252)).
-  - Add support for recursive token replacement in values ([#201](https://github.com/qetza/vsts-replacetokens-task/issues/201)).
-  - Add optional reworked feature to simplify empty and default values (this is a **breaking change** if enabled as the old _Empty value_ is not used anymore but replaced by an empty variable declaration).
-
-**New in 4.3.0**
-- Add task **5.0.0**
-  - **Breaking change**: Migrate task to Node10 execution handler needing agent `2.144.0` minimum ([#228](https://github.com/qetza/vsts-replacetokens-task/issues/228), [#230](https://github.com/qetza/vsts-replacetokens-task/issues/230)).
-
-**New in 4.2.1**
-- Task **4.1.1**
-  - Revert migrate tasks to Node10 execution handler ([#233](https://github.com/qetza/vsts-replacetokens-task/issues/233)).
-- Task **3.9.1**
-  - Revert migrate tasks to Node10 execution handler ([#233](https://github.com/qetza/vsts-replacetokens-task/issues/233)).
-
-**New in 4.2.0**
-- Task **4.1.0**
-  - Migrate tasks to Node10 execution handler ([#228](https://github.com/qetza/vsts-replacetokens-task/issues/228), [#230](https://github.com/qetza/vsts-replacetokens-task/issues/230)).
-- Task **3.9.0**
-  - Migrate tasks to Node10 execution handler ([#228](https://github.com/qetza/vsts-replacetokens-task/issues/228), [#230](https://github.com/qetza/vsts-replacetokens-task/issues/230)).
-
-**New in 4.1.0**
-- Task **4.0.1**
-  - Promoted to release.
-  - Add `base64` transform ([#163](https://github.com/qetza/vsts-replacetokens-task/issues/163)).
-  - Add action on no file processed ([#210](https://github.com/qetza/vsts-replacetokens-task/issues/210)).
-- Task **3.8.0**
-  - Add `base64` transform ([#163](https://github.com/qetza/vsts-replacetokens-task/issues/163)).
-  - Add action on no file processed ([#210](https://github.com/qetza/vsts-replacetokens-task/issues/210)).
-
-**New in 4.0.0**
-- Add support for multiple task versions.
-- Add task 4.x (preview)
-  - **Breaking change**: Add output variables ([#160](https://github.com/qetza/vsts-replacetokens-task/issues/160)). (some older version of TFS/Azure Pipelines doesn't support output variables when used in release pipelines)
-  - **Breaking change**: Add dropdown parameter _Token pattern_ to select token pattern ([#131](https://github.com/qetza/vsts-replacetokens-task/issues/131)). (users with customized token pattern will need to manually select one or `custom`)
-
-**New in 3.7.1**
-- Fix issue on binary files ([#193](https://github.com/qetza/vsts-replacetokens-task/issues/193)).
-- Rollback output variables ([#196](https://github.com/qetza/vsts-replacetokens-task/issues/196)).
-
-**New in 3.7.0**
-- Add output variables _tokenReplacedCount_, _tokenFoundCount_ and _fileProcessedCount_ ([#160](https://github.com/qetza/vsts-replacetokens-task/issues/160)).
-- Add support for variable transformations with _Enable tranformations_ ([#96](https://github.com/qetza/vsts-replacetokens-task/issues/96)).
-- Add default value for tokens not found with _Default value_ (contribution from [ClemensSutor](https://github.com/ClemensSutor)).
-- Group log outputs in Azure Pipelines output.
-- Add support for variables in external YAML files with `.yml` or `.yaml` extension ([#177](https://github.com/qetza/vsts-replacetokens-task/issues/177)).
-
-**New in 3.6.0**
-- Add parameter _Use legacy pattern_ with default value to `false`. 
-
-**New in 3.5.2**
-- Fix issue when token prefix present but not as a token prefix ([#149](https://github.com/qetza/vsts-replacetokens-task/issues/149)).
-
-**New in 3.5.1**
-- Fix issue when variable `System.ServerType` is not defined ([#147](https://github.com/qetza/vsts-replacetokens-task/issues/147)).
-
-**New in 3.5.0**
-- Add anonymous usage telemetry.
-- Ignore spaces between token prefix/suffix and variable name ([#143](https://github.com/qetza/vsts-replacetokens-task/issues/143)).
-
-**New in 3.4.1**
-- Fix JSON escaping of slash `/` ([#138](https://github.com/qetza/vsts-replacetokens-task/issues/138))
-
-**New in 3.4.0**
-- Add summary in logs with number of tokens found and replaced ([#126](https://github.com/qetza/vsts-replacetokens-task/issues/126)).
-- Add support for variables in external JSON files ([#113](https://github.com/qetza/vsts-replacetokens-task/issues/113)).
-
-**New in 3.3.1**
-- **Breaking change**: If you were using negative pattern you need to use the semi colon `;` as a separator instead of new-line in _Target files_.
-- Fix negative pattern support ([#127](https://github.com/qetza/vsts-replacetokens-task/issues/127)).
-
-**New in 3.3.0**
-- Add support for custom output file and wildcard support ([#114](https://github.com/qetza/vsts-replacetokens-task/issues/114)).
-
-**New in 3.2.2**
-- Fix matching issue with directory ([#122](https://github.com/qetza/vsts-replacetokens-task/issues/122)).
-
-**New in 3.2.1**
-- Fix log issue with escaped secret values.
-
-**New in 3.2.0**
-- Switch to [jschardet](https://github.com/aadsm/jschardet) for encoding detection when selecting `auto` in _File encoding_ ([#99](https://github.com/qetza/vsts-replacetokens-task/issues/99)).
-- Switch to [azure-pipelines-task-lib](https://github.com/Microsoft/azure-pipelines-task-lib) v2.8.0.
-- Add `auto` to _Escape type_ and set it as default value.
-- Move _Escape type_, _Escape character_ and _Characters to escape_ to the main paramters section for easier discoverability.
-
-**New in 3.1.0**
-- Add _Verbosity_ parameter to allow detail logs without using `system.debug`.
-
-**New in 3.0.0**
-- **Breaking change**: If you were using the character escaping feature you need to select `custom` in _Escape values type_ parameter.
-- Add support to escape JSON in variable values (contributed by Justin Gould)
-- Add support to escape XML in variable values (contributed by Justin Gould)
-- Add `Windows 1252` and `ISO 8859-1` encoding to _File encoding_ ([#67](https://github.com/qetza/vsts-replacetokens-task/issues/67))
-
-**New in 2.3.0**
-- Add support to escape characters in variable values ([#52](https://github.com/qetza/vsts-replacetokens-task/issues/52))
-
-**New in 2.2.1**
-- Fix issue with backslash in default target files value on mac ([#50](https://github.com/qetza/vsts-replacetokens-task/issues/50))
-
-**New in 2.2.0**
-- Fix issue on file not found when using network paths ([#40](https://github.com/qetza/vsts-replacetokens-task/issues/40), [#41](https://github.com/qetza/vsts-replacetokens-task/issues/41)).
-
-**New in 2.1.0**
-- Add support for comma-separator in _Target files_ ([#35](https://github.com/qetza/vsts-replacetokens-task/issues/35)).
-- Add _Empty value_ parameter to allow token replacement with an empty string ([#32](https://github.com/qetza/vsts-replacetokens-task/issues/32)).
-
-**New in 2.0.2**
-- Fix invalid file permissions after saving files.
-
-**New in 2.0.0**
-- **Breaking change**: Migrated code to typescript to support cross-platform agent. This change requires the use of an agent at least in version 2.105.0 which is **not compatible with TFS 2015**. If you need to install the task on TFS 2015, download the vsix from the repository: [https://github.com/qetza/vsts-replacetokens-task/releases/download/v1.4.1/qetza.replacetokens-1.4.1.vsix](https://github.com/qetza/vsts-replacetokens-task/releases/download/v1.4.1/qetza.replacetokens-1.4.1.vsix)
-- **Breaking change**: _File encoding_ parameter is now used when reading and writing files. Previously it was only used when writing.
-- **Breaking change**: _File encoding_ doesn't support 'utf-32' and 'utf-32 (big endian)' anymore.
-- **Breaking change**: _Target files_ parameter now only uses the new line as a separator for multi-values (previously it used new-line and semi-colon).
-- Removed required _Root directory_, an empty value is equivalent to $(System.DefaultWorkingDirectory).
-
-**New in 1.4.1**
-- Fix missing method issue with new xplat agent (2.104.1)
-
-**New in 1.4.0**
-- Add variables expansion in variable values.
-- Escape token prefix and suffix in regex pattern.
-
-**New in 1.3.1**
-- Fix wrong encoding constructors parameters.
-
-**New in 1.3.0**
-- Replaced parameter _Fail on missing_ with _Action_ in _Missing variables_ group.
-- Add _Keep token_ parameter in 'Missing variables' group.
-- Fix issue on empty file.
-
-**New in 1.2.0**
-- Add _Root directory_ task parameter to configure file search root directory (contributed by Jesse Houwing).
-- Update _Target files_ task parameter to support newline-separator (contributed by Jesse Houwing).
+You can see the JSON serialized telemetry data sent in debug logs.
