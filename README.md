@@ -13,6 +13,8 @@ The task was completely rewritten to use the npm package [@qetza/replacetokens](
   - renamed input _targetFiles_ to _sources_ 
   - removed support for comma-separated paths in _targetFiles_
   - renamed _encoding_ value `win1252` to `windows1252`
+  - renamed _escapeType_ to _escape_
+    - renamed _escapeType_ value `none` to `off`
   - merged inputs _variableFiles_ and _inlineVariables_ in _additionalVariables_
   - renamed input _variableSeparator_ to _separator_
   - renamed input _enableRecursion_ to _recursive_
