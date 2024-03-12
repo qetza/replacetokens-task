@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.0.1
+Task 6.0.1
+- Fix missing default variables due to case-sensitivity ([#8](https://github.com/qetza/replacetokens-task/issues/8)).
+
 ## 5.0.0
 Task 6.0.0
 - **Breaking changes**: the task was completely rewritten to use the npm package [@qetza/replacetokens](https://www.npmjs.com/package/@qetza/replacetokens) and be more similar with the new [ReplaceTokens GitHub Actions](https://github.com/marketplace/actions/replacetokens):

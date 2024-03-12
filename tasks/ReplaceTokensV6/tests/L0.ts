@@ -198,7 +198,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
         tr.succeeded.should.be.true;
 
         tr.stdout.should.include('sources: ["**/*.json","**/*.xml","**/*.yml"]');
-        tr.stdout.should.include('variables: {"var_secret":"secret","var_yml2":"secret","var_var":"var","var_yaml2":"var"}');
+        tr.stdout.should.include('variables: {"VAR_SECRET":"secret","VAR_YML2":"secret","VAR_VAR":"var","VAR_YAML2":"var"}');
         tr.stdout.should.include(
           'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"separator":".","token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
         );
@@ -327,7 +327,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.stdout.should.include(`##vso[task.debug]loading variables from file '${path.join(data, 'vars.yml').replace(/\\/g, '/')}'`);
       tr.stdout.should.include(`##vso[task.debug]loading variables from file '${path.join(data, 'vars.yaml').replace(/\\/g, '/')}'`);
 
-      tr.stdout.should.include('variables: {"var_json":"file","var_yaml1":"file","var_yaml2":"file","var_yml1":"file","var_yml2":"file"}');
+      tr.stdout.should.include('variables: {"VAR_JSON":"file","VAR_YAML1":"file","VAR_YAML2":"file","VAR_YML1":"file","VAR_YML2":"file"}');
     }, tr);
   });
 
@@ -347,7 +347,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
     runValidations(() => {
       tr.stdout.should.include("##vso[task.debug]loading variables from environment variable '__VARS__'");
 
-      tr.stdout.should.include('variables: {"var1":"value1","var2":"value2"}');
+      tr.stdout.should.include('variables: {"VAR1":"value1","VAR2":"value2"}');
     }, tr);
   });
 
@@ -367,7 +367,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
 
     // assert
     runValidations(() => {
-      tr.stdout.should.include('variables: {"var1":"value1","var2":"value2"}');
+      tr.stdout.should.include('variables: {"VAR1":"value1","VAR2":"value2"}');
     }, tr);
   });
 
@@ -388,8 +388,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
     process.env['__additionalVariables__'] = `
 - '@**/_data/vars.*;!**/*.xml'
 - '$__VARS__'
--
-  var2: inline
+- var2: inline
   var_yml2: inline
 `;
 
@@ -400,7 +399,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       // assert
       runValidations(() => {
         tr.stdout.should.include(
-          'variables: {"var_secret":"secret","var_yml2":"inline","var_var":"var","var_yaml2":"file","var_json":"file","var_yaml1":"file","var_yml1":"file","var1":"env","var2":"inline"}'
+          'variables: {"VAR_SECRET":"secret","VAR_YML2":"inline","VAR_VAR":"var","VAR_YAML2":"file","VAR_JSON":"file","VAR_YAML1":"file","VAR_YML1":"file","VAR1":"env","VAR2":"inline"}'
         );
       }, tr);
     } finally {
