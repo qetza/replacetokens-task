@@ -13,7 +13,7 @@
   "version": {
     "Major": 6,
     "Minor": 0,
-    "Patch": 1
+    "Patch": 2
   },
   "releaseNotes": "breaking changes, see [changelog](https://github.com/qetza/replacetokens-task/blob/master/tasks/ReplaceTokensV6/CHANGELOG.md)",
   "instanceNameFormat": "Replace tokens",
@@ -21,7 +21,8 @@
   "groups": [],
   "inputs": [
     {
-      "name": "root",
+      "name": "rootDirectory",
+      "aliases": ["root"],
       "type": "filePath",
       "required": false,
       "defaultValue": "",
@@ -29,7 +30,8 @@
       "helpMarkDown": "The root path to use when reading files with a relative path. Default: $(System.DefaultWorkingDirectory)"
     },
     {
-      "name": "sources",
+      "name": "targetFiles",
+      "aliases": ["sources"],
       "type": "multiLine",
       "required": true,
       "defaultValue": "",
@@ -88,7 +90,8 @@
       "helpMarkDown": "The encoding to read and write all files. Default: auto"
     },
     {
-      "name": "addBom",
+      "name": "writeBOM",
+      "aliases": ["addBOM"],
       "type": "boolean",
       "required": false,
       "defaultValue": false,
@@ -105,7 +108,8 @@
       "helpMarkDown": "A YAML formatted string containing additional variables or file or environment variable references."
     },
     {
-      "name": "separator",
+      "name": "variableSeparator",
+      "aliases": ["separator"],
       "type": "string",
       "defaultValue": ".",
       "required": false,
@@ -114,7 +118,8 @@
       "helpMarkDown": "The separtor to use when flattening keys in variables."
     },
     {
-      "name": "escape",
+      "name": "escapeType",
+      "aliases": ["escape"],
       "type": "pickList",
       "required": false,
       "defaultValue": "auto",
@@ -132,7 +137,7 @@
       "name": "escapeChar",
       "type": "string",
       "required": false,
-      "visibleRule": "escape == custom",
+      "visibleRule": "escapeType == custom",
       "label": "Escape character",
       "helpMarkDown": "The escape character to use when using 'custom' escape."
     },
@@ -140,12 +145,13 @@
       "name": "charsToEscape",
       "type": "string",
       "required": false,
-      "visibleRule": "escape == custom",
+      "visibleRule": "escapeType == custom",
       "label": "Characters to escape",
       "helpMarkDown": "The characters to escape when using 'custom' escape."
     },
     {
-      "name": "logLevel",
+      "name": "verbosity",
+      "aliases": ["logLevel"],
       "type": "pickList",
       "required": false,
       "defaultValue": "info",
@@ -172,7 +178,8 @@
       "helpMarkDown": "The behavior if variable is not found. Default: none"
     },
     {
-      "name": "missingVarDefault",
+      "name": "defaultValue",
+      "aliases": ["missingVarDefault"],
       "type": "string",
       "required": false,
       "defaultValue": "",
@@ -181,7 +188,8 @@
       "helpMarkDown": "The default value to use when a key is not found. Default: empty string"
     },
     {
-      "name": "missingVarLog",
+      "name": "actionOnMissing",
+      "aliases": ["missingVarLog"],
       "type": "pickList",
       "required": false,
       "defaultValue": "warn",
@@ -195,7 +203,8 @@
       "helpMarkDown": "The level to log key not found messages. Default: warn"
     },
     {
-      "name": "ifNoFilesFound",
+      "name": "actionOnNoFiles",
+      "aliases": ["ifNoFilesFound"],
       "type": "pickList",
       "required": false,
       "defaultValue": "ignore",
@@ -208,7 +217,8 @@
       "helpMarkDown": "The behavior if no files are found. Default: ignore"
     },
     {
-      "name": "recursive",
+      "name": "enableRecursion",
+      "aliases": ["recursive"],
       "type": "boolean",
       "required": false,
       "defaultValue": false,
@@ -216,7 +226,8 @@
       "helpMarkDown": "Enable token replacements in values recusively. Default: false"
     },
     {
-      "name": "transforms",
+      "name": "enableTransforms",
+      "aliases": ["transforms"],
       "type": "boolean",
       "required": false,
       "defaultValue": false,
@@ -224,20 +235,22 @@
       "helpMarkDown": "Enable transforms on values. Default: false"
     },
     {
-      "name": "transformsPrefix",
+      "name": "transformPrefix",
+      "aliases": ["transformsPrefix"],
       "type": "string",
       "required": false,
       "defaultValue": "(",
-      "visibleRule": "transforms == true",
+      "visibleRule": "enableTransforms == true",
       "label": "Transforms prefix",
       "helpMarkDown": "The tranforms prefix when using transforms. Default: ("
     },
     {
-      "name": "transformsSuffix",
+      "name": "transformSuffix",
+      "aliases": ["transformsSuffix"],
       "type": "string",
       "required": false,
       "defaultValue": ")",
-      "visibleRule": "transforms == true",
+      "visibleRule": "enableTransforms == true",
       "label": "Transforms suffix",
       "helpMarkDown": "The tranforms suffix when using transforms. Default: )"
     },

@@ -5,8 +5,8 @@ const taskPath = path.join(__dirname, '..', 'index.js');
 const tmr: tmrm.TaskMockRunner = new tmrm.TaskMockRunner(taskPath);
 
 // inputs
-tmr.setInput('sources', process.env['__sources__']);
-tmr.setInput('ifNoFilesFound', process.env['__ifNoFilesFound__']);
+tmr.setInput('targetFiles', process.env['__sources__']);
+tmr.setInput('actionOnNoFiles', process.env['__ifNoFilesFound__']);
 
 // mocks
 const rt = require('@qetza/replacetokens');

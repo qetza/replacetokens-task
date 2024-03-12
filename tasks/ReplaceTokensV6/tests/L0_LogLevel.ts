@@ -5,8 +5,8 @@ const taskPath = path.join(__dirname, '..', 'index.js');
 const tmr: tmrm.TaskMockRunner = new tmrm.TaskMockRunner(taskPath);
 
 // inputs
-tmr.setInput('sources', process.env['__sources__']);
-tmr.setInput('logLevel', process.env['__logLevel__']);
+tmr.setInput('targetFiles', process.env['__sources__']);
+tmr.setInput('verbosity', process.env['__logLevel__']);
 
 // mocks
 const rt = require('@qetza/replacetokens');

@@ -32,27 +32,29 @@ async function run() {
 
   try {
     // read and validate inputs
-    const sources = tl.getDelimitedInput('sources', /\r?\n/, true);
+    const sources = tl.getDelimitedInput('targetFiles', /\r?\n/);
+    if (sources.length === 0) throw new Error('Input required: sources');
+
     const options: rt.Options = {
-      addBOM: tl.getBoolInput('addBOM'),
+      addBOM: tl.getBoolInput('writeBOM'),
       encoding: tl.getInput('encoding') || rt.Encodings.Auto,
       escape: {
         chars: tl.getInput('charsToEscape'),
         escapeChar: tl.getInput('escapeChar'),
-        type: getChoiceInput('escape', [rt.Escapes.Auto, rt.Escapes.Custom, rt.Escapes.Json, rt.Escapes.Off, rt.Escapes.Xml]) || rt.Escapes.Auto
+        type: getChoiceInput('escapeType', [rt.Escapes.Auto, rt.Escapes.Custom, rt.Escapes.Json, rt.Escapes.Off, rt.Escapes.Xml], 'escape') || rt.Escapes.Auto
       },
       missing: {
         action:
           getChoiceInput('missingVarAction', [rt.MissingVariables.Action.Keep, rt.MissingVariables.Action.None, rt.MissingVariables.Action.Replace]) ||
           rt.MissingVariables.Action.None,
-        default: tl.getInput('missingVarDefault') || '',
+        default: tl.getInput('defaultValue') || '',
         log:
-          getChoiceInput('missingVarLog', [rt.MissingVariables.Log.Error, rt.MissingVariables.Log.Off, rt.MissingVariables.Log.Warn]) ||
+          getChoiceInput('actionOnMissing', [rt.MissingVariables.Log.Error, rt.MissingVariables.Log.Off, rt.MissingVariables.Log.Warn], 'missingVarLog') ||
           rt.MissingVariables.Log.Warn
       },
-      recursive: tl.getBoolInput('recursive'),
-      root: tl.getPathInput('root', false, true),
-      separator: tl.getInput('separator') || rt.Defaults.Separator,
+      recursive: tl.getBoolInput('enableRecursion'),
+      root: tl.getPathInput('rootDirectory', false, true),
+      separator: tl.getInput('variableSeparator') || rt.Defaults.Separator,
       token: {
         pattern:
           getChoiceInput('tokenPattern', [
@@ -68,9 +70,9 @@ async function run() {
         suffix: tl.getInput('tokenSuffix')
       },
       transforms: {
-        enabled: tl.getBoolInput('transforms'),
-        prefix: tl.getInput('transformsPrefix') || rt.Defaults.TransformPrefix,
-        suffix: tl.getInput('transformsSuffix') || rt.Defaults.TransformSuffix
+        enabled: tl.getBoolInput('enableTransforms'),
+        prefix: tl.getInput('transformPrefix') || rt.Defaults.TransformPrefix,
+        suffix: tl.getInput('transformSuffix') || rt.Defaults.TransformSuffix
       }
     };
 
@@ -83,8 +85,8 @@ async function run() {
       await parseVariables(tl.getInput('additionalVariables'), options.root, options.separator)
     );
 
-    const ifNoFilesFound = tl.getInput('ifNoFilesFound') || 'ignore';
-    const logLevelStr = tl.getInput('logLevel') || 'info';
+    const ifNoFilesFound = tl.getInput('actionOnNoFiles') || 'ignore';
+    const logLevelStr = tl.getInput('verbosity') || 'info';
 
     // set telemetry attributes
     telemetryEvent.setAttributes({
@@ -187,11 +189,12 @@ async function run() {
   }
 }
 
-var getChoiceInput = function (name: string, choices: string[]): string {
+var getChoiceInput = function (name: string, choices: string[], alias?: string): string {
+  alias = alias || name;
   const input = tl.getInput(name)?.trim();
   if (!input || choices.includes(input)) return input;
 
-  throw new Error(`Unsupported value for input: ${name}\nSupport input list: '${choices.join(' | ')}'`);
+  throw new Error(`Unsupported value for input: ${alias}\nSupport input list: '${choices.join(' | ')}'`);
 };
 
 var parseVariables = async function (input: string, root: string, separator: string): Promise<{ [key: string]: any }> {
