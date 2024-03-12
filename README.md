@@ -76,7 +76,7 @@ The task was completely rewritten to use the npm package [@qetza/replacetokens](
     # Optional. Default: false
     addBOM: ''
 
-    # A YAML formatted string containing additional variable values.
+    # A YAML formatted string containing additional variable values (keys are case-insensitive).
     # YAML can be:
     #   - an object: properties will be parsed as key/value pairs
     #   - a string starting with '@': value is parsed as multiple glob patterns separated 
@@ -91,11 +91,12 @@ The task was completely rewritten to use the npm package [@qetza/replacetokens](
     # Example:
     # - '@**/*.json;**/*.yml;!**/local/*'
     # - '$COMPUTER_VARS'
-    # -
-    #   var1: '${{ parameters.var1 }}'
+    # - var1: '${{ parameters.var1 }}'
     #
-    # will add all variables from '.json' and '.yml' files except under 'local' directory, 
-    # from the environment variable 'COMPUTER_VARS' and the inline variable 'var1'
+    # will add all variables from:
+    # - '.json' and '.yml' files except under 'local' directory, 
+    # - the environment variable 'COMPUTER_VARS'
+    # - the inline variable 'var1'
     #
     # Optional.
     additionalVariables: ''
