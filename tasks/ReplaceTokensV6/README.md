@@ -214,7 +214,7 @@ The task was completely rewritten to use the npm package [@qetza/replacetokens](
     #
     # Accepted values:
     #   - default: #{ ... }#
-    #   - azurepipelines: $( ... )
+    #   - azpipelines: $( ... )
     #   - custom: token-prefix ... token-suffix
     #   - doublebraces: {{ ... }}
     #   - doubleunderscores: __ ... __
