@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.0.2
+Task 6.0.2
+- Add aliases for renamed inputs to ease upgrade ([#11](https://github.com/qetza/replacetokens-task/issues/11)).
+
 ## 5.0.1
 Task 6.0.1
 - Fix missing default variables due to case-sensitivity ([#8](https://github.com/qetza/replacetokens-task/issues/8)).
@@ -17,7 +21,7 @@ Task 6.0.0
   - renamed input _enableRecursion_ to _recursive_
   - renamed input _rootDirectory_ to _root_
   - renamed _tokenPattern_ value `rm` to `doubleunderscores`
-  - renamed input _writeBOM_ to _addBom_ 
+  - renamed input _writeBOM_ to _addBOM_ 
   - changed _writeBOM_ default value to `false`
   - renamed input _verbosity_ to _logLevel_
     - renamed _verbosity_ value `detailed` to `debug`

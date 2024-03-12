@@ -140,8 +140,6 @@ cp('-Rf', path.join(__dirname, '..', 'images', 'screenshot*.png'), `${packageIma
 
 // update metadata
 var public = process.argv.includes('--public');
-var taskId = public ? undefined : '0664FF86-F509-4392-A33C-B2D9239B9AE5';
-var application = public ? undefined : 'replacetokens-task-dev';
 
 versions.forEach(version => {
   console.log();
@@ -162,24 +160,23 @@ versions.forEach(version => {
   console.log(`> version: ${taskVersion}`);
 
   if (!public) {
-    manifest.friendlyName = `${manifest.friendlyName} (dev ${taskVersion})`;
-
-    console.log(`> friendlyName: ${manifest.friendlyName}`);
-  }
-
-  if (taskId) {
-    manifest.id = taskId;
-
+    manifest.id = '0664FF86-F509-4392-A33C-B2D9239B9AE5';
     console.log(`> id: ${manifest.id}`);
+
+    manifest.name = `${manifest.name}-dev`;
+    console.log(`> name: ${manifest.name}`);
+
+    manifest.friendlyName = `${manifest.friendlyName} (dev ${taskVersion})`;
+    console.log(`> friendlyName: ${manifest.friendlyName}`);
   }
 
   fs.writeFileSync(path.join(packageTaskDir, 'task.json'), JSON.stringify(manifest, null, 2));
 
   var script = fs.readFileSync(path.join(packageTaskDir, 'index.js'), { encoding: 'utf8' });
-  if (application) {
-    script = script.replace(/const\s+application\s*=\s*'[^']*'\s*;/, `const application = '${application}';`);
+  if (!public) {
+    script = script.replace(/const\s+application\s*=\s*'[^']*'\s*;/, `const application = 'replacetokens-task-dev';`);
 
-    console.log(`> application: ${application}`);
+    console.log(`> application: replacetokens-task-dev`);
   }
 
   script = script.replace(/const\s+version\s*=\s*'[^']*'\s*;/, `const version = '${taskVersion}';`);
