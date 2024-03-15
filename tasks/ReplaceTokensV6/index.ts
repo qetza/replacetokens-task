@@ -6,6 +6,7 @@ import * as rt from '@qetza/replacetokens';
 import stripJsonComments from './strip-json-comments';
 import * as telemetry from './telemetry';
 import { SpanStatusCode } from '@opentelemetry/api';
+import * as os from 'os';
 
 async function run() {
   const _debug = console.debug;
@@ -32,9 +33,7 @@ async function run() {
 
   try {
     // read and validate inputs
-    const sources = tl.getDelimitedInput('targetFiles', /\r?\n/);
-    if (sources.length === 0) throw new Error('Input required: sources');
-
+    const sources = getSources();
     const options: rt.Options = {
       addBOM: tl.getBoolInput('writeBOM'),
       encoding: tl.getInput('encoding') || rt.Encodings.Auto,
@@ -188,6 +187,20 @@ async function run() {
     console.groupEnd = _groupEnd;
   }
 }
+
+var getSources = function (): string[] {
+  const sources = tl.getDelimitedInput('targetFiles', /\r?\n/);
+  if (sources.length === 0) throw new Error('Input required: sources');
+
+  // make sources compatible with fast-glob on win32
+  if (os.platform() === 'win32') {
+    for (var i in sources) {
+      sources[i] = sources[i].replace(/\\/g, '/').replace(/\/\/+/g, '/');
+    }
+  }
+
+  return sources;
+};
 
 var getChoiceInput = function (name: string, choices: string[], alias?: string): string {
   alias = alias || name;
