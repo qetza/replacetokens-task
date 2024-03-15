@@ -13,11 +13,11 @@
   "version": {
     "Major": 6,
     "Minor": 0,
-    "Patch": 2
+    "Patch": 3
   },
   "releaseNotes": "breaking changes, see [changelog](https://github.com/qetza/replacetokens-task/blob/master/tasks/ReplaceTokensV6/CHANGELOG.md)",
   "instanceNameFormat": "Replace tokens",
-  "minimumAgentVersion": "2.144.0",
+  "minimumAgentVersion": "2.206.1",
   "groups": [],
   "inputs": [
     {

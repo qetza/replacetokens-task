@@ -1,4 +1,6 @@
 # Changelog
+## 6.0.3
+- Fix minimum agent requirement to `2.206.1` ([#13](https://github.com/qetza/replacetokens-task/issues/13)).
 
 ## 6.0.2
 - Add aliases for renamed inputs to ease upgrade ([#11](https://github.com/qetza/replacetokens-task/issues/11)).
