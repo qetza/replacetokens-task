@@ -1,10 +1,10 @@
 import * as path from 'path';
 import * as ttm from 'azure-pipelines-task-lib/mock-test';
+import * as os from 'os';
 
 require('chai').should();
 
 const data = path.join(__dirname, '..', '..', 'tests', '_data');
-const tmp = path.join(__dirname, '_tmp');
 
 describe('ReplaceTokens v6 L0 suite', function () {
   this.timeout(10000);
@@ -286,6 +286,28 @@ describe('ReplaceTokens v6 L0 suite', function () {
       cleanVariables(Object.keys(vars));
       cleanSecrets(Object.keys(secrets));
     }
+  });
+
+  it('sources: normalize', async () => {
+    // arrange
+    const tp = path.join(__dirname, 'L0_Run.js');
+    const tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
+
+    process.env['__sources__'] = 'D:\\a\\1\\s/test.json';
+
+    // act
+    await tr.runAsync();
+
+    // assert
+    runValidations(() => {
+      tr.succeeded.should.be.true;
+
+      if (os.platform() === 'win32') {
+        tr.stdout.should.include('sources: ["D:/a/1/s/test.json"]');
+      } else {
+        tr.stdout.should.include('sources: ["D:\\\\a\\\\1\\\\s/test.json"]');
+      }
+    }, tr);
   });
 
   it('addBOM', async () => {
