@@ -121,7 +121,7 @@ export function useApplicationInsightsExporter(proxy?: string) {
   provider.addSpanProcessor(new SimpleSpanProcessor(new ApplicationInsightsExporter({ proxy: proxy })));
 }
 
-export function startSpan(name: string, account: string, pipeline: string, host: string) {
+export function startSpan(name: string, account: string, pipeline: string, host: string, os: string) {
   return tracer.startSpan(name, {
     attributes: {
       account: crypto
@@ -132,7 +132,8 @@ export function startSpan(name: string, account: string, pipeline: string, host:
         .createHash('sha256')
         .update(pipeline || '')
         .digest('hex'),
-      host: host
+      host: host,
+      os: os
     }
   });
 }

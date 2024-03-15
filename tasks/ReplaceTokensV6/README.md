@@ -319,6 +319,7 @@ The following **anonymous** data is send:
 - the **hash** of your collection id
 - the **hash** of your project id and pipeline definition id
 - the hosting (`server` or `cloud`)
+- the agent OS (`Windows`, `macOS` or `Linux`)
 - the inputs values for
   - _addBOM_
   - _charsToEscape_

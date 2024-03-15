@@ -13,7 +13,7 @@
   "version": {
     "Major": 5,
     "Minor": 3,
-    "Patch": 0
+    "Patch": 1
   },
   "releaseNotes": "Migrate to Node10 handler (breaking change).<br/>Add Node16 handler.",
   "instanceNameFormat": "Replace tokens in $(targetFiles)",

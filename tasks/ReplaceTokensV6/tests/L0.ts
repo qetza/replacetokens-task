@@ -224,6 +224,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
     process.env['SYSTEM_COLLECTIONID'] = 'col01';
     process.env['SYSTEM_TEAMPROJECTID'] = 'project01';
     process.env['SYSTEM_DEFINITIONID'] = 'def01';
+    process.env['AGENT_OS'] = 'Windows_NT';
 
     try {
       // act
@@ -235,7 +236,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
 
         tr.stdout.should.include('telemetry sent');
         tr.stdout.should.match(
-          /\[\{"name":"\*+","time":"[^"]+","iKey":"\*+","tags":\{"ai\.application\.ver":"6\.\d+\.\d+","ai\.cloud\.role":"cloud","ai\.internal\.sdkVersion":"replacetokens:2\.0\.0","ai\.operation\.id":"[^"]+","ai\.operation\.name":"replacetokens-task","ai\.user\.accountId":"494d0aad9d06c4ddb51d5300620122ce55366a9382b3cc2835ed5f0e2e67b4d0","ai\.user\.authUserId":"b98ed03d3eec376dcc015365c1a944e3ebbcc33d30e3261af3f4e4abb107aa82"},"data":\{"baseType":"EventData","baseData":\{"ver":"2","name":"tokens\.replaced","properties":\{"sources":3,"add-bom":false,"encoding":"auto","escape":"auto","if-no-files-found":"ignore","log-level":"info","missing-var-action":"none","missing-var-default":"","missing-var-log":"warn","recusrive":false,"separator":"\.","token-pattern":"default","transforms":false,"transforms-prefix":"\(","transforms-suffix":"\)","variable-files":0,"variable-envs":0,"inline-variables":0,"output-defaults":1,"output-files":2,"output-replaced":3,"output-tokens":4,"output-transforms":5,"result":"success","duration":\d+(?:\.\d+)?}}}}]/
+          /\[\{"name":"\*+","time":"[^"]+","iKey":"\*+","tags":\{"ai\.application\.ver":"6\.\d+\.\d+","ai\.cloud\.role":"cloud","ai\.internal\.sdkVersion":"replacetokens:2\.0\.0","ai\.operation\.id":"[^"]+","ai\.operation\.name":"replacetokens-task","ai\.user\.accountId":"494d0aad9d06c4ddb51d5300620122ce55366a9382b3cc2835ed5f0e2e67b4d0","ai\.user\.authUserId":"b98ed03d3eec376dcc015365c1a944e3ebbcc33d30e3261af3f4e4abb107aa82"},"data":\{"baseType":"EventData","baseData":\{"ver":"2","name":"tokens\.replaced","properties":\{"os":"Windows","sources":3,"add-bom":false,"encoding":"auto","escape":"auto","if-no-files-found":"ignore","log-level":"info","missing-var-action":"none","missing-var-default":"","missing-var-log":"warn","recusrive":false,"separator":"\.","token-pattern":"default","transforms":false,"transforms-prefix":"\(","transforms-suffix":"\)","variable-files":0,"variable-envs":0,"inline-variables":0,"output-defaults":1,"output-files":2,"output-replaced":3,"output-tokens":4,"output-transforms":5,"result":"success","duration":\d+(?:\.\d+)?}}}}]/
         );
       }, tr);
     } finally {
@@ -243,6 +244,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       delete process.env['SYSTEM_COLLECTIONID'];
       delete process.env['SYSTEM_TEAMPROJECTID'];
       delete process.env['SYSTEM_DEFINITIONID'];
+      delete process.env['AGENT_OS'];
 
       cleanVariables(Object.keys(vars));
       cleanSecrets(Object.keys(secrets));
@@ -263,6 +265,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
     process.env['SYSTEM_COLLECTIONID'] = 'col01';
     process.env['SYSTEM_TEAMPROJECTID'] = 'project01';
     process.env['SYSTEM_DEFINITIONID'] = 'def01';
+    process.env['AGENT_OS'] = 'Windows_NT';
 
     try {
       // act
@@ -274,7 +277,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
 
         tr.stdout.should.include('telemetry sent');
         tr.stdout.should.match(
-          /\[\{"name":"\*+","time":"[^"]+","iKey":"\*+","tags":\{"ai\.application\.ver":"6\.\d+\.\d+","ai\.cloud\.role":"cloud","ai\.internal\.sdkVersion":"replacetokens:2\.0\.0","ai\.operation\.id":"[^"]+","ai\.operation\.name":"replacetokens-task","ai\.user\.accountId":"494d0aad9d06c4ddb51d5300620122ce55366a9382b3cc2835ed5f0e2e67b4d0","ai\.user\.authUserId":"b98ed03d3eec376dcc015365c1a944e3ebbcc33d30e3261af3f4e4abb107aa82"},"data":\{"baseType":"EventData","baseData":\{"ver":"2","name":"tokens\.replaced","properties":\{"result":"failed","duration":\d+(?:\.\d+)?}}}}]/
+          /\[\{"name":"\*+","time":"[^"]+","iKey":"\*+","tags":\{"ai\.application\.ver":"6\.\d+\.\d+","ai\.cloud\.role":"cloud","ai\.internal\.sdkVersion":"replacetokens:2\.0\.0","ai\.operation\.id":"[^"]+","ai\.operation\.name":"replacetokens-task","ai\.user\.accountId":"494d0aad9d06c4ddb51d5300620122ce55366a9382b3cc2835ed5f0e2e67b4d0","ai\.user\.authUserId":"b98ed03d3eec376dcc015365c1a944e3ebbcc33d30e3261af3f4e4abb107aa82"},"data":\{"baseType":"EventData","baseData":\{"ver":"2","name":"tokens\.replaced","properties":\{"os":"Windows","result":"failed","duration":\d+(?:\.\d+)?}}}}]/
         );
       }, tr);
     } finally {
@@ -282,6 +285,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       delete process.env['SYSTEM_COLLECTIONID'];
       delete process.env['SYSTEM_TEAMPROJECTID'];
       delete process.env['SYSTEM_DEFINITIONID'];
+      delete process.env['AGENT_OS'];
 
       cleanVariables(Object.keys(vars));
       cleanSecrets(Object.keys(secrets));

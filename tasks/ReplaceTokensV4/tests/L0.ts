@@ -56,6 +56,7 @@ describe('ReplaceTokens v4 L0 suite', function () {
     process.env['SYSTEM_COLLECTIONID'] = 'col01';
     process.env['SYSTEM_TEAMPROJECTID'] = 'project01';
     process.env['SYSTEM_DEFINITIONID'] = 'def01';
+    process.env['AGENT_OS'] = 'Windows_NT';
 
     if (fs.existsSync(tmp)) removeFolder(tmp);
 
@@ -67,6 +68,7 @@ describe('ReplaceTokens v4 L0 suite', function () {
     delete process.env['SYSTEM_COLLECTIONID'];
     delete process.env['SYSTEM_TEAMPROJECTID'];
     delete process.env['SYSTEM_DEFINITIONID'];
+    delete process.env['AGENT_OS'];
   });
 
   afterEach(() => {
@@ -165,7 +167,7 @@ describe('ReplaceTokens v4 L0 suite', function () {
 
           tr.stdout.should.include('telemetry sent');
           tr.stdout.should.match(
-            /\{"name":"Microsoft\.ApplicationInsights\.Dev\.\*+\.Event","time":"[^"]+","iKey":"\*+","tags":\{"ai\.application\.ver":"4\.\d+\.\d+","ai\.cloud\.role":"server","ai\.internal\.sdkVersion":"replacetokens:1\.0\.0","ai\.operation\.id":"([^"]+)","ai\.operation\.name":"replacetokens-task","ai\.operation\.parentId":"\|\1","ai\.user\.accountId":"494d0aad9d06c4ddb51d5300620122ce55366a9382b3cc2835ed5f0e2e67b4d0","ai\.user\.authUserId":"b98ed03d3eec376dcc015365c1a944e3ebbcc33d30e3261af3f4e4abb107aa82"},"data":\{"baseType":"EventData","baseData":\{"ver":"2","name":"tokens\.replaced","properties":\{"preview":false,"pipelineType":"build","result":"failed"}}}}/
+            /\{"name":"Microsoft\.ApplicationInsights\.Dev\.\*+\.Event","time":"[^"]+","iKey":"\*+","tags":\{"ai\.application\.ver":"4\.\d+\.\d+","ai\.cloud\.role":"server","ai\.internal\.sdkVersion":"replacetokens:1\.0\.0","ai\.operation\.id":"([^"]+)","ai\.operation\.name":"replacetokens-task","ai\.operation\.parentId":"\|\1","ai\.user\.accountId":"494d0aad9d06c4ddb51d5300620122ce55366a9382b3cc2835ed5f0e2e67b4d0","ai\.user\.authUserId":"b98ed03d3eec376dcc015365c1a944e3ebbcc33d30e3261af3f4e4abb107aa82"},"data":\{"baseType":"EventData","baseData":\{"ver":"2","name":"tokens\.replaced","properties":\{"preview":false,"pipelineType":"build","result":"failed","os":"Windows"}}}}/
           );
         },
         tr,
@@ -190,7 +192,7 @@ describe('ReplaceTokens v4 L0 suite', function () {
 
           tr.stdout.should.include('telemetry sent');
           tr.stdout.should.match(
-            /\{"name":"Microsoft\.ApplicationInsights\.Dev\.\*+\.Event","time":"[^"]+","iKey":"\*+","tags":\{"ai\.application\.ver":"4\.\d+\.\d+","ai\.cloud\.role":"server","ai\.internal\.sdkVersion":"replacetokens:1\.0\.0","ai\.operation\.id":"([^"]+)","ai\.operation\.name":"replacetokens-task","ai\.operation\.parentId":"\|\1","ai\.user\.accountId":"494d0aad9d06c4ddb51d5300620122ce55366a9382b3cc2835ed5f0e2e67b4d0","ai\.user\.authUserId":"b98ed03d3eec376dcc015365c1a944e3ebbcc33d30e3261af3f4e4abb107aa82"},"data":\{"baseType":"EventData","baseData":\{"ver":"2","name":"tokens\.replaced","properties":\{"preview":false,"pipelineType":"build","result":"succeed","tokenPrefix":"#{","tokenSuffix":"}#","pattern":"#\\\\{\\\\s\*\(\(\?:\(\?!#\\\\{\)\(\?!\\\\s\*\\\\}#\)\.\)\*\)\\\\s\*\\\\}#","encoding":"auto","keepToken":false,"actionOnMissing":"warn","writeBOM":true,"verbosity":"normal","variableFiles":0,"rules":1,"rulesWithInputWildcard":0,"rulesWithOutputPattern":0,"rulesWithNegativePattern":0,"duration":\d+(?:\.\d+)?,"tokenReplaced":1,"tokenFound":1,"fileProcessed":1,"useLegacyPattern":false,"enableTransforms":false,"transformPrefix":"\(","transformSuffix":"\)","transformPattern":"\\\\s\*\(\.\*\)\\\\\(\\\\s\*\(\(\?:\(\?!\\\\\(\)\(\?!\\\\s\*\\\\\)\)\.\)\*\)\\\\s\*\\\\\)\\\\s\*","transformExecuted":0,"defaultValue":"","defaultValueReplaced":0,"tokenPattern":"default","actionOnNoFiles":"continue","inlineVariables":0,"enableRecursion":false,"useLegacyEmptyFeature":false,"useDefaultValue":false}}}}/
+            /\{"name":"Microsoft\.ApplicationInsights\.Dev\.\*+\.Event","time":"[^"]+","iKey":"\*+","tags":\{"ai\.application\.ver":"4\.\d+\.\d+","ai\.cloud\.role":"server","ai\.internal\.sdkVersion":"replacetokens:1\.0\.0","ai\.operation\.id":"([^"]+)","ai\.operation\.name":"replacetokens-task","ai\.operation\.parentId":"\|\1","ai\.user\.accountId":"494d0aad9d06c4ddb51d5300620122ce55366a9382b3cc2835ed5f0e2e67b4d0","ai\.user\.authUserId":"b98ed03d3eec376dcc015365c1a944e3ebbcc33d30e3261af3f4e4abb107aa82"},"data":\{"baseType":"EventData","baseData":\{"ver":"2","name":"tokens\.replaced","properties":\{"preview":false,"pipelineType":"build","result":"succeed","tokenPrefix":"#{","tokenSuffix":"}#","pattern":"#\\\\{\\\\s\*\(\(\?:\(\?!#\\\\{\)\(\?!\\\\s\*\\\\}#\)\.\)\*\)\\\\s\*\\\\}#","encoding":"auto","keepToken":false,"actionOnMissing":"warn","writeBOM":true,"verbosity":"normal","variableFiles":0,"rules":1,"rulesWithInputWildcard":0,"rulesWithOutputPattern":0,"rulesWithNegativePattern":0,"duration":\d+(?:\.\d+)?,"tokenReplaced":1,"tokenFound":1,"fileProcessed":1,"useLegacyPattern":false,"enableTransforms":false,"transformPrefix":"\(","transformSuffix":"\)","transformPattern":"\\\\s\*\(\.\*\)\\\\\(\\\\s\*\(\(\?:\(\?!\\\\\(\)\(\?!\\\\s\*\\\\\)\)\.\)\*\)\\\\s\*\\\\\)\\\\s\*","transformExecuted":0,"defaultValue":"","defaultValueReplaced":0,"tokenPattern":"default","actionOnNoFiles":"continue","inlineVariables":0,"enableRecursion":false,"useLegacyEmptyFeature":false,"useDefaultValue":false,"os":"Windows"}}}}/
           );
         },
         tr,
