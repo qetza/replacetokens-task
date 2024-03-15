@@ -305,7 +305,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       if (os.platform() === 'win32') {
         tr.stdout.should.include('sources: ["D:/a/1/s/test.json"]');
       } else {
-        tr.stdout.should.include('sources: ["D:\\a\\1\\s/test.json"]');
+        tr.stdout.should.include('sources: ["D:\\\\a\\\\1\\\\s/test.json"]');
       }
     }, tr);
   });
