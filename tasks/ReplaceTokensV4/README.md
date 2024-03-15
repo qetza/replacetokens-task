@@ -278,6 +278,7 @@ The following **anonymous** data is send:
 - the **hash** of your project id and pipeline definition id
 - the pipeline type (`build` or `release`)
 - the hosting (`server` or `services`)
+- the agent OS (`Windows`, `macOS` or `Linux`)
 - the input values for
   - _actionOnMissing_
   - _charsToEscape_

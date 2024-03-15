@@ -28,7 +28,20 @@ async function run() {
     'run',
     tl.getVariable('system.collectionid'),
     `${tl.getVariable('system.teamprojectid')}${tl.getVariable('system.definitionid')}`,
-    !serverType || serverType.toLowerCase() !== 'hosted' ? 'server' : 'cloud'
+    !serverType || serverType.toLowerCase() !== 'hosted' ? 'server' : 'cloud',
+    (() => {
+      const os = tl.getVariable('Agent.OS');
+      switch (os) {
+        case 'Windows_NT':
+          return 'Windows';
+        case 'Darwin':
+          return 'macOS';
+        case 'Linux':
+          return 'Linux';
+        default:
+          return os || 'unknown';
+      }
+    })()
   );
 
   try {

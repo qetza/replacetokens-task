@@ -1,5 +1,8 @@
 # Changelog
 
+## 4.4.1
+- Add agent OS in telemetry ([#5](https://github.com/qetza/replacetokens-task/issues/5)).
+
 ## 4.4.0
 - Add support for `indent` transformation with indent size and indent first line parameters ([326](https://github.com/qetza/vsts-replacetokens-task/issues/326)).
 - Add support for `REPLACETOKENS_TELEMETRY_OPTOUT` environment variable.

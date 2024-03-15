@@ -519,6 +519,19 @@ async function run() {
       .digest('hex');
     telemetryEvent.pipelineType = tl.getVariable('release.releaseid') ? 'release' : 'build';
     telemetryEvent.serverType = !serverType || serverType.toLowerCase() !== 'hosted' ? 'server' : 'cloud';
+    telemetryEvent.os = (() => {
+      const os = tl.getVariable('Agent.OS');
+      switch (os) {
+        case 'Windows_NT':
+          return 'Windows';
+        case 'Darwin':
+          return 'macOS';
+        case 'Linux':
+          return 'Linux';
+        default:
+          return os || 'unknown';
+      }
+    })();
 
     // load inputs
     const root: string = tl.getPathInput('rootDirectory', false, true);

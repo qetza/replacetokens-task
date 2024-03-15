@@ -4,6 +4,16 @@
 Task 6.0.3
 - Fix minimum agent requirement to `2.206.1` ([#13](https://github.com/qetza/replacetokens-task/issues/13)).
 - Fix paths in sources incompatible with `fast-glob` syntax on win32 ([#16](https://github.com/qetza/replacetokens-task/issues/16)).
+- Add agent OS in telemetry ([#5](https://github.com/qetza/replacetokens-task/issues/5)).
+
+Task 5.3.1
+- Add agent OS in telemetry ([#5](https://github.com/qetza/replacetokens-task/issues/5)).
+
+Task 4.4.1
+- Add agent OS in telemetry ([#5](https://github.com/qetza/replacetokens-task/issues/5)).
+
+Task 3.12.1
+- Add agent OS in telemetry ([#5](https://github.com/qetza/replacetokens-task/issues/5)).
 
 ## 5.0.2
 Task 6.0.2
