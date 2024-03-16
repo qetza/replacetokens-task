@@ -1,4 +1,7 @@
 # Changelog
+## 5.0.4
+Task 6.0.4
+- Update @qetza/replacetokens to 1.4.0.
 
 ## 5.0.3
 Task 6.0.3

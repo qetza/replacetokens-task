@@ -1,4 +1,7 @@
 # Changelog
+## 6.0.4
+- Update @qetza/replacetokens to 1.4.0.
+
 ## 6.0.3
 - Fix minimum agent requirement to `2.206.1` ([#13](https://github.com/qetza/replacetokens-task/issues/13)).
 - Fix paths in sources incompatible with `fast-glob` syntax on win32 ([#16](https://github.com/qetza/replacetokens-task/issues/16)).

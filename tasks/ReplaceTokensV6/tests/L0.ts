@@ -109,7 +109,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.failed.should.be.true;
 
       tr.stdout.should.include(
-        "##vso[task.complete result=Failed;]Error: Unsupported value for input: escape%0ASupport input list: 'auto | custom | json | off | xml'"
+        "##vso[task.complete result=Failed;]Error: Unsupported value for input: escape. Support input list: 'auto | custom | json | off | xml'"
       );
     }, tr);
   });
@@ -130,7 +130,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.failed.should.be.true;
 
       tr.stdout.should.include(
-        "##vso[task.complete result=Failed;]Error: Unsupported value for input: missingVarAction%0ASupport input list: 'keep | none | replace'"
+        "##vso[task.complete result=Failed;]Error: Unsupported value for input: missingVarAction. Support input list: 'keep | none | replace'"
       );
     }, tr);
   });
@@ -151,7 +151,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.failed.should.be.true;
 
       tr.stdout.should.include(
-        "##vso[task.complete result=Failed;]Error: Unsupported value for input: missingVarLog%0ASupport input list: 'error | off | warn'"
+        "##vso[task.complete result=Failed;]Error: Unsupported value for input: missingVarLog. Support input list: 'error | off | warn'"
       );
     }, tr);
   });
@@ -172,7 +172,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.failed.should.be.true;
 
       tr.stdout.should.include(
-        "##vso[task.complete result=Failed;]Error: Unsupported value for input: tokenPattern%0ASupport input list: 'azpipelines | custom | default | doublebraces | doubleunderscores | githubactions | octopus'"
+        "##vso[task.complete result=Failed;]Error: Unsupported value for input: tokenPattern. Support input list: 'azpipelines | custom | default | doublebraces | doubleunderscores | githubactions | octopus'"
       );
     }, tr);
   });
@@ -349,9 +349,9 @@ describe('ReplaceTokens v6 L0 suite', function () {
 
     // assert
     runValidations(() => {
-      tr.stdout.should.include(`##vso[task.debug]loading variables from file '${path.join(data, 'vars.jsonc').replace(/\\/g, '/')}'`);
-      tr.stdout.should.include(`##vso[task.debug]loading variables from file '${path.join(data, 'vars.yml').replace(/\\/g, '/')}'`);
-      tr.stdout.should.include(`##vso[task.debug]loading variables from file '${path.join(data, 'vars.yaml').replace(/\\/g, '/')}'`);
+      tr.stdout.should.include(`##vso[task.debug]loading variables from file '${path.join(data, 'vars.jsonc')}'`);
+      tr.stdout.should.include(`##vso[task.debug]loading variables from file '${path.join(data, 'vars.yml')}'`);
+      tr.stdout.should.include(`##vso[task.debug]loading variables from file '${path.join(data, 'vars.yaml')}'`);
 
       tr.stdout.should.include('variables: {"VAR_JSON":"file","VAR_YAML1":"file","VAR_YAML2":"file","VAR_YML1":"file","VAR_YML2":"file"}');
     }, tr);
@@ -371,7 +371,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
 
     // assert
     runValidations(() => {
-      tr.stdout.should.include("##vso[task.debug]loading variables from environment variable '__VARS__'");
+      tr.stdout.should.include("##vso[task.debug]loading variables from env '__VARS__'");
 
       tr.stdout.should.include('variables: {"VAR1":"value1","VAR2":"value2"}');
     }, tr);

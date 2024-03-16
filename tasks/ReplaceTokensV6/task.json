@@ -13,7 +13,7 @@
   "version": {
     "Major": 6,
     "Minor": 0,
-    "Patch": 3
+    "Patch": 4
   },
   "releaseNotes": "breaking changes, see [changelog](https://github.com/qetza/replacetokens-task/blob/master/tasks/ReplaceTokensV6/CHANGELOG.md)",
   "instanceNameFormat": "Replace tokens",
