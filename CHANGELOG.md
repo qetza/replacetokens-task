@@ -1,4 +1,17 @@
 # Changelog
+## 5.0.4
+Task 6.0.4
+- Update @qetza/replacetokens to 1.4.0.
+- Change telemetry provider.
+
+Task 5.3.2
+- Change telemetry provider.
+
+Task 4.4.2
+- Change telemetry provider.
+
+Task 3.12.2
+- Change telemetry provider.
 
 ## 5.0.3
 Task 6.0.3

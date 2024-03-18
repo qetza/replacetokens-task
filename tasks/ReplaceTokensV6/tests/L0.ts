@@ -109,7 +109,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.failed.should.be.true;
 
       tr.stdout.should.include(
-        "##vso[task.complete result=Failed;]Error: Unsupported value for input: escape%0ASupport input list: 'auto | custom | json | off | xml'"
+        "##vso[task.complete result=Failed;]Error: Unsupported value for input: escape. Support input list: 'auto | custom | json | off | xml'"
       );
     }, tr);
   });
@@ -130,7 +130,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.failed.should.be.true;
 
       tr.stdout.should.include(
-        "##vso[task.complete result=Failed;]Error: Unsupported value for input: missingVarAction%0ASupport input list: 'keep | none | replace'"
+        "##vso[task.complete result=Failed;]Error: Unsupported value for input: missingVarAction. Support input list: 'keep | none | replace'"
       );
     }, tr);
   });
@@ -151,7 +151,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.failed.should.be.true;
 
       tr.stdout.should.include(
-        "##vso[task.complete result=Failed;]Error: Unsupported value for input: missingVarLog%0ASupport input list: 'error | off | warn'"
+        "##vso[task.complete result=Failed;]Error: Unsupported value for input: missingVarLog. Support input list: 'error | off | warn'"
       );
     }, tr);
   });
@@ -172,7 +172,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.failed.should.be.true;
 
       tr.stdout.should.include(
-        "##vso[task.complete result=Failed;]Error: Unsupported value for input: tokenPattern%0ASupport input list: 'azpipelines | custom | default | doublebraces | doubleunderscores | githubactions | octopus'"
+        "##vso[task.complete result=Failed;]Error: Unsupported value for input: tokenPattern. Support input list: 'azpipelines | custom | default | doublebraces | doubleunderscores | githubactions | octopus'"
       );
     }, tr);
   });
@@ -236,7 +236,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
 
         tr.stdout.should.include('telemetry sent');
         tr.stdout.should.match(
-          /\[\{"name":"\*+","time":"[^"]+","iKey":"\*+","tags":\{"ai\.application\.ver":"6\.\d+\.\d+","ai\.cloud\.role":"cloud","ai\.internal\.sdkVersion":"replacetokens:2\.0\.0","ai\.operation\.id":"[^"]+","ai\.operation\.name":"replacetokens-task","ai\.user\.accountId":"494d0aad9d06c4ddb51d5300620122ce55366a9382b3cc2835ed5f0e2e67b4d0","ai\.user\.authUserId":"b98ed03d3eec376dcc015365c1a944e3ebbcc33d30e3261af3f4e4abb107aa82"},"data":\{"baseType":"EventData","baseData":\{"ver":"2","name":"tokens\.replaced","properties":\{"os":"Windows","sources":3,"add-bom":false,"encoding":"auto","escape":"auto","if-no-files-found":"ignore","log-level":"info","missing-var-action":"none","missing-var-default":"","missing-var-log":"warn","recusrive":false,"separator":"\.","token-pattern":"default","transforms":false,"transforms-prefix":"\(","transforms-suffix":"\)","variable-files":0,"variable-envs":0,"inline-variables":0,"output-defaults":1,"output-files":2,"output-replaced":3,"output-tokens":4,"output-transforms":5,"result":"success","duration":\d+(?:\.\d+)?}}}}]/
+          /\[\{"eventType":"TokensReplaced","application":"replacetokens-task","version":"6.0.0","account":"494d0aad9d06c4ddb51d5300620122ce55366a9382b3cc2835ed5f0e2e67b4d0","pipeline":"b98ed03d3eec376dcc015365c1a944e3ebbcc33d30e3261af3f4e4abb107aa82","host":"cloud","os":"Windows","sources":3,"add-bom":false,"encoding":"auto","escape":"auto","if-no-files-found":"ignore","log-level":"info","missing-var-action":"none","missing-var-default":"","missing-var-log":"warn","recusrive":false,"separator":".","token-pattern":"default","transforms":false,"transforms-prefix":"\(","transforms-suffix":"\)","variable-files":0,"variable-envs":0,"inline-variables":0,"output-defaults":1,"output-files":2,"output-replaced":3,"output-tokens":4,"output-transforms":5,"result":"success","duration":\d+(?:\.\d+)?}]/
         );
       }, tr);
     } finally {
@@ -277,7 +277,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
 
         tr.stdout.should.include('telemetry sent');
         tr.stdout.should.match(
-          /\[\{"name":"\*+","time":"[^"]+","iKey":"\*+","tags":\{"ai\.application\.ver":"6\.\d+\.\d+","ai\.cloud\.role":"cloud","ai\.internal\.sdkVersion":"replacetokens:2\.0\.0","ai\.operation\.id":"[^"]+","ai\.operation\.name":"replacetokens-task","ai\.user\.accountId":"494d0aad9d06c4ddb51d5300620122ce55366a9382b3cc2835ed5f0e2e67b4d0","ai\.user\.authUserId":"b98ed03d3eec376dcc015365c1a944e3ebbcc33d30e3261af3f4e4abb107aa82"},"data":\{"baseType":"EventData","baseData":\{"ver":"2","name":"tokens\.replaced","properties":\{"os":"Windows","result":"failed","duration":\d+(?:\.\d+)?}}}}]/
+          /\[\{"eventType":"TokensReplaced","application":"replacetokens-task","version":"6.0.0","account":"494d0aad9d06c4ddb51d5300620122ce55366a9382b3cc2835ed5f0e2e67b4d0","pipeline":"b98ed03d3eec376dcc015365c1a944e3ebbcc33d30e3261af3f4e4abb107aa82","host":"cloud","os":"Windows","result":"failed","duration":\d+(?:\.\d+)?}]/
         );
       }, tr);
     } finally {
@@ -349,9 +349,9 @@ describe('ReplaceTokens v6 L0 suite', function () {
 
     // assert
     runValidations(() => {
-      tr.stdout.should.include(`##vso[task.debug]loading variables from file '${path.join(data, 'vars.jsonc').replace(/\\/g, '/')}'`);
-      tr.stdout.should.include(`##vso[task.debug]loading variables from file '${path.join(data, 'vars.yml').replace(/\\/g, '/')}'`);
-      tr.stdout.should.include(`##vso[task.debug]loading variables from file '${path.join(data, 'vars.yaml').replace(/\\/g, '/')}'`);
+      tr.stdout.should.include(`##vso[task.debug]loading variables from file '${path.join(data, 'vars.jsonc')}'`);
+      tr.stdout.should.include(`##vso[task.debug]loading variables from file '${path.join(data, 'vars.yml')}'`);
+      tr.stdout.should.include(`##vso[task.debug]loading variables from file '${path.join(data, 'vars.yaml')}'`);
 
       tr.stdout.should.include('variables: {"VAR_JSON":"file","VAR_YAML1":"file","VAR_YAML2":"file","VAR_YML1":"file","VAR_YML2":"file"}');
     }, tr);
@@ -371,7 +371,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
 
     // assert
     runValidations(() => {
-      tr.stdout.should.include("##vso[task.debug]loading variables from environment variable '__VARS__'");
+      tr.stdout.should.include("##vso[task.debug]loading variables from env '__VARS__'");
 
       tr.stdout.should.include('variables: {"VAR1":"value1","VAR2":"value2"}');
     }, tr);

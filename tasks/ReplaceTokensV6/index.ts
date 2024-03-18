@@ -1,9 +1,6 @@
 import * as tl from 'azure-pipelines-task-lib';
-import * as path from 'path';
 import * as yaml from 'js-yaml';
-import * as fg from 'fast-glob';
 import * as rt from '@qetza/replacetokens';
-import stripJsonComments from './strip-json-comments';
 import * as telemetry from './telemetry';
 import { SpanStatusCode } from '@opentelemetry/api';
 import * as os from 'os';
@@ -20,7 +17,7 @@ async function run() {
     !tl.getBoolInput('telemetryOptout') &&
     !['true', '1'].includes(process.env['REPLACETOKENS_TELEMETRY_OPTOUT'] || process.env['REPLACETOKENS_DISABLE_TELEMETRY'])
   ) {
-    telemetry.useApplicationInsightsExporter(tl.getHttpProxyConfiguration()?.proxyUrl);
+    telemetry.enableTelemetry(tl.getHttpProxyConfiguration()?.proxyUrl);
   }
 
   const serverType = tl.getVariable('System.ServerType');
@@ -88,17 +85,45 @@ async function run() {
       }
     };
 
-    const variables = rt.flattenAndMerge(
-      options.separator,
-      tl.getVariables().reduce((result, current) => {
-        result[current.name] = current.value;
-        return result;
-      }, {}),
-      await parseVariables(tl.getInput('additionalVariables'), options.root, options.separator)
-    );
-
     const ifNoFilesFound = tl.getInput('actionOnNoFiles') || 'ignore';
     const logLevelStr = tl.getInput('verbosity') || 'info';
+
+    // override console logs
+    const logLevel = parseLogLevel(logLevelStr);
+    console.debug = function (...args: any[]) {
+      tl.debug(args.join(' ')); // always debug to core
+
+      if (logLevel === LogLevel.Debug) console.log(args.join(' ')); // log as info to be independant of core switch
+    };
+    console.info = function (...args: any[]) {
+      if (logLevel < LogLevel.Warn) console.log(args.join(' '));
+    };
+    console.warn = function (...args: any[]) {
+      if (logLevel < LogLevel.Error) tl.warning(args.join(' '));
+    };
+    console.error = function (...args: any[]) {
+      tl.setResult(tl.TaskResult.Failed, args.join(' ')); // always set failure on error
+    };
+    console.group = function (...args: any[]) {
+      console.info('##[group] ' + args.join(' '));
+    };
+    console.groupEnd = function () {
+      console.info('##[endgroup]');
+    };
+
+    // load variables
+    const variables = await rt.parseVariables(
+      [
+        JSON.stringify(
+          tl.getVariables().reduce((result, current) => {
+            result[current.name] = current.value;
+            return result;
+          }, {})
+        ),
+        ...getAdditionalVariables()
+      ],
+      { normalizeWin32: true, root: options.root, separator: options.separator }
+    );
 
     // set telemetry attributes
     telemetryEvent.setAttributes({
@@ -125,29 +150,6 @@ async function run() {
       'variable-envs': variablesEnvCount,
       'inline-variables': inlineVariablesCount
     });
-
-    // override console logs
-    const logLevel = parseLogLevel(logLevelStr);
-    console.debug = function (...args: any[]) {
-      tl.debug(args.join(' ')); // always debug to core
-
-      if (logLevel === LogLevel.Debug) console.log(args.join(' ')); // log as info to be independant of core switch
-    };
-    console.info = function (...args: any[]) {
-      if (logLevel < LogLevel.Warn) console.log(args.join(' '));
-    };
-    console.warn = function (...args: any[]) {
-      if (logLevel < LogLevel.Error) tl.warning(args.join(' '));
-    };
-    console.error = function (...args: any[]) {
-      tl.setResult(tl.TaskResult.Failed, args.join(' ')); // always set failure on error
-    };
-    console.group = function (...args: any[]) {
-      console.info('##[group] ' + args.join(' '));
-    };
-    console.groupEnd = function () {
-      console.info('##[endgroup]');
-    };
 
     // replace tokens
     const result = await rt.replaceTokens(sources, variables, options);
@@ -220,100 +222,64 @@ var getChoiceInput = function (name: string, choices: string[], alias?: string):
   const input = tl.getInput(name)?.trim();
   if (!input || choices.includes(input)) return input;
 
-  throw new Error(`Unsupported value for input: ${alias}\nSupport input list: '${choices.join(' | ')}'`);
-};
-
-var parseVariables = async function (input: string, root: string, separator: string): Promise<{ [key: string]: any }> {
-  input = input || '';
-  if (!input) return {};
-
-  switch (input[0]) {
-    case '@': // single string referencing a file
-      return await loadVariablesFromFile(input.substring(1), root, separator);
-
-    case '$': // single string referencing environment variable
-      return loadVariablesFromEnv(input.substring(1));
-
-    default: // yaml format
-      return await loadVariablesFromYaml(input, root, separator);
-  }
+  throw new Error(`Unsupported value for input: ${alias}. Support input list: '${choices.join(' | ')}'`);
 };
 
 var variableFilesCount = 0;
-var loadVariablesFromFile = async function (name: string, root: string, separator: string): Promise<{ [key: string]: any }> {
-  var files = await fg.glob(
-    name.split(';').map(v => v.trim()),
-    {
-      absolute: true,
-      cwd: root,
-      onlyFiles: true,
-      unique: true
-    }
-  );
-
-  const vars: { [key: string]: any }[] = [];
-  for (const file of files) {
-    tl.debug(`loading variables from file '${file}'`);
-
-    const extension: string = path.extname(file).toLowerCase();
-    const content = (await rt.readTextFile(file)).content;
-
-    if (['.yml', '.yaml'].includes(extension)) {
-      yaml.loadAll(content, (v: any) => {
-        vars.push(v);
-      });
-    } else {
-      vars.push(JSON.parse(stripJsonComments(content)));
-    }
-
-    ++variableFilesCount;
-  }
-
-  return rt.flattenAndMerge(separator, ...vars);
-};
-
 var variablesEnvCount = 0;
-var loadVariablesFromEnv = function (name: string): { [key: string]: any } {
-  tl.debug(`loading variables from environment variable '${name}'`);
+var inlineVariablesCount = 0;
+var getAdditionalVariables = function (): string[] {
+  const input = tl.getInput('additionalVariables') || '';
+  if (!input) return [];
 
-  ++variablesEnvCount;
+  switch (input[0]) {
+    case '@': // single string referencing a file
+      ++variableFilesCount;
+      return [input];
 
-  return JSON.parse(stripJsonComments(process.env[name] || '{}'));
+    case '$': // single string referencing environment variable
+      ++variablesEnvCount;
+      return [input];
+
+    default: // yaml format
+      return getAdditionalVariablesFromYaml(input);
+  }
 };
 
-var inlineVariablesCount = 0;
-var loadVariablesFromYaml = async function (input: string, root: string, separator: string): Promise<{ [key: string]: any }> {
+var getAdditionalVariablesFromYaml = function (input: string): string[] {
   const variables = yaml.load(input);
-  const load = async (v: any) => {
+  const load = (v: any): string => {
     if (typeof v === 'string') {
       switch (v[0]) {
         case '@':
-          return await loadVariablesFromFile(v.substring(1), root, separator);
+          ++variableFilesCount;
+          return v;
 
         case '$':
-          return loadVariablesFromEnv(v.substring(1));
+          ++variablesEnvCount;
+          return v;
 
         default:
-          throw new Error("Unsupported value for: additionalVariables\nString values must starts with '@' (file path) or '$' (environment variable)");
+          throw new Error("Unsupported value for: additionalVariables. String values must starts with '@' (file path) or '$' (environment variable)");
       }
     }
 
     inlineVariablesCount += Object.keys(v).length;
 
-    return v;
+    return JSON.stringify(v);
   };
 
   if (Array.isArray(variables)) {
     // merge items
-    const vars: { [key: string]: any }[] = [];
+    const vars: string[] = [];
     for (let v of variables) {
-      vars.push(await load(v));
+      vars.push(load(v));
     }
 
-    return rt.flattenAndMerge(separator, ...vars);
+    return vars;
   }
 
-  return await load(variables);
+  return [load(variables)];
 };
 
 enum LogLevel {
@@ -322,7 +288,7 @@ enum LogLevel {
   Warn,
   Error
 }
-function parseLogLevel(level: string): LogLevel {
+var parseLogLevel = function (level: string): LogLevel {
   switch (level) {
     case 'debug':
       return LogLevel.Debug;
@@ -335,6 +301,6 @@ function parseLogLevel(level: string): LogLevel {
     default:
       return LogLevel.Info;
   }
-}
+};
 
 run();

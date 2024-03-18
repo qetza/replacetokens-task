@@ -3,85 +3,26 @@ import url = require('url');
 import http = require('http');
 import https = require('https');
 
-const instrumentationKey = 'e18a8793-c093-46f9-8c3b-433c9553eb7f';
-const preview = false;
-const version = '3.5.0';
-const sdkVersion = 'replacetokens:1.0.0';
 const application = 'replacetokens-task';
-const eventName = 'tokens.replaced';
-const telemetryUrl = 'https://westeurope-5.in.applicationinsights.azure.com/v2/track';
+const version = '3.0.0';
+const endpoint = 'https://insights-collector.eu01.nr-data.net/v1/accounts/4392697/events';
+const key = 'eu01xxc28887c2d47d9719ed24a74df5FFFFNRAL';
 const timeout = 3000;
 
-export default function trackEvent(event: TelemetryEvent, proxyUrl?: string): string {
+export default function trackEvent(event: TelemetryEvent, proxy?: string): string | undefined {
   try {
     // create event payload
-    let operationId: string = crypto.randomBytes(16).toString('hex');
-    let body = {
-      name: 'Microsoft.ApplicationInsights.Dev.' + instrumentationKey + '.Event',
-      time: new Date().toISOString(),
-      iKey: instrumentationKey,
-      tags: {
-        'ai.application.ver': version,
-        'ai.cloud.role': event.serverType,
-        'ai.internal.sdkVersion': sdkVersion,
-        'ai.operation.id': operationId,
-        'ai.operation.name': application,
-        'ai.operation.parentId': '|' + operationId,
-        'ai.user.accountId': event.account,
-        'ai.user.authUserId': event.pipeline
-      },
-      data: {
-        baseType: 'EventData',
-        baseData: {
-          ver: '2',
-          name: eventName,
-          properties: {
-            preview: preview,
-            pipelineType: event.pipelineType,
-            result: event.result,
-            tokenPrefix: event.tokenPrefix,
-            tokenSuffix: event.tokenSuffix,
-            pattern: event.pattern,
-            encoding: event.encoding,
-            keepToken: event.keepToken,
-            actionOnMissing: event.actionOnMissing,
-            writeBOM: event.writeBOM,
-            emptyValue: event.emptyValue,
-            escapeType: event.escapeType,
-            escapeChar: event.escapeChar,
-            charsToEscape: event.charsToEscape,
-            verbosity: event.verbosity,
-            variableFiles: event.variableFiles,
-            variableSeparator: event.variableSeparator,
-            rules: event.rules,
-            rulesWithInputWildcard: event.rulesWithInputWildcard,
-            rulesWithOutputPattern: event.rulesWithOutputPattern,
-            rulesWithNegativePattern: event.rulesWithNegativePattern,
-            duration: event.duration,
-            tokenReplaced: event.tokenReplaced,
-            tokenFound: event.tokenFound,
-            fileProcessed: event.fileProcessed,
-            useLegacyPattern: event.useLegacyPattern,
-            enableTransforms: event.enableTransforms,
-            transformPrefix: event.transformPrefix,
-            transformSuffix: event.transformSuffix,
-            transformPattern: event.transformPattern,
-            transformExecuted: event.transformExecuted,
-            defaultValue: event.defaultValue,
-            defaultValueReplaced: event.defaultValueReplaced,
-            actionOnNoFiles: event.actionOnNoFiles,
-            inlineVariables: event.inlineVariables,
-            enableRecursion: event.enableRecursion,
-            useLegacyEmptyFeature: event.useLegacyEmptyFeature,
-            useDefaultValue: event.useDefaultValue,
-            os: event.os
-          }
-        }
+    let body = [
+      {
+        ...event,
+        eventType: 'TokensReplaced',
+        application: application,
+        version: version
       }
-    };
+    ];
 
     // send event
-    let telemetryUrlParsed = url.parse(telemetryUrl);
+    let telemetryUrlParsed = url.parse(endpoint);
     let options = {
       method: 'POST',
       host: telemetryUrlParsed.hostname,
@@ -90,29 +31,30 @@ export default function trackEvent(event: TelemetryEvent, proxyUrl?: string): st
       withCredentials: false,
       timeout: timeout,
       headers: <{ [key: string]: string }>{
+        'Api-Key': key,
         'Content-Type': 'application/json'
       }
     };
 
-    proxyUrl = proxyUrl || process.env['https_proxy'] || undefined;
-    if (proxyUrl) {
-      if (proxyUrl.indexOf('//') === 0) proxyUrl = 'http:' + proxyUrl;
+    proxy = proxy || process.env['https_proxy'] || undefined;
+    if (proxy) {
+      if (proxy.indexOf('//') === 0) proxy = 'http:' + proxy;
 
-      let proxyUrlParsed = url.parse(proxyUrl);
+      let proxyUrlParsed = url.parse(proxy);
       if (proxyUrlParsed.protocol === 'https:') {
-        proxyUrl = undefined;
+        proxy = undefined;
       } else {
         options = {
           ...options,
           host: proxyUrlParsed.hostname,
           port: proxyUrlParsed.port || '80',
-          path: telemetryUrl,
+          path: endpoint,
           headers: { ...options.headers, Host: telemetryUrlParsed.hostname }
         };
       }
     }
 
-    let request = proxyUrl ? http.request(options) : https.request(options);
+    let request = proxy ? http.request(options) : https.request(options);
 
     request.setTimeout(timeout, () => {
       request.abort();
@@ -122,20 +64,31 @@ export default function trackEvent(event: TelemetryEvent, proxyUrl?: string): st
     request.write(JSON.stringify(body));
     request.end();
 
-    // return payload
-    body.name = 'Microsoft.ApplicationInsights.Dev.*****.Event';
-    body.iKey = '*****';
-
     return JSON.stringify(body);
-  } catch {}
+  } catch {
+    // silently continue
+  }
 }
 
-export interface TelemetryEvent {
-  account: string;
-  pipeline: string;
-  pipelineType: string;
-  serverType: string;
+export class TelemetryEvent {
+  private readonly account: string;
+  private readonly pipeline: string;
+
+  constructor(account: string, pipeline: string) {
+    this.account = crypto
+      .createHash('sha256')
+      .update(account || '')
+      .digest('hex');
+    this.pipeline = crypto
+      .createHash('sha256')
+      .update(pipeline || '')
+      .digest('hex');
+  }
+
+  host: string;
+  os: string;
   result: string;
+  duration: number;
   tokenPrefix: string;
   tokenSuffix: string;
   pattern: string;
@@ -154,7 +107,6 @@ export interface TelemetryEvent {
   rulesWithInputWildcard: number;
   rulesWithOutputPattern: number;
   rulesWithNegativePattern: number;
-  duration: number;
   tokenReplaced: number;
   tokenFound: number;
   fileProcessed: number;
@@ -171,5 +123,4 @@ export interface TelemetryEvent {
   enableRecursion: boolean;
   useLegacyEmptyFeature: boolean;
   useDefaultValue: boolean;
-  os: string;
 }

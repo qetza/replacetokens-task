@@ -4,7 +4,6 @@ import iconv = require('iconv-lite');
 import jschardet = require('jschardet');
 import path = require('path');
 import os = require('os');
-import crypto = require('crypto');
 import trackEvent, { TelemetryEvent } from './telemetry';
 import yaml = require('js-yaml');
 import stripJsonComments from './strip-json-comments';
@@ -497,8 +496,11 @@ var normalize = function (p: string): string {
 
 async function run() {
   // initialize telemetry (outside of try as needed in catch and finally)
-  let telemetryEnabled: boolean = false;
-  let telemetryEvent: TelemetryEvent = {} as TelemetryEvent;
+  let telemetryEnabled = false;
+  let telemetryEvent = new TelemetryEvent(
+    tl.getVariable('ystem.collectionid'),
+    `${tl.getVariable('system.teamprojectid')}${tl.getVariable('system.definitionid')}`
+  );
 
   let proxyUrl: string | undefined = undefined;
   const config = tl.getHttpProxyConfiguration();
@@ -512,13 +514,7 @@ async function run() {
       tl.getBoolInput('enableTelemetry', false) &&
       ['true', '1'].indexOf(process.env['REPLACETOKENS_TELEMETRY_OPTOUT'] || process.env['REPLACETOKENS_DISABLE_TELEMETRY']) === -1;
 
-    telemetryEvent.account = crypto.createHash('sha256').update(tl.getVariable('system.collectionid')).digest('hex');
-    telemetryEvent.pipeline = crypto
-      .createHash('sha256')
-      .update(tl.getVariable('system.teamprojectid') + tl.getVariable('system.definitionid'))
-      .digest('hex');
-    telemetryEvent.pipelineType = tl.getVariable('release.releaseid') ? 'release' : 'build';
-    telemetryEvent.serverType = !serverType || serverType.toLowerCase() !== 'hosted' ? 'server' : 'cloud';
+    telemetryEvent.host = !serverType || serverType.toLowerCase() !== 'hosted' ? 'server' : 'cloud';
     telemetryEvent.os = (() => {
       const os = tl.getVariable('Agent.OS');
       switch (os) {
@@ -720,7 +716,7 @@ async function run() {
     telemetryEvent.escapeType = options.escapeType;
     telemetryEvent.keepToken = options.keepToken;
     telemetryEvent.pattern = regex.source;
-    telemetryEvent.result = 'succeed';
+    telemetryEvent.result = 'success';
     telemetryEvent.rules = rules.length;
     telemetryEvent.rulesWithInputWildcard = ruleUsingInputWildcardCount;
     telemetryEvent.rulesWithNegativePattern = ruleUsingNegativeInputPattern;

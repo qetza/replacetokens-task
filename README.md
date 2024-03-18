@@ -79,7 +79,7 @@ The task was completely rewritten to use the npm package [@qetza/replacetokens](
     addBOM: ''
 
     # A YAML formatted string containing additional variable values (keys are case-insensitive).
-    # YAML can be:
+    # Value can be:
     #   - an object: properties will be parsed as key/value pairs
     #   - a string starting with '@': value is parsed as multiple glob patterns separated 
     #     by a semi-colon ';' using fast-glob syntax to JSON or YAML files
