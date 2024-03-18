@@ -1,4 +1,6 @@
 # Changelog
+## 5.3.2
+- Change telemetry provider.
 
 ## 5.3.1
 - Add agent OS in telemetry ([#5](https://github.com/qetza/replacetokens-task/issues/5)).

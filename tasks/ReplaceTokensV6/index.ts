@@ -17,7 +17,7 @@ async function run() {
     !tl.getBoolInput('telemetryOptout') &&
     !['true', '1'].includes(process.env['REPLACETOKENS_TELEMETRY_OPTOUT'] || process.env['REPLACETOKENS_DISABLE_TELEMETRY'])
   ) {
-    telemetry.useApplicationInsightsExporter(tl.getHttpProxyConfiguration()?.proxyUrl);
+    telemetry.enableTelemetry(tl.getHttpProxyConfiguration()?.proxyUrl);
   }
 
   const serverType = tl.getVariable('System.ServerType');
@@ -242,11 +242,11 @@ var getAdditionalVariables = function (): string[] {
       return [input];
 
     default: // yaml format
-      return loadVariablesFromYaml(input);
+      return getAdditionalVariablesFromYaml(input);
   }
 };
 
-var loadVariablesFromYaml = function (input: string): string[] {
+var getAdditionalVariablesFromYaml = function (input: string): string[] {
   const variables = yaml.load(input);
   const load = (v: any): string => {
     if (typeof v === 'string') {
@@ -301,6 +301,6 @@ var parseLogLevel = function (level: string): LogLevel {
     default:
       return LogLevel.Info;
   }
-}
+};
 
 run();

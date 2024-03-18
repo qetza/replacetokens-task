@@ -308,7 +308,7 @@ The following **anonymous** data is send:
 - the **number of** _targetFiles_ entries having an output pattern
 - the **number of** _variableFiles_ entries
 - the **number of** _inlineVariables_ entries
-- the task result (`succeed` or `failed`)
+- the task result (`success` or `failed`)
 - the task execution duration
 - the outputs (_defaultValueCount_, _fileProcessedCount_, _tokenReplacedCount_, _tokenFoundCount_ and _transformExecutedCount_)
 

@@ -271,7 +271,7 @@ The following **anonymous** data is send:
 - the **number of** _targetFiles_ entries having an output pattern
 - the **number of** _variableFiles_ entries
 - the **number of** _inlineVariables_ entries
-- the task result (`succeed` or `failed`)
+- the task result (`success` or `failed`)
 - the task execution duration
 - the **number of** tokens replaced with the default value
 - the **number of** files parsed
