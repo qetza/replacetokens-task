@@ -1,4 +1,14 @@
 # Changelog
+## 5.0.5
+Task 5.3.3
+- Fix telemetry account hash.
+
+Task 4.4.3
+- Fix telemetry account hash.
+  
+Task 3.12.3
+- Fix telemetry account hash.
+
 ## 5.0.4
 Task 6.0.4
 - Update @qetza/replacetokens to 1.4.0.

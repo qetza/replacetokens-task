@@ -1,4 +1,7 @@
 # Changelog
+## 3.12.3
+- Fix telemetry account hash.
+
 ## 3.12.2
 - Change telemetry provider.
 

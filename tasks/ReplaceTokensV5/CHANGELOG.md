@@ -1,4 +1,7 @@
 # Changelog
+## 5.3.3
+- Fix telemetry account hash.
+
 ## 5.3.2
 - Change telemetry provider.
 

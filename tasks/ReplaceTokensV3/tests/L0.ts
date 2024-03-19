@@ -167,7 +167,7 @@ describe('ReplaceTokens v3 L0 suite', function () {
 
           tr.stdout.should.include('telemetry sent');
           tr.stdout.should.match(
-            /\[\{"account":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","pipeline":"b98ed03d3eec376dcc015365c1a944e3ebbcc33d30e3261af3f4e4abb107aa82","host":"server","os":"Windows","result":"failed","eventType":"TokensReplaced","application":"replacetokens-task","version":"3.0.0"}]/
+            /\[\{"account":"494d0aad9d06c4ddb51d5300620122ce55366a9382b3cc2835ed5f0e2e67b4d0","pipeline":"b98ed03d3eec376dcc015365c1a944e3ebbcc33d30e3261af3f4e4abb107aa82","host":"server","os":"Windows","result":"failed","eventType":"TokensReplaced","application":"replacetokens-task","version":"3.0.0"}]/
           );
         },
         tr,
@@ -192,7 +192,7 @@ describe('ReplaceTokens v3 L0 suite', function () {
 
           tr.stdout.should.include('telemetry sent');
           tr.stdout.should.match(
-            /\[\{"account":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","pipeline":"b98ed03d3eec376dcc015365c1a944e3ebbcc33d30e3261af3f4e4abb107aa82","host":"server","os":"Windows","actionOnMissing":"warn","encoding":"auto","keepToken":false,"pattern":"#\\\\{\\\\s\*\(\(\?:\(\?!#\\\\{\)\(\?!\\\\s\*\\\\}#\)\.\)\*\)\\\\s\*\\\\}#","result":"success","rules":1,"rulesWithInputWildcard":0,"rulesWithNegativePattern":0,"rulesWithOutputPattern":0,"tokenPrefix":"#{","tokenSuffix":"}#","variableFiles":0,"verbosity":"normal","writeBOM":true,"useLegacyPattern":false,"enableTransforms":false,"transformPrefix":"\(","transformSuffix":"\)","transformPattern":"\\\\s\*\(\.\*\)\\\\\(\\\\s\*\(\(\?:\(\?!\\\\\(\)\(\?!\\\\s\*\\\\\)\)\.\)\*\)\\\\s\*\\\\\)\\\\s\*","defaultValue":"","actionOnNoFiles":"continue","inlineVariables":0,"enableRecursion":false,"useLegacyEmptyFeature":false,"useDefaultValue":false,"duration":\d+(?:\.\d+)?,"tokenReplaced":1,"tokenFound":1,"defaultValueReplaced":0,"fileProcessed":1,"transformExecuted":0,"eventType":"TokensReplaced","application":"replacetokens-task","version":"3.0.0"}]/
+            /\[\{"account":"494d0aad9d06c4ddb51d5300620122ce55366a9382b3cc2835ed5f0e2e67b4d0","pipeline":"b98ed03d3eec376dcc015365c1a944e3ebbcc33d30e3261af3f4e4abb107aa82","host":"server","os":"Windows","actionOnMissing":"warn","encoding":"auto","keepToken":false,"pattern":"#\\\\{\\\\s\*\(\(\?:\(\?!#\\\\{\)\(\?!\\\\s\*\\\\}#\)\.\)\*\)\\\\s\*\\\\}#","result":"success","rules":1,"rulesWithInputWildcard":0,"rulesWithNegativePattern":0,"rulesWithOutputPattern":0,"tokenPrefix":"#{","tokenSuffix":"}#","variableFiles":0,"verbosity":"normal","writeBOM":true,"useLegacyPattern":false,"enableTransforms":false,"transformPrefix":"\(","transformSuffix":"\)","transformPattern":"\\\\s\*\(\.\*\)\\\\\(\\\\s\*\(\(\?:\(\?!\\\\\(\)\(\?!\\\\s\*\\\\\)\)\.\)\*\)\\\\s\*\\\\\)\\\\s\*","defaultValue":"","actionOnNoFiles":"continue","inlineVariables":0,"enableRecursion":false,"useLegacyEmptyFeature":false,"useDefaultValue":false,"duration":\d+(?:\.\d+)?,"tokenReplaced":1,"tokenFound":1,"defaultValueReplaced":0,"fileProcessed":1,"transformExecuted":0,"eventType":"TokensReplaced","application":"replacetokens-task","version":"3.0.0"}]/
           );
         },
         tr,
