@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "id": "replacetokens",
   "name": "Replace Tokens",
-  "version": "5.0.4",
+  "version": "5.0.5",
   "public": true,
   "publisher": "qetza",
   "targets": [

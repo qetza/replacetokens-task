@@ -498,7 +498,7 @@ async function run() {
   // initialize telemetry (outside of try as needed in catch and finally)
   let telemetryEnabled = false;
   let telemetryEvent = new TelemetryEvent(
-    tl.getVariable('ystem.collectionid'),
+    tl.getVariable('system.collectionid'),
     `${tl.getVariable('system.teamprojectid')}${tl.getVariable('system.definitionid')}`
   );
 

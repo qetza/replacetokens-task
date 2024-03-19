@@ -11,7 +11,8 @@
     "@qetza/replacetokens": "^1.4.0",
     "axios": "^1.6.7",
     "azure-pipelines-task-lib": "^4.1.0",
-    "js-yaml": "^4.1.0"
+    "js-yaml": "^4.1.0",
+    "replacetokens-task": "file:../.."
   },
   "devDependencies": {
     "@types/chai": "^4.3.12",

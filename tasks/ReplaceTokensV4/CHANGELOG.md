@@ -1,4 +1,7 @@
 # Changelog
+## 4.4.3
+- Fix telemetry account hash.
+
 ## 4.4.2
 - Change telemetry provider.
 
