@@ -1,4 +1,7 @@
 # Changelog
+## 6.0.5
+- Fix normalized variable names not supported as token name ([#15](https://github.com/qetza/replacetokens-task/issues/15)) ([#20](https://github.com/qetza/replacetokens-task/issues/20)).
+
 ## 6.0.4
 - Update @qetza/replacetokens to 1.4.0.
 - Change telemetry provider.

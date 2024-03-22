@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import * as path from 'path';
 import * as ttm from 'azure-pipelines-task-lib/mock-test';
 import * as os from 'os';
@@ -5,12 +6,16 @@ import * as os from 'os';
 require('chai').should();
 
 const data = path.join(__dirname, '..', '..', 'tests', '_data');
+const tmp = path.join(__dirname, '..', '..', 'tests', '_tmp');
 
 describe('ReplaceTokens v6 L0 suite', function () {
   this.timeout(10000);
 
+  beforeEach(() => {
+    fs.mkdirSync(tmp, { recursive: true });
+  });
+
   afterEach(() => {
-    // clean env
     delete process.env['__sources__'];
     delete process.env['__addBOM__'];
     delete process.env['__additionalVariables__'];
@@ -34,8 +39,22 @@ describe('ReplaceTokens v6 L0 suite', function () {
     delete process.env['__transformsPrefix__'];
     delete process.env['__transformsSuffix__'];
     delete process.env['__VARS__'];
-    delete process.env['VSTS_PUBLIC_VARIABLES'];
-    delete process.env['VSTS_SECRET_VARIABLES'];
+
+    if (process.env['VSTS_PUBLIC_VARIABLES']) {
+      for (const name in JSON.parse(process.env['VSTS_PUBLIC_VARIABLES'])) {
+        delete process.env[name.replace(/[ \.]/g, '_').toUpperCase()];
+      }
+      delete process.env['VSTS_PUBLIC_VARIABLES'];
+    }
+
+    if (process.env['VSTS_SECRET_VARIABLES']) {
+      for (const name in JSON.parse(process.env['VSTS_SECRET_VARIABLES'])) {
+        delete process.env[`SECRET_${name.replace(/[ \.]/g, '_').toUpperCase()}`];
+      }
+      delete process.env['VSTS_SECRET_VARIABLES'];
+    }
+
+    fs.rmSync(tmp, { force: true, recursive: true });
   });
 
   function runValidations(validator: () => void, tr: ttm.MockTestRunner) {
@@ -52,28 +71,16 @@ describe('ReplaceTokens v6 L0 suite', function () {
   function addVariables(variables: { [key: string]: string }) {
     process.env['VSTS_PUBLIC_VARIABLES'] = JSON.stringify(Object.keys(variables));
 
-    for (const name of Object.keys(variables)) {
-      process.env[name.toUpperCase()] = variables[name];
-    }
-  }
-
-  function cleanVariables(names: string[]) {
-    for (const name of names) {
-      delete process.env[name.toUpperCase()];
+    for (const [name, value] of Object.entries(variables)) {
+      process.env[name.replace(/[ \.]/g, '_').toUpperCase()] = value;
     }
   }
 
   function addSecrets(secrets: { [key: string]: string }) {
     process.env['VSTS_SECRET_VARIABLES'] = JSON.stringify(Object.keys(secrets));
 
-    for (const name of Object.keys(secrets)) {
-      process.env[`SECRET_${name.toUpperCase()}`] = secrets[name];
-    }
-  }
-
-  function cleanSecrets(names: string[]) {
-    for (const name of names) {
-      delete process.env[`SECRET_${name.toUpperCase()}`];
+    for (const [name, value] of Object.entries(secrets)) {
+      process.env[`SECRET_${name.replace(/[ \.]/g, '_').toUpperCase()}`] = value;
     }
   }
 
@@ -182,42 +189,27 @@ describe('ReplaceTokens v6 L0 suite', function () {
     const tp = path.join(__dirname, 'L0_Run.js');
     const tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-    const vars = { var_var: 'var', var_yaml2: 'var' };
-    const secrets = { var_secret: 'secret', var_yml2: 'secret' };
-    addVariables(vars);
-    addSecrets(secrets);
-
     process.env['__sources__'] = '**/*.json\r\n**/*.xml\r\n**/*.yml';
 
-    try {
-      // act
-      await tr.runAsync();
+    // act
+    await tr.runAsync();
 
-      // assert
-      runValidations(() => {
-        tr.succeeded.should.be.true;
+    // assert
+    runValidations(() => {
+      tr.succeeded.should.be.true;
 
-        tr.stdout.should.include('sources: ["**/*.json","**/*.xml","**/*.yml"]');
-        tr.stdout.should.include('variables: {"VAR_SECRET":"secret","VAR_YML2":"secret","VAR_VAR":"var","VAR_YAML2":"var"}');
-        tr.stdout.should.include(
-          'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"separator":".","token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
-        );
-      }, tr);
-    } finally {
-      cleanVariables(Object.keys(vars));
-      cleanSecrets(Object.keys(secrets));
-    }
+      tr.stdout.should.not.contain('loadVariables_variables');
+      tr.stdout.should.include('sources: ["**/*.json","**/*.xml","**/*.yml"]');
+      tr.stdout.should.include(
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+      );
+    }, tr);
   });
 
   it('telemetry: success', async () => {
     // arrange
     const tp = path.join(__dirname, 'L0_Run.js');
     const tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
-
-    const vars = { var_var: 'var', var_yaml2: 'var' };
-    const secrets = { var_secret: 'secret', var_yml2: 'secret' };
-    addVariables(vars);
-    addSecrets(secrets);
 
     process.env['__sources__'] = '**/*.json\r\n**/*.xml\r\n**/*.yml';
     process.env['SYSTEM_SERVERTYPE'] = 'hosted';
@@ -245,9 +237,6 @@ describe('ReplaceTokens v6 L0 suite', function () {
       delete process.env['SYSTEM_TEAMPROJECTID'];
       delete process.env['SYSTEM_DEFINITIONID'];
       delete process.env['AGENT_OS'];
-
-      cleanVariables(Object.keys(vars));
-      cleanSecrets(Object.keys(secrets));
     }
   });
 
@@ -255,11 +244,6 @@ describe('ReplaceTokens v6 L0 suite', function () {
     // arrange
     const tp = path.join(__dirname, 'L0_Run.js');
     const tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
-
-    const vars = { var_var: 'var', var_yaml2: 'var' };
-    const secrets = { var_secret: 'secret', var_yml2: 'secret' };
-    addVariables(vars);
-    addSecrets(secrets);
 
     process.env['SYSTEM_SERVERTYPE'] = 'hosted';
     process.env['SYSTEM_COLLECTIONID'] = 'col01';
@@ -286,9 +270,6 @@ describe('ReplaceTokens v6 L0 suite', function () {
       delete process.env['SYSTEM_TEAMPROJECTID'];
       delete process.env['SYSTEM_DEFINITIONID'];
       delete process.env['AGENT_OS'];
-
-      cleanVariables(Object.keys(vars));
-      cleanSecrets(Object.keys(secrets));
     }
   });
 
@@ -330,7 +311,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":true,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"separator":".","token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":true,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
     }, tr);
   });
@@ -349,11 +330,8 @@ describe('ReplaceTokens v6 L0 suite', function () {
 
     // assert
     runValidations(() => {
-      tr.stdout.should.include(`##vso[task.debug]loading variables from file '${path.join(data, 'vars.jsonc')}'`);
-      tr.stdout.should.include(`##vso[task.debug]loading variables from file '${path.join(data, 'vars.yml')}'`);
-      tr.stdout.should.include(`##vso[task.debug]loading variables from file '${path.join(data, 'vars.yaml')}'`);
-
-      tr.stdout.should.include('variables: {"VAR_JSON":"file","VAR_YAML1":"file","VAR_YAML2":"file","VAR_YML1":"file","VAR_YML2":"file"}');
+      tr.stdout.should.include('loadVariables_variables: ["@**/_data/vars.(json|jsonc|yml|yaml)"]');
+      tr.stdout.should.include(`loadVariables_options: {"normalizeWin32":true,"root":"${process.env['__root__'].replace(/\\/g, '\\\\')}","separator":"."}`);
     }, tr);
   });
 
@@ -371,9 +349,8 @@ describe('ReplaceTokens v6 L0 suite', function () {
 
     // assert
     runValidations(() => {
-      tr.stdout.should.include("##vso[task.debug]loading variables from env '__VARS__'");
-
-      tr.stdout.should.include('variables: {"VAR1":"value1","VAR2":"value2"}');
+      tr.stdout.should.include('loadVariables_variables: ["$__VARS__"]');
+      tr.stdout.should.include(`loadVariables_options: {"normalizeWin32":true,"separator":"."}`);
     }, tr);
   });
 
@@ -393,7 +370,8 @@ describe('ReplaceTokens v6 L0 suite', function () {
 
     // assert
     runValidations(() => {
-      tr.stdout.should.include('variables: {"VAR1":"value1","VAR2":"value2"}');
+      tr.stdout.should.include('loadVariables_variables: ["{\\"var1\\":\\"value1\\",\\"var2\\":\\"value2\\"}"]');
+      tr.stdout.should.include(`loadVariables_options: {"normalizeWin32":true,"separator":"."}`);
     }, tr);
   });
 
@@ -402,12 +380,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
     const tp = path.join(__dirname, 'L0_Run.js');
     const tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
-    const vars = { var_var: 'var', var_yaml2: 'var' };
-    const secrets = { var_secret: 'secret', var_yml2: 'secret' };
-    addVariables(vars);
-    addSecrets(secrets);
-
-    process.env['__telemetry__'] = 'true';
+    process.env['__telemetryOptout__'] = 'true';
     process.env['__sources__'] = '**/*.json';
     process.env['__root__'] = path.join(data, '..');
     process.env['__VARS__'] = '{ "var1": "env", "var2": "env" }';
@@ -418,20 +391,14 @@ describe('ReplaceTokens v6 L0 suite', function () {
   var_yml2: inline
 `;
 
-    try {
-      // act
-      await tr.runAsync();
+    // act
+    await tr.runAsync();
 
-      // assert
-      runValidations(() => {
-        tr.stdout.should.include(
-          'variables: {"VAR_SECRET":"secret","VAR_YML2":"inline","VAR_VAR":"var","VAR_YAML2":"file","VAR_JSON":"file","VAR_YAML1":"file","VAR_YML1":"file","VAR1":"env","VAR2":"inline"}'
-        );
-      }, tr);
-    } finally {
-      cleanVariables(Object.keys(vars));
-      cleanSecrets(Object.keys(secrets));
-    }
+    // assert
+    runValidations(() => {
+      tr.stdout.should.include('loadVariables_variables: ["@**/_data/vars.*;!**/*.xml","$__VARS__","{\\"var2\\":\\"inline\\",\\"var_yml2\\":\\"inline\\"}"]');
+      tr.stdout.should.include(`loadVariables_options: {"normalizeWin32":true,"root":"${process.env['__root__'].replace(/\\/g, '\\\\')}","separator":"."}`);
+    }, tr);
   });
 
   it('charsToEscape', async () => {
@@ -450,7 +417,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"chars":"abcd","type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"separator":".","token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"chars":"abcd","type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
     }, tr);
   });
@@ -471,7 +438,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"abcd","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"separator":".","token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"abcd","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
     }, tr);
   });
@@ -492,7 +459,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"json"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"separator":".","token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"json"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
     }, tr);
   });
@@ -667,7 +634,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"keep","default":"","log":"warn"},"recursive":false,"separator":".","token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"keep","default":"","log":"warn"},"recursive":false,"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
     }, tr);
   });
@@ -688,7 +655,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"abcd","log":"warn"},"recursive":false,"separator":".","token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"abcd","log":"warn"},"recursive":false,"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
     }, tr);
   });
@@ -709,7 +676,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"off"},"recursive":false,"separator":".","token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"off"},"recursive":false,"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
     }, tr);
   });
@@ -730,7 +697,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":true,"separator":".","token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":true,"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
     }, tr);
   });
@@ -751,7 +718,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        `options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"root":"${__dirname.replace(/\\/g, '\\\\')}","separator":".","token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}`
+        `options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"root":"${__dirname.replace(/\\/g, '\\\\')}","token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}`
       );
     }, tr);
   });
@@ -762,6 +729,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
     const tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
     process.env['__sources__'] = '**/*.json';
+    process.env['__additionalVariables__'] = 'var1: value1';
     process.env['__separator__'] = ':';
 
     // act
@@ -771,9 +739,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
     runValidations(() => {
       tr.succeeded.should.be.true;
 
-      tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"separator":":","token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
-      );
+      tr.stdout.should.include('loadVariables_options: {"normalizeWin32":true,"separator":":"}');
     }, tr);
   });
 
@@ -793,7 +759,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"separator":".","token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
       tr.stdout.should.not.include('telemetry sent');
       tr.stdout.should.not.include('##vso[task.debug]telemetry: [');
@@ -816,7 +782,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"separator":".","token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
       tr.stdout.should.not.include('telemetry sent');
       tr.stdout.should.not.include('##vso[task.debug]telemetry: [');
@@ -839,7 +805,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"separator":".","token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
       tr.stdout.should.not.include('telemetry sent');
       tr.stdout.should.not.include('##vso[task.debug]telemetry: [');
@@ -862,7 +828,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"separator":".","token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
       tr.stdout.should.not.include('telemetry sent');
       tr.stdout.should.not.include('##vso[task.debug]telemetry: [');
@@ -885,7 +851,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"separator":".","token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
       tr.stdout.should.not.include('telemetry sent');
       tr.stdout.should.not.include('##vso[task.debug]telemetry: [');
@@ -908,7 +874,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"separator":".","token":{"pattern":"azpipelines"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"token":{"pattern":"azpipelines"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
     }, tr);
   });
@@ -929,7 +895,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"separator":".","token":{"pattern":"default","prefix":"[["},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"token":{"pattern":"default","prefix":"[["},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
     }, tr);
   });
@@ -950,7 +916,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"separator":".","token":{"pattern":"default","suffix":"]]"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"token":{"pattern":"default","suffix":"]]"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
     }, tr);
   });
@@ -971,7 +937,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"separator":".","token":{"pattern":"default"},"transforms":{"enabled":true,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"token":{"pattern":"default"},"transforms":{"enabled":true,"prefix":"(","suffix":")"}}'
       );
     }, tr);
   });
@@ -992,7 +958,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"separator":".","token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"[","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"[","suffix":")"}}'
       );
     }, tr);
   });
@@ -1013,8 +979,45 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"separator":".","token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":"]"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":"]"}}'
       );
+    }, tr);
+  });
+
+  it('replace tokens', async () => {
+    // arrange
+    const tp = path.join(__dirname, 'L0_NoMock.js');
+    const tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
+
+    addVariables({ 'var.var': 'var', var_yaml2: 'var' });
+    addSecrets({ 'var.secret': 'secret', 'var.yml2': 'secret' });
+
+    let input = path.join(tmp, 'file.txt');
+    await fs.promises.copyFile(path.join(data, 'file.txt'), input);
+    input = path.resolve(input);
+
+    process.env['__telemetryOptout__'] = 'true';
+    process.env['__sources__'] = input;
+    process.env['__root__'] = path.join(data, '..');
+    process.env['__VARS__'] = '{ "var1": "env", "var2": "env" }';
+    process.env['__additionalVariables__'] = `
+- '@**/_data/vars.*;!**/*.xml'
+- '$__VARS__'
+- var2: inline
+  var.yml2: inline
+`;
+
+    // act
+    await tr.runAsync();
+
+    // assert
+    runValidations(() => {
+      tr.succeeded.should.be.true;
+
+      const actual = fs.readFileSync(input, 'utf8');
+      const expected = fs.readFileSync(path.join(data, 'file.expected.txt'), 'utf8');
+
+      actual.should.equal(expected);
     }, tr);
   });
 });

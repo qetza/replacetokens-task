@@ -29,22 +29,6 @@ if (process.env['__transformsPrefix__']) tmr.setInput('transformPrefix', process
 if (process.env['__transformsSuffix__']) tmr.setInput('transformSuffix', process.env['__transformsSuffix__']);
 
 // mocks
-const rtClone = Object.assign({}, require('@qetza/replacetokens'));
-rtClone.loadVariables = function (variables, options) {
-  console.log(`loadVariables_variables: ${JSON.stringify(variables)}`);
-  console.log(`loadVariables_options: ${JSON.stringify(options)}`);
-
-  return Promise.resolve({});
-};
-rtClone.replaceTokens = function (sources, variables, options) {
-  console.log(`sources: ${JSON.stringify(sources)}`);
-  console.log(`options: ${JSON.stringify(options)}`);
-
-  return Promise.resolve({ defaults: 1, files: 2, replaced: 3, tokens: 4, transforms: 5 });
-};
-
-tmr.registerMock('@qetza/replacetokens', rtClone);
-
 const axiosClone = Object.assign({}, require('axios'));
 axiosClone.default = Object.assign({}, axiosClone.default);
 axiosClone.default.post = function () {
