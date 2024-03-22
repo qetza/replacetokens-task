@@ -9,8 +9,13 @@ tmr.setInput('targetFiles', process.env['__sources__']);
 tmr.setInput('verbosity', process.env['__logLevel__']);
 
 // mocks
-const rt = require('@qetza/replacetokens');
-const rtClone = Object.assign({}, rt);
+const rtClone = Object.assign({}, require('@qetza/replacetokens'));
+rtClone.loadVariables = function (variables, options) {
+  console.log(`loadVariables_variables: ${JSON.stringify(variables)}`);
+  console.log(`loadVariables_options: ${JSON.stringify(options)}`);
+
+  return Promise.resolve({});
+};
 rtClone.replaceTokens = function (sources, variables, options) {
   console.debug('debug');
   console.info('info');
@@ -19,7 +24,7 @@ rtClone.replaceTokens = function (sources, variables, options) {
   console.group('group');
   console.groupEnd();
 
-  return { defaults: 1, files: 2, replaced: 3, tokens: 4, transforms: 5 };
+  return Promise.resolve({ defaults: 1, files: 2, replaced: 3, tokens: 4, transforms: 5 });
 };
 
 tmr.registerMock('@qetza/replacetokens', rtClone);

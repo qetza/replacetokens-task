@@ -1,4 +1,8 @@
 # Changelog
+## 5.0.6
+Task 6.0.5
+- Fix normalized variable names not supported as token name ([#15](https://github.com/qetza/replacetokens-task/issues/15)) ([#20](https://github.com/qetza/replacetokens-task/issues/20)).
+
 ## 5.0.5
 Task 5.3.3
 - Fix telemetry account hash.

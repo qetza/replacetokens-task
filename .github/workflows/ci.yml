@@ -96,8 +96,5 @@ jobs:
           npm --prefix tasks/ReplaceTokensV5 ci
           npm --prefix tasks/ReplaceTokensV6 ci
 
-      - name: Build
-        run: npm run build
-
       - name: Test
         run: npm run test

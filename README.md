@@ -9,7 +9,6 @@ Please refer to the [release page](https://github.com/qetza/replacetokens-task/r
 ## Breaking changes in v6
 The task was completely rewritten to use the npm package [@qetza/replacetokens](https://www.npmjs.com/package/@qetza/replacetokens) and be more similar with the new [ReplaceTokens GitHub Actions](https://github.com/marketplace/actions/replacetokens):
   - support only node 16 (mininum agent version 2.206.1)
-  - tokens **must** match real variable names and not normalized names done by the Azure Pipelines agent (token `BUILD_DEFINITIONNAME` will **not** match build variable `Build.DefinitionName`)
   - renamed input _targetFiles_ to _sources_
   - migrated to [fast-glob](https://github.com/mrmlnc/fast-glob) for glob patterns causing syntax changes (must use forward slash (`/`) for directory separator whatever the OS)
   - removed support for comma-separated paths in _targetFiles_

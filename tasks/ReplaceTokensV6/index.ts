@@ -63,7 +63,6 @@ async function run() {
       },
       recursive: tl.getBoolInput('enableRecursion'),
       root: tl.getPathInput('rootDirectory', false, true),
-      separator: tl.getInput('variableSeparator') || rt.Defaults.Separator,
       token: {
         pattern:
           getChoiceInput('tokenPattern', [
@@ -111,19 +110,9 @@ async function run() {
       console.info('##[endgroup]');
     };
 
-    // load variables
-    const variables = await rt.parseVariables(
-      [
-        JSON.stringify(
-          tl.getVariables().reduce((result, current) => {
-            result[current.name] = current.value;
-            return result;
-          }, {})
-        ),
-        ...getAdditionalVariables()
-      ],
-      { normalizeWin32: true, root: options.root, separator: options.separator }
-    );
+    // load additional variables
+    const separator = tl.getInput('variableSeparator') || rt.Defaults.Separator;
+    const additionalVariables = await getAdditionalVariables(options.root, separator);
 
     // set telemetry attributes
     telemetryEvent.setAttributes({
@@ -139,7 +128,7 @@ async function run() {
       'missing-var-default': options.missing.default,
       'missing-var-log': options.missing.log,
       recusrive: options.recursive,
-      separator: options.separator,
+      separator: separator,
       'token-pattern': options.token.pattern,
       'token-prefix': options.token.prefix,
       'token-suffix': options.token.suffix,
@@ -152,7 +141,7 @@ async function run() {
     });
 
     // replace tokens
-    const result = await rt.replaceTokens(sources, variables, options);
+    const result = await rt.replaceTokens(sources, (name: string) => (name in additionalVariables ? additionalVariables[name] : tl.getVariable(name)), options);
 
     if (result.files === 0) {
       (msg => {
@@ -228,22 +217,27 @@ var getChoiceInput = function (name: string, choices: string[], alias?: string):
 var variableFilesCount = 0;
 var variablesEnvCount = 0;
 var inlineVariablesCount = 0;
-var getAdditionalVariables = function (): string[] {
+var getAdditionalVariables = async function (root?: string, separator?: string): Promise<{ [key: string]: string }> {
   const input = tl.getInput('additionalVariables') || '';
-  if (!input) return [];
+  if (!input) return {};
 
-  switch (input[0]) {
-    case '@': // single string referencing a file
-      ++variableFilesCount;
-      return [input];
+  return await rt.loadVariables(
+    (() => {
+      switch (input[0]) {
+        case '@': // single string referencing a file
+          ++variableFilesCount;
+          return [input];
 
-    case '$': // single string referencing environment variable
-      ++variablesEnvCount;
-      return [input];
+        case '$': // single string referencing environment variable
+          ++variablesEnvCount;
+          return [input];
 
-    default: // yaml format
-      return getAdditionalVariablesFromYaml(input);
-  }
+        default: // yaml format
+          return getAdditionalVariablesFromYaml(input);
+      }
+    })(),
+    { normalizeWin32: true, root: root, separator: separator }
+  );
 };
 
 var getAdditionalVariablesFromYaml = function (input: string): string[] {
