@@ -998,6 +998,8 @@ describe('ReplaceTokens v6 L0 suite', function () {
 
     process.env['__telemetryOptout__'] = 'true';
     process.env['__sources__'] = input;
+    process.env['__missingVarAction__'] = 'replace';
+    process.env['__missingVarDefault__'] = 'DEFAULT';
     process.env['__root__'] = path.join(data, '..');
     process.env['__VARS__'] = '{ "var1": "env", "var2": "env" }';
     process.env['__additionalVariables__'] = `

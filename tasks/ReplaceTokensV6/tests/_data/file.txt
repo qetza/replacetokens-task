@@ -7,3 +7,4 @@ var_yaml1: #{var_yaml1}#
 var_yaml2: #{var_yaml2}#
 var.yml1: #{var.yml1}#
 var.yml2: #{var.yml2}#
+unknown: #{unknown}#

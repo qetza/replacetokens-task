@@ -7,3 +7,4 @@ var_yaml1: file
 var_yaml2: file
 var.yml1: file
 var.yml2: inline
+unknown: DEFAULT
