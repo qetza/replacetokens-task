@@ -102,6 +102,11 @@ The task was completely rewritten to use the npm package [@qetza/replacetokens](
     # Optional.
     additionalVariables: ''
 
+    # Enable case-insensitive file path matching in glob patterns for sources and additionalVariables.
+    #
+    # Optional. Default: true
+    caseInsensitivePaths: ''
+
     # The characters to escape when using 'custom' escape.
     #
     # Optional.
@@ -321,6 +326,7 @@ The following **anonymous** data is send:
 - the agent OS (`Windows`, `macOS` or `Linux`)
 - the inputs values for
   - _addBOM_
+  - _caseInsensitivePaths_
   - _charsToEscape_
   - _encoding_
   - _escape_

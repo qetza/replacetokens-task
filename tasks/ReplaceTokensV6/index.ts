@@ -63,6 +63,9 @@ async function run() {
       },
       recursive: tl.getBoolInput('enableRecursion'),
       root: tl.getPathInput('rootDirectory', false, true),
+      sources: {
+        caseInsensitive: tl.getBoolInput('caseInsensitivePaths')
+      },
       token: {
         pattern:
           getChoiceInput('tokenPattern', [
@@ -112,12 +115,13 @@ async function run() {
 
     // load additional variables
     const separator = tl.getInput('variableSeparator') || rt.Defaults.Separator;
-    const additionalVariables = await getAdditionalVariables(options.root, separator);
+    const additionalVariables = await getAdditionalVariables(options.root, separator, options.sources.caseInsensitive);
 
     // set telemetry attributes
     telemetryEvent.setAttributes({
       sources: sources.length,
       'add-bom': options.addBOM,
+      'case-insenstive-paths': options.sources.caseInsensitive,
       'chars-to-escape': options.escape.chars,
       encoding: options.encoding,
       escape: options.escape.type,
@@ -217,7 +221,7 @@ var getChoiceInput = function (name: string, choices: string[], alias?: string):
 var variableFilesCount = 0;
 var variablesEnvCount = 0;
 var inlineVariablesCount = 0;
-var getAdditionalVariables = async function (root?: string, separator?: string): Promise<{ [key: string]: string }> {
+var getAdditionalVariables = async function (root?: string, separator?: string, caseInsensitive?: boolean): Promise<{ [key: string]: string }> {
   const input = tl.getInput('additionalVariables') || '';
   if (!input) return {};
 
@@ -236,7 +240,7 @@ var getAdditionalVariables = async function (root?: string, separator?: string):
           return getAdditionalVariablesFromYaml(input);
       }
     })(),
-    { normalizeWin32: true, root: root, separator: separator }
+    { caseInsensitive: caseInsensitive, normalizeWin32: true, root: root, separator: separator }
   );
 };
 

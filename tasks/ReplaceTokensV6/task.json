@@ -13,7 +13,7 @@
   "version": {
     "Major": 6,
     "Minor": 0,
-    "Patch": 5
+    "Patch": 6
   },
   "releaseNotes": "breaking changes, see [changelog](https://github.com/qetza/replacetokens-task/blob/master/tasks/ReplaceTokensV6/CHANGELOG.md)",
   "instanceNameFormat": "Replace tokens",
@@ -70,6 +70,14 @@
       "visibleRule": "tokenPattern == custom",
       "label": "Token suffix",
       "helpMarkDown": "The token suffix when using 'custom' token pattern."
+    },
+    {
+      "name": "caseInsensitivePaths",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": true,
+      "label": "Case insensitive paths",
+      "helpMarkDown": "Enable case-insensitive file path matching in glob patterns (sources and additionalVariables). Default: true"
     },
     {
       "name": "encoding",
