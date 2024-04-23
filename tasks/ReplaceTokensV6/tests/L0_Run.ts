@@ -14,6 +14,7 @@ if (process.env['__encoding__']) tmr.setInput('encoding', process.env['__encodin
 if (process.env['__escape__']) tmr.setInput('escapeType', process.env['__escape__']);
 if (process.env['__escapeChar__']) tmr.setInput('escapeChar', process.env['__escapeChar__']);
 if (process.env['__ifNoFilesFound__']) tmr.setInput('actionOnNoFiles', process.env['__ifNoFilesFound__']);
+if (process.env['__includeDotPaths__']) tmr.setInput('includeDotPaths', process.env['__includeDotPaths__']);
 if (process.env['__logLevel__']) tmr.setInput('verbosity', process.env['__logLevel__']);
 if (process.env['__missingVarAction__']) tmr.setInput('missingVarAction', process.env['__missingVarAction__']);
 if (process.env['__missingVarDefault__']) tmr.setInput('defaultValue', process.env['__missingVarDefault__']);

@@ -15,6 +15,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
     fs.mkdirSync(tmp, { recursive: true });
 
     process.env['__caseInsensitivePaths__'] = 'true';
+    process.env['__includeDotPaths__'] = 'true';
   });
 
   afterEach(() => {
@@ -27,6 +28,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
     delete process.env['__escape__'];
     delete process.env['__escapeChar__'];
     delete process.env['__ifNoFilesFound__'];
+    delete process.env['__includeDotPaths__'];
     delete process.env['__logLevel__'];
     delete process.env['__missingVarAction__'];
     delete process.env['__missingVarDefault__'];
@@ -204,7 +206,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.stdout.should.not.contain('loadVariables_variables');
       tr.stdout.should.include('sources: ["**/*.json","**/*.xml","**/*.yml"]');
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true,"dot":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
     }, tr);
   });
@@ -231,7 +233,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
 
         tr.stdout.should.include('telemetry sent');
         tr.stdout.should.match(
-          /\[\{"eventType":"TokensReplaced","application":"replacetokens-task","version":"6.0.0","account":"494d0aad9d06c4ddb51d5300620122ce55366a9382b3cc2835ed5f0e2e67b4d0","pipeline":"b98ed03d3eec376dcc015365c1a944e3ebbcc33d30e3261af3f4e4abb107aa82","host":"cloud","os":"Windows","sources":3,"add-bom":false,"case-insenstive-paths":true,"encoding":"auto","escape":"auto","if-no-files-found":"ignore","log-level":"info","missing-var-action":"none","missing-var-default":"","missing-var-log":"warn","recusrive":false,"separator":".","token-pattern":"default","transforms":false,"transforms-prefix":"\(","transforms-suffix":"\)","variable-files":0,"variable-envs":0,"inline-variables":0,"output-defaults":1,"output-files":2,"output-replaced":3,"output-tokens":4,"output-transforms":5,"result":"success","duration":\d+(?:\.\d+)?}]/
+          /\[\{"eventType":"TokensReplaced","application":"replacetokens-task","version":"6.0.0","account":"494d0aad9d06c4ddb51d5300620122ce55366a9382b3cc2835ed5f0e2e67b4d0","pipeline":"b98ed03d3eec376dcc015365c1a944e3ebbcc33d30e3261af3f4e4abb107aa82","host":"cloud","os":"Windows","sources":3,"add-bom":false,"case-insenstive-paths":true,"encoding":"auto","escape":"auto","if-no-files-found":"ignore","include-dot-paths":true,"log-level":"info","missing-var-action":"none","missing-var-default":"","missing-var-log":"warn","recusrive":false,"separator":".","token-pattern":"default","transforms":false,"transforms-prefix":"\(","transforms-suffix":"\)","variable-files":0,"variable-envs":0,"inline-variables":0,"output-defaults":1,"output-files":2,"output-replaced":3,"output-tokens":4,"output-transforms":5,"result":"success","duration":\d+(?:\.\d+)?}]/
         );
       }, tr);
     } finally {
@@ -314,7 +316,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":true,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":true,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true,"dot":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
     }, tr);
   });
@@ -335,7 +337,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
     runValidations(() => {
       tr.stdout.should.include('loadVariables_variables: ["@**/_data/vars.(json|jsonc|yml|yaml)"]');
       tr.stdout.should.include(
-        `loadVariables_options: {"caseInsensitive":true,"normalizeWin32":true,"root":"${process.env['__root__'].replace(/\\/g, '\\\\')}","separator":"."}`
+        `loadVariables_options: {"caseInsensitive":true,"dot":true,"normalizeWin32":true,"root":"${process.env['__root__'].replace(/\\/g, '\\\\')}","separator":"."}`
       );
     }, tr);
   });
@@ -355,7 +357,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
     // assert
     runValidations(() => {
       tr.stdout.should.include('loadVariables_variables: ["$__VARS__"]');
-      tr.stdout.should.include(`loadVariables_options: {"caseInsensitive":true,"normalizeWin32":true,"separator":"."}`);
+      tr.stdout.should.include(`loadVariables_options: {"caseInsensitive":true,"dot":true,"normalizeWin32":true,"separator":"."}`);
     }, tr);
   });
 
@@ -376,7 +378,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
     // assert
     runValidations(() => {
       tr.stdout.should.include('loadVariables_variables: ["{\\"var1\\":\\"value1\\",\\"var2\\":\\"value2\\"}"]');
-      tr.stdout.should.include(`loadVariables_options: {"caseInsensitive":true,"normalizeWin32":true,"separator":"."}`);
+      tr.stdout.should.include(`loadVariables_options: {"caseInsensitive":true,"dot":true,"normalizeWin32":true,"separator":"."}`);
     }, tr);
   });
 
@@ -403,7 +405,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
     runValidations(() => {
       tr.stdout.should.include('loadVariables_variables: ["@**/_data/vars.*;!**/*.xml","$__VARS__","{\\"var2\\":\\"inline\\",\\"var_yml2\\":\\"inline\\"}"]');
       tr.stdout.should.include(
-        `loadVariables_options: {"caseInsensitive":true,"normalizeWin32":true,"root":"${process.env['__root__'].replace(/\\/g, '\\\\')}","separator":"."}`
+        `loadVariables_options: {"caseInsensitive":true,"dot":true,"normalizeWin32":true,"root":"${process.env['__root__'].replace(/\\/g, '\\\\')}","separator":"."}`
       );
     }, tr);
   });
@@ -424,9 +426,9 @@ describe('ReplaceTokens v6 L0 suite', function () {
     runValidations(() => {
       tr.succeeded.should.be.true;
 
-      tr.stdout.should.include('loadVariables_options: {"caseInsensitive":false,"normalizeWin32":true,"separator":"."}');
+      tr.stdout.should.include('loadVariables_options: {"caseInsensitive":false,"dot":true,"normalizeWin32":true,"separator":"."}');
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":false},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":false,"dot":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
     }, tr);
   });
@@ -447,7 +449,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"chars":"abcd","type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"chars":"abcd","type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true,"dot":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
     }, tr);
   });
@@ -468,7 +470,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"abcd","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"abcd","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true,"dot":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
     }, tr);
   });
@@ -489,7 +491,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"json"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"json"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true,"dot":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
     }, tr);
   });
@@ -549,6 +551,29 @@ describe('ReplaceTokens v6 L0 suite', function () {
 
       tr.stdout.should.include('##vso[task.issue type=error;source=TaskInternal;]No files were found with provided sources.');
       tr.stdout.should.include('##vso[task.complete result=Failed;]No files were found with provided sources.');
+    }, tr);
+  });
+
+  it('includeDotPaths', async () => {
+    // arrange
+    const tp = path.join(__dirname, 'L0_Run.js');
+    const tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
+
+    process.env['__sources__'] = '**/*.json';
+    process.env['__additionalVariables__'] = 'var1: value1';
+    process.env['__includeDotPaths__'] = 'false';
+
+    // act
+    await tr.runAsync();
+
+    // assert
+    runValidations(() => {
+      tr.succeeded.should.be.true;
+
+      tr.stdout.should.include('loadVariables_options: {"caseInsensitive":true,"dot":false,"normalizeWin32":true,"separator":"."}');
+      tr.stdout.should.include(
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true,"dot":false},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+      );
     }, tr);
   });
 
@@ -664,7 +689,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"keep","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"keep","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true,"dot":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
     }, tr);
   });
@@ -685,7 +710,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"abcd","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"abcd","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true,"dot":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
     }, tr);
   });
@@ -706,7 +731,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"off"},"recursive":false,"sources":{"caseInsensitive":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"off"},"recursive":false,"sources":{"caseInsensitive":true,"dot":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
     }, tr);
   });
@@ -727,7 +752,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":true,"sources":{"caseInsensitive":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":true,"sources":{"caseInsensitive":true,"dot":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
     }, tr);
   });
@@ -748,7 +773,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        `options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"root":"${__dirname.replace(/\\/g, '\\\\')}","sources":{"caseInsensitive":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}`
+        `options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"root":"${__dirname.replace(/\\/g, '\\\\')}","sources":{"caseInsensitive":true,"dot":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}`
       );
     }, tr);
   });
@@ -769,7 +794,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
     runValidations(() => {
       tr.succeeded.should.be.true;
 
-      tr.stdout.should.include('loadVariables_options: {"caseInsensitive":true,"normalizeWin32":true,"separator":":"}');
+      tr.stdout.should.include('loadVariables_options: {"caseInsensitive":true,"dot":true,"normalizeWin32":true,"separator":":"}');
     }, tr);
   });
 
@@ -789,7 +814,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true,"dot":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
       tr.stdout.should.not.include('telemetry sent');
       tr.stdout.should.not.include('##vso[task.debug]telemetry: [');
@@ -812,7 +837,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true,"dot":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
       tr.stdout.should.not.include('telemetry sent');
       tr.stdout.should.not.include('##vso[task.debug]telemetry: [');
@@ -835,7 +860,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true,"dot":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
       tr.stdout.should.not.include('telemetry sent');
       tr.stdout.should.not.include('##vso[task.debug]telemetry: [');
@@ -858,7 +883,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true,"dot":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
       tr.stdout.should.not.include('telemetry sent');
       tr.stdout.should.not.include('##vso[task.debug]telemetry: [');
@@ -881,7 +906,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true,"dot":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
       tr.stdout.should.not.include('telemetry sent');
       tr.stdout.should.not.include('##vso[task.debug]telemetry: [');
@@ -904,7 +929,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true},"token":{"pattern":"azpipelines"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true,"dot":true},"token":{"pattern":"azpipelines"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
     }, tr);
   });
@@ -925,7 +950,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true},"token":{"pattern":"default","prefix":"[["},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true,"dot":true},"token":{"pattern":"default","prefix":"[["},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
     }, tr);
   });
@@ -946,7 +971,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true},"token":{"pattern":"default","suffix":"]]"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true,"dot":true},"token":{"pattern":"default","suffix":"]]"},"transforms":{"enabled":false,"prefix":"(","suffix":")"}}'
       );
     }, tr);
   });
@@ -967,7 +992,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true},"token":{"pattern":"default"},"transforms":{"enabled":true,"prefix":"(","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true,"dot":true},"token":{"pattern":"default"},"transforms":{"enabled":true,"prefix":"(","suffix":")"}}'
       );
     }, tr);
   });
@@ -988,7 +1013,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"[","suffix":")"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true,"dot":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"[","suffix":")"}}'
       );
     }, tr);
   });
@@ -1009,7 +1034,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.succeeded.should.be.true;
 
       tr.stdout.should.include(
-        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":"]"}}'
+        'options: {"addBOM":false,"encoding":"auto","escape":{"type":"auto"},"missing":{"action":"none","default":"","log":"warn"},"recursive":false,"sources":{"caseInsensitive":true,"dot":true},"token":{"pattern":"default"},"transforms":{"enabled":false,"prefix":"(","suffix":"]"}}'
       );
     }, tr);
   });

@@ -148,6 +148,11 @@ The task was completely rewritten to use the npm package [@qetza/replacetokens](
     # Optional. Default: ignore
     ifNoFilesFound: ''
 
+    # Include directories and files starting with a dot ('.') in glob matching results for sources and additionalVariables.
+    #
+    # Optional. Default: true
+    includeDotPaths: ''
+
     # The log level.
     #
     # Accepted values:
@@ -332,6 +337,7 @@ The following **anonymous** data is send:
   - _escape_
   - _escapeChar_
   - _ifNoFilesFound_
+  - _includeDotPaths_
   - _logLevel_
   - _missingVarAction_
   - _missingVarDefault_

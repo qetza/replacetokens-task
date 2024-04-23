@@ -2,6 +2,7 @@
 ## 5.0.7
 Task 6.0.6
 - Fix default case sensitivity in sources and additional variables matching ([#29](https://github.com/qetza/replacetokens-task/issues/29)).
+- Fix default directories and files starting with a dot in sources and additional variables matching ([#29](https://github.com/qetza/replacetokens-task/issues/29)).
 
 ## 5.0.6
 Task 6.0.5
