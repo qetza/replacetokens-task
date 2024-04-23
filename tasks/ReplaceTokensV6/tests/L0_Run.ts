@@ -8,6 +8,7 @@ const tmr: tmrm.TaskMockRunner = new tmrm.TaskMockRunner(taskPath);
 if (process.env['__sources__']) tmr.setInput('targetFiles', process.env['__sources__']);
 if (process.env['__addBOM__']) tmr.setInput('writeBOM', process.env['__addBOM__']);
 if (process.env['__additionalVariables__']) tmr.setInput('additionalVariables', process.env['__additionalVariables__']);
+if (process.env['__caseInsensitivePaths__']) tmr.setInput('caseInsensitivePaths', process.env['__caseInsensitivePaths__']);
 if (process.env['__charsToEscape__']) tmr.setInput('charsToEscape', process.env['__charsToEscape__']);
 if (process.env['__encoding__']) tmr.setInput('encoding', process.env['__encoding__']);
 if (process.env['__escape__']) tmr.setInput('escapeType', process.env['__escape__']);
