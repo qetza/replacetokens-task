@@ -64,7 +64,8 @@ async function run() {
       recursive: tl.getBoolInput('enableRecursion'),
       root: tl.getPathInput('rootDirectory', false, true),
       sources: {
-        caseInsensitive: tl.getBoolInput('caseInsensitivePaths')
+        caseInsensitive: tl.getBoolInput('caseInsensitivePaths'),
+        dot: tl.getBoolInput('includeDotPaths')
       },
       token: {
         pattern:
@@ -115,7 +116,7 @@ async function run() {
 
     // load additional variables
     const separator = tl.getInput('variableSeparator') || rt.Defaults.Separator;
-    const additionalVariables = await getAdditionalVariables(options.root, separator, options.sources.caseInsensitive);
+    const additionalVariables = await getAdditionalVariables(options.root, separator, options.sources.caseInsensitive, options.sources.dot);
 
     // set telemetry attributes
     telemetryEvent.setAttributes({
@@ -127,6 +128,7 @@ async function run() {
       escape: options.escape.type,
       'escape-char': options.escape.escapeChar,
       'if-no-files-found': ifNoFilesFound,
+      'include-dot-paths': options.sources.dot,
       'log-level': logLevelStr,
       'missing-var-action': options.missing.action,
       'missing-var-default': options.missing.default,
@@ -221,7 +223,7 @@ var getChoiceInput = function (name: string, choices: string[], alias?: string):
 var variableFilesCount = 0;
 var variablesEnvCount = 0;
 var inlineVariablesCount = 0;
-var getAdditionalVariables = async function (root?: string, separator?: string, caseInsensitive?: boolean): Promise<{ [key: string]: string }> {
+var getAdditionalVariables = async function (root?: string, separator?: string, caseInsensitive?: boolean, dot?: boolean): Promise<{ [key: string]: string }> {
   const input = tl.getInput('additionalVariables') || '';
   if (!input) return {};
 
@@ -240,7 +242,7 @@ var getAdditionalVariables = async function (root?: string, separator?: string, 
           return getAdditionalVariablesFromYaml(input);
       }
     })(),
-    { caseInsensitive: caseInsensitive, normalizeWin32: true, root: root, separator: separator }
+    { caseInsensitive: caseInsensitive, dot: dot, normalizeWin32: true, root: root, separator: separator }
   );
 };
 

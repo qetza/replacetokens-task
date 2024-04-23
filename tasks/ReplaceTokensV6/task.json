@@ -80,6 +80,14 @@
       "helpMarkDown": "Enable case-insensitive file path matching in glob patterns (sources and additionalVariables). Default: true"
     },
     {
+      "name": "includeDotPaths",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": true,
+      "label": "Include dot paths",
+      "helpMarkDown": "Include directories and files starting with a dot ('.') in glob matching results (sources and additionalVariables). Default: true"
+    },
+    {
       "name": "encoding",
       "type": "pickList",
       "required": false,
