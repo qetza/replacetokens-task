@@ -496,6 +496,9 @@ var normalize = function (p: string): string {
 };
 
 async function run() {
+  // depreciation warnings
+  tl.warning('This version is deprecated. Use v5 (node10) or v6 (node16) versions instead. For help see https://github.com/qetza/replacetokens-task/discussions/33 and https://github.com/qetza/replacetokens-task/discussions/34');
+
   // initialize telemetry (outside of try as needed in catch and finally)
   let telemetryEnabled = false;
   let telemetryEvent = new TelemetryEvent(
