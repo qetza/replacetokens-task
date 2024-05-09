@@ -20,6 +20,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11' 
+
       - name: Setup nodejs 16.x
         uses: actions/setup-node@v4
         with:
@@ -52,6 +57,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11' 
 
       - name: 'Hack: manual download of node6 (linux)'
         if: runner.os == 'Linux'
