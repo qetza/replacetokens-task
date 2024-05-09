@@ -1,4 +1,7 @@
 # Changelog
+## 4.4.4
+- Add explicit deprecation warning.
+
 ## 4.4.3
 - Fix telemetry account hash.
 

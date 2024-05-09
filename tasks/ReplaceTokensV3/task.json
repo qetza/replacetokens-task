@@ -13,12 +13,11 @@
   "version": {
     "Major": 3,
     "Minor": 12,
-    "Patch": 3
+    "Patch": 4
   },
   "instanceNameFormat": "Replace tokens in $(targetFiles)",
   "minimumAgentVersion": "2.105.0",
   "deprecated": true,
-  "deprecationMessage": "The replacetokens@3 task has been deprecated. Use replacetokens@5 (node10) or replacetokens@6 (node16) task instead.",
   "groups": [
     {
       "name": "validations",

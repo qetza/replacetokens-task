@@ -1,4 +1,7 @@
 # Changelog
+## 3.12.4
+- Add explicit deprecation warning.
+
 ## 3.12.3
 - Fix telemetry account hash.
 

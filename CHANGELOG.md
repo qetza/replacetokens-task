@@ -2,6 +2,12 @@
 ## 5.0.8
 - Add links in README to migration documentation.
 
+Task 3.12.4
+- Add explicit deprecation warning.
+
+Task 4.4.4
+- Add explicit deprecation warning.
+
 ## 5.0.7
 Task 6.0.6
 - Fix default case sensitivity in sources and additional variables matching ([#29](https://github.com/qetza/replacetokens-task/issues/29)).
