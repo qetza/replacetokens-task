@@ -49,6 +49,10 @@ The task was completely rewritten to use the npm package [@qetza/replacetokens](
   - renamed output _transformExecutedCount_ to _transforms_
   - renamed output _defaultValueCount_ to _defaults_
 
+You can find some documentation to help migrate here: [Migrate from v5 to v6](https://github.com/qetza/replacetokens-task/discussions/34)
+
+If you are migrating from **v3 to v6** make sure to read this documentation first: [Migrate from v3 to v5](https://github.com/qetza/replacetokens-task/discussions/33)
+
 ## Usage
 ### Inputs
 ```yaml
