@@ -314,15 +314,15 @@ If you are migrating from **v3 to v6** make sure to read this documentation firs
 ```yaml
 steps:
 - task: qetza.replacetokens.replacetokens-task.replacetokens@6
-  name: replace-tokens
+  name: replaceTokens
   inputs:
     sources: '**/*.json'
 - script: |
-    echo "defaults  : $(replace-tokens.defaults }}"
-    echo "files     : $(replace-tokens.files }}"
-    echo "replaced  : $(replace-tokens.replaced }}"
-    echo "tokens    : $(replace-tokens.tokens }}"
-    echo "transforms: $(replace-tokens.transforms }}"
+    echo "defaults  : $(replaceTokens.defaults }}"
+    echo "files     : $(replaceTokens.files }}"
+    echo "replaced  : $(replaceTokens.replaced }}"
+    echo "tokens    : $(replaceTokens.tokens }}"
+    echo "transforms: $(replaceTokens.transforms }}"
 ```
 
 ## Data/Telemetry
