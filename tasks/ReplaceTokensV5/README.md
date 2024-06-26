@@ -256,15 +256,15 @@ Please refer to the [release page](https://github.com/qetza/replacetokens-task/r
 ```yaml
 steps:
 - task: qetza.replacetokens.replacetokens-task.replacetokens@5
-  name: replace-tokens
+  name: replaceTokens
   inputs:
     targetFiles: '**/*.json'
 - script: |
-    echo "defaultValueCount     : $(replace-tokens.defaultValueCount }}"
-    echo "fileProcessedCount    : $(replace-tokens.fileProcessedCount }}"
-    echo "tokenFoundCount       : $(replace-tokens.tokenFoundCount }}"
-    echo "tokenReplacedCount    : $(replace-tokens.tokenReplacedCount }}"
-    echo "transformExecutedCount: $(replace-tokens.transformExecutedCount }}"
+    echo "defaultValueCount     : $(replaceTokens.defaultValueCount }}"
+    echo "fileProcessedCount    : $(replaceTokens.fileProcessedCount }}"
+    echo "tokenFoundCount       : $(replaceTokens.tokenFoundCount }}"
+    echo "tokenReplacedCount    : $(replaceTokens.tokenReplacedCount }}"
+    echo "transformExecutedCount: $(replaceTokens.transformExecutedCount }}"
 ```
 
 ## Data/Telemetry
