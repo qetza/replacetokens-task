@@ -260,11 +260,11 @@ steps:
   inputs:
     targetFiles: '**/*.json'
 - script: |
-    echo "defaultValueCount     : $(replaceTokens.defaultValueCount }}"
-    echo "fileProcessedCount    : $(replaceTokens.fileProcessedCount }}"
-    echo "tokenFoundCount       : $(replaceTokens.tokenFoundCount }}"
-    echo "tokenReplacedCount    : $(replaceTokens.tokenReplacedCount }}"
-    echo "transformExecutedCount: $(replaceTokens.transformExecutedCount }}"
+    echo "defaultValueCount     : $(replaceTokens.defaultValueCount)"
+    echo "fileProcessedCount    : $(replaceTokens.fileProcessedCount)"
+    echo "tokenFoundCount       : $(replaceTokens.tokenFoundCount)"
+    echo "tokenReplacedCount    : $(replaceTokens.tokenReplacedCount)"
+    echo "transformExecutedCount: $(replaceTokens.transformExecutedCount)"
 ```
 
 ## Data/Telemetry
