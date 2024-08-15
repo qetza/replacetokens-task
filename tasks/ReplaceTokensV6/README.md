@@ -318,11 +318,11 @@ steps:
   inputs:
     sources: '**/*.json'
 - script: |
-    echo "defaults  : $(replaceTokens.defaults }}"
-    echo "files     : $(replaceTokens.files }}"
-    echo "replaced  : $(replaceTokens.replaced }}"
-    echo "tokens    : $(replaceTokens.tokens }}"
-    echo "transforms: $(replaceTokens.transforms }}"
+    echo "defaults  : $(replaceTokens.defaults)"
+    echo "files     : $(replaceTokens.files)"
+    echo "replaced  : $(replaceTokens.replaced)"
+    echo "tokens    : $(replaceTokens.tokens)"
+    echo "transforms: $(replaceTokens.transforms)"
 ```
 
 ## Data/Telemetry
