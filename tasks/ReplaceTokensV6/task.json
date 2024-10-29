@@ -140,7 +140,7 @@
       "defaultValue": false,
       "visibleRule": "additionalVariables != \"\"",
       "label": "Use only additional variables",
-      "helpMarkDown": "Use only variables declared in additionalVariables. Default: false"
+      "helpMarkDown": "Use only variables declared in additional variables. Default: false"
     },
     {
       "name": "escapeType",

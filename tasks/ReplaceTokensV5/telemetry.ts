@@ -125,4 +125,5 @@ export class TelemetryEvent {
   enableRecursion: boolean;
   useLegacyEmptyFeature: boolean;
   useDefaultValue: boolean;
+  useAdditionalVariablesOnly: boolean;
 }

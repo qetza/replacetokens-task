@@ -191,7 +191,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           tr.stdout.should.include('telemetry sent');
           tr.stdout.should.match(
-            /\[\{"account":"494d0aad9d06c4ddb51d5300620122ce55366a9382b3cc2835ed5f0e2e67b4d0","pipeline":"b98ed03d3eec376dcc015365c1a944e3ebbcc33d30e3261af3f4e4abb107aa82","host":"server","os":"Windows","actionOnMissing":"warn","encoding":"auto","keepToken":false,"pattern":"#\\\\{\\\\s\*\(\(\?:\(\?!#\\\\{\)\(\?!\\\\s\*\\\\}#\)\.\)\*\)\\\\s\*\\\\}#","result":"success","rules":1,"rulesWithInputWildcard":0,"rulesWithNegativePattern":0,"rulesWithOutputPattern":0,"tokenPrefix":"#{","tokenSuffix":"}#","variableFiles":0,"verbosity":"normal","writeBOM":true,"useLegacyPattern":false,"enableTransforms":false,"transformPrefix":"\(","transformSuffix":"\)","transformPattern":"\\\\s\*\(\.\*\)\\\\\(\\\\s\*\(\(\?:\(\?!\\\\\(\)\(\?!\\\\s\*\\\\\)\)\.\)\*\)\\\\s\*\\\\\)\\\\s\*","defaultValue":"","tokenPattern":"default","actionOnNoFiles":"continue","inlineVariables":0,"enableRecursion":false,"useLegacyEmptyFeature":false,"useDefaultValue":false,"duration":\d+(?:\.\d+)?,"tokenReplaced":1,"tokenFound":1,"defaultValueReplaced":0,"fileProcessed":1,"transformExecuted":0,"eventType":"TokensReplaced","application":"replacetokens-task","version":"5.0.0"}]/
+            /\[\{"account":"494d0aad9d06c4ddb51d5300620122ce55366a9382b3cc2835ed5f0e2e67b4d0","pipeline":"b98ed03d3eec376dcc015365c1a944e3ebbcc33d30e3261af3f4e4abb107aa82","host":"server","os":"Windows","actionOnMissing":"warn","encoding":"auto","keepToken":false,"pattern":"#\\\\{\\\\s\*\(\(\?:\(\?!#\\\\{\)\(\?!\\\\s\*\\\\}#\)\.\)\*\)\\\\s\*\\\\}#","result":"success","rules":1,"rulesWithInputWildcard":0,"rulesWithNegativePattern":0,"rulesWithOutputPattern":0,"tokenPrefix":"#{","tokenSuffix":"}#","variableFiles":0,"verbosity":"normal","writeBOM":true,"useLegacyPattern":false,"enableTransforms":false,"transformPrefix":"\(","transformSuffix":"\)","transformPattern":"\\\\s\*\(\.\*\)\\\\\(\\\\s\*\(\(\?:\(\?!\\\\\(\)\(\?!\\\\s\*\\\\\)\)\.\)\*\)\\\\s\*\\\\\)\\\\s\*","defaultValue":"","tokenPattern":"default","actionOnNoFiles":"continue","inlineVariables":0,"enableRecursion":false,"useLegacyEmptyFeature":false,"useDefaultValue":false,"useAdditionalVariablesOnly":false,"duration":\d+(?:\.\d+)?,"tokenReplaced":1,"tokenFound":1,"defaultValueReplaced":0,"fileProcessed":1,"transformExecuted":0,"eventType":"TokensReplaced","application":"replacetokens-task","version":"5.0.0"}]/
           );
         },
         tr,
@@ -1578,6 +1578,29 @@ describe('ReplaceTokens v5 L0 suite', function () {
           tr.succeeded.should.equal(true, 'task succeeded');
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.expected.json'), 'replaced output');
+        },
+        tr,
+        done
+      );
+    });
+
+    it('should replace only with file or inline variables when specified', function (done: Mocha.Done) {
+      // arrange
+      let tp = path.join(__dirname, 'externalVariables', 'L0_UseAdditionalVariablesOnly.js');
+      let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
+
+      process.env['__inputpath__'] = copyData('variables.json', 'useonlyexternalvariables.json');
+      process.env['__variablespath__'] = path.join(data, 'externalvariables1.json');
+
+      // act
+      tr.run();
+
+      // assert
+      runValidation(
+        () => {
+          tr.succeeded.should.equal(true, 'task succeeded');
+
+          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.useadditionalvariablesonly.expected.json'), 'replaced output');
         },
         tr,
         done

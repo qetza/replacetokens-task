@@ -3,6 +3,9 @@
 Task 6.1.0
 - Add _useAdditionalVariablesOnly_ parameter ([#29](https://github.com/qetza/replacetokens-task/issues/60)).
 
+Task 5.4.0
+- Add _useAdditionalVariablesOnly_ parameter ([#29](https://github.com/qetza/replacetokens-task/issues/60)).
+
 ## 5.0.8
 - Add links in README to migration documentation.
 

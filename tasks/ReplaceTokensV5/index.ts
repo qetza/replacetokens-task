@@ -42,6 +42,7 @@ interface Options {
   readonly enableRecursion: boolean;
   readonly useLegacyEmptyFeature: boolean;
   readonly useDefaultValue: boolean;
+  readonly useAdditionalVariablesOnly: boolean;
 }
 
 interface Rule {
@@ -256,8 +257,7 @@ var replaceTokensInString = function (
     if (options.enableRecursion && names.includes(name)) throw new Error("recursion cycle with token '" + name + "'.");
 
     // replace value
-    let value: string = tl.getVariable(name);
-    if (name in externalVariables) value = externalVariables[name];
+    let value: string = name in externalVariables || options.useAdditionalVariablesOnly ? externalVariables[name] : tl.getVariable(name);
 
     let usedDefaultValue: boolean = false;
     if (
@@ -549,7 +549,8 @@ async function run() {
       enableTransforms: tl.getBoolInput('enableTransforms', false),
       enableRecursion: tl.getBoolInput('enableRecursion', false),
       useLegacyEmptyFeature: tl.getBoolInput('useLegacyEmptyFeature', false),
-      useDefaultValue: tl.getBoolInput('useDefaultValue', false)
+      useDefaultValue: tl.getBoolInput('useDefaultValue', false),
+      useAdditionalVariablesOnly: tl.getBoolInput('useAdditionalVariablesOnly', false)
     };
     const transformPrefix: string = tl.getInput('transformPrefix', false) || '(';
     const transformSuffix: string = tl.getInput('transformSuffix', false) || ')';
@@ -739,6 +740,7 @@ async function run() {
     telemetryEvent.enableRecursion = options.enableRecursion;
     telemetryEvent.useLegacyEmptyFeature = options.useLegacyEmptyFeature;
     telemetryEvent.useDefaultValue = options.useDefaultValue;
+    telemetryEvent.useAdditionalVariablesOnly = options.useAdditionalVariablesOnly;
 
     // process files
     rules.forEach(rule => {

@@ -1,4 +1,7 @@
 # Changelog
+## 5.4.0
+- Add _useAdditionalVariablesOnly_ parameter ([#29](https://github.com/qetza/replacetokens-task/issues/60)).
+
 ## 5.3.3
 - Fix telemetry account hash.
 
