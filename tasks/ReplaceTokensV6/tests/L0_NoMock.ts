@@ -27,6 +27,7 @@ if (process.env['__tokenSuffix__']) tmr.setInput('tokenSuffix', process.env['__t
 if (process.env['__transforms__']) tmr.setInput('enableTransforms', process.env['__transforms__']);
 if (process.env['__transformsPrefix__']) tmr.setInput('transformPrefix', process.env['__transformsPrefix__']);
 if (process.env['__transformsSuffix__']) tmr.setInput('transformSuffix', process.env['__transformsSuffix__']);
+if (process.env['__useAdditionalVariablesOnly__']) tmr.setInput('useAdditionalVariablesOnly', process.env['__useAdditionalVariablesOnly__']);
 
 // mocks
 const axiosClone = Object.assign({}, require('axios'));
