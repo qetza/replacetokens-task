@@ -12,8 +12,8 @@
   "author": "Guillaume ROUCHON",
   "version": {
     "Major": 6,
-    "Minor": 0,
-    "Patch": 6
+    "Minor": 1,
+    "Patch": 0
   },
   "releaseNotes": "breaking changes, see [changelog](https://github.com/qetza/replacetokens-task/blob/master/tasks/ReplaceTokensV6/CHANGELOG.md)",
   "instanceNameFormat": "Replace tokens",
@@ -132,6 +132,15 @@
       "visibleRule": "additionalVariables != \"\"",
       "label": "Separator",
       "helpMarkDown": "The separtor to use when flattening keys in variables."
+    },
+    {
+      "name": "useAdditionalVariablesOnly",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": false,
+      "visibleRule": "additionalVariables != \"\"",
+      "label": "Use only additional variables",
+      "helpMarkDown": "Use only variables declared in additional variables. Default: false"
     },
     {
       "name": "escapeType",

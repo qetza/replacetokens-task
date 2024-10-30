@@ -277,6 +277,11 @@ If you are migrating from **v3 to v6** make sure to read this documentation firs
     #
     # Optional. Default: )
     transformsSuffix: ''
+
+    # Use only variables declared in 'additionalVariables'.
+    #
+    # Optional: Default: false
+    useAdditionalVariablesOnly: ''
 ```
 
 ### Output
@@ -354,6 +359,7 @@ The following **anonymous** data is send:
   - _transforms_
   - _transformsPrefix_
   - _transformsSuffix_
+  - _useAdditionalVariablesOnly_
 - the **number of** _sources_ entries
 - the **number of** _additionalVariables_ entries referencing file
 - the **number of** _additionalVariables_ entries referencing environment variables

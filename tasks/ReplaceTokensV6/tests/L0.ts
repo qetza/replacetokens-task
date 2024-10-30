@@ -233,7 +233,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
 
         tr.stdout.should.include('telemetry sent');
         tr.stdout.should.match(
-          /\[\{"eventType":"TokensReplaced","application":"replacetokens-task","version":"6.0.0","account":"494d0aad9d06c4ddb51d5300620122ce55366a9382b3cc2835ed5f0e2e67b4d0","pipeline":"b98ed03d3eec376dcc015365c1a944e3ebbcc33d30e3261af3f4e4abb107aa82","host":"cloud","os":"Windows","sources":3,"add-bom":false,"case-insenstive-paths":true,"encoding":"auto","escape":"auto","if-no-files-found":"ignore","include-dot-paths":true,"log-level":"info","missing-var-action":"none","missing-var-default":"","missing-var-log":"warn","recusrive":false,"separator":".","token-pattern":"default","transforms":false,"transforms-prefix":"\(","transforms-suffix":"\)","variable-files":0,"variable-envs":0,"inline-variables":0,"output-defaults":1,"output-files":2,"output-replaced":3,"output-tokens":4,"output-transforms":5,"result":"success","duration":\d+(?:\.\d+)?}]/
+          /\[\{"eventType":"TokensReplaced","application":"replacetokens-task","version":"6.0.0","account":"494d0aad9d06c4ddb51d5300620122ce55366a9382b3cc2835ed5f0e2e67b4d0","pipeline":"b98ed03d3eec376dcc015365c1a944e3ebbcc33d30e3261af3f4e4abb107aa82","host":"cloud","os":"Windows","sources":3,"add-bom":false,"case-insenstive-paths":true,"encoding":"auto","escape":"auto","if-no-files-found":"ignore","include-dot-paths":true,"log-level":"info","missing-var-action":"none","missing-var-default":"","missing-var-log":"warn","recusrive":false,"separator":".","token-pattern":"default","transforms":false,"transforms-prefix":"\(","transforms-suffix":"\)","use-additional-variables-only":false,"variable-files":0,"variable-envs":0,"inline-variables":0,"output-defaults":1,"output-files":2,"output-replaced":3,"output-tokens":4,"output-transforms":5,"result":"success","duration":\d+(?:\.\d+)?}]/
         );
       }, tr);
     } finally {
@@ -1073,6 +1073,46 @@ describe('ReplaceTokens v6 L0 suite', function () {
 
       const actual = fs.readFileSync(input, 'utf8');
       const expected = fs.readFileSync(path.join(data, 'file.expected.txt'), 'utf8');
+
+      actual.should.equal(expected);
+    }, tr);
+  });
+
+  it('useAdditionalVariablesOnly', async () => {
+    // arrange
+    const tp = path.join(__dirname, 'L0_NoMock.js');
+    const tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
+
+    addVariables({ 'var.var': 'var', var_yaml2: 'var' });
+    addSecrets({ 'var.secret': 'secret', 'var.yml2': 'secret' });
+
+    let input = path.join(tmp, 'file.txt');
+    await fs.promises.copyFile(path.join(data, 'file.txt'), input);
+    input = path.resolve(input);
+
+    process.env['__telemetryOptout__'] = 'true';
+    process.env['__sources__'] = input;
+    process.env['__missingVarAction__'] = 'replace';
+    process.env['__missingVarDefault__'] = 'DEFAULT';
+    process.env['__root__'] = path.join(data, '..');
+    process.env['__VARS__'] = '{ "var1": "env", "var2": "env" }';
+    process.env['__useAdditionalVariablesOnly__'] = 'true';
+    process.env['__additionalVariables__'] = `
+- '@**/_data/vars.*;!**/*.xml'
+- '$__VARS__'
+- var2: inline
+  var.yml2: inline
+`;
+
+    // act
+    await tr.runAsync();
+
+    // assert
+    runValidations(() => {
+      tr.succeeded.should.be.true;
+
+      const actual = fs.readFileSync(input, 'utf8');
+      const expected = fs.readFileSync(path.join(data, 'file.only_additional_variables.expected.txt'), 'utf8');
 
       actual.should.equal(expected);
     }, tr);

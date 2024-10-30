@@ -12,8 +12,8 @@
   "author": "Guillaume ROUCHON",
   "version": {
     "Major": 5,
-    "Minor": 3,
-    "Patch": 3
+    "Minor": 4,
+    "Patch": 0
   },
   "releaseNotes": "Migrate to Node10 handler (breaking change).<br/>Add Node16 handler.",
   "instanceNameFormat": "Replace tokens in $(targetFiles)",
@@ -250,6 +250,15 @@
       "groupName": "variables",
       "required": false,
       "helpMarkDown": "The separtor to use in variable names for nested objects in inline variables or variable files.<br/>Example: {'My':{'Value':'Hello World!'}} will create a variable 'My.Value' with the value 'Hello World!'"
+    },
+    {
+      "name": "useAdditionalVariablesOnly",
+      "type": "boolean",
+      "label": "Use only file and inline variables",
+      "defaultValue": "false",
+      "groupName": "variables",
+      "required": false,
+      "helpMarkDown": "Use only variables declared in variable files and inline variables."
     },
     {
       "name": "enableRecursion",

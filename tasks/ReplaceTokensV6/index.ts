@@ -117,6 +117,7 @@ async function run() {
     // load additional variables
     const separator = tl.getInput('variableSeparator') || rt.Defaults.Separator;
     const additionalVariables = await getAdditionalVariables(options.root, separator, options.sources.caseInsensitive, options.sources.dot);
+    const useAdditionalVariablesOnly = tl.getBoolInput('useAdditionalVariablesOnly');
 
     // set telemetry attributes
     telemetryEvent.setAttributes({
@@ -141,13 +142,18 @@ async function run() {
       transforms: options.transforms.enabled,
       'transforms-prefix': options.transforms.prefix,
       'transforms-suffix': options.transforms.suffix,
+      'use-additional-variables-only': useAdditionalVariablesOnly,
       'variable-files': variableFilesCount,
       'variable-envs': variablesEnvCount,
       'inline-variables': inlineVariablesCount
     });
 
     // replace tokens
-    const result = await rt.replaceTokens(sources, (name: string) => (name in additionalVariables ? additionalVariables[name] : tl.getVariable(name)), options);
+    const result = await rt.replaceTokens(
+      sources,
+      (name: string) => (name in additionalVariables || useAdditionalVariablesOnly ? additionalVariables[name] : tl.getVariable(name)),
+      options
+    );
 
     if (result.files === 0) {
       (msg => {

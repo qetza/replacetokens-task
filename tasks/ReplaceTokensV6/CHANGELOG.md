@@ -1,4 +1,7 @@
 # Changelog
+## 6.1.0
+- Add _useAdditionalVariablesOnly_ parameter ([#29](https://github.com/qetza/replacetokens-task/issues/60)).
+
 ## 6.0.6
 - Fix default case sensitivity in sources and additional variables matching ([#29](https://github.com/qetza/replacetokens-task/issues/29)).
 - Fix default directories and files starting with a dot in sources and additional variables matching ([#29](https://github.com/qetza/replacetokens-task/issues/29)).
