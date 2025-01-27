@@ -134,7 +134,7 @@ async function run() {
       'missing-var-action': options.missing.action,
       'missing-var-default': options.missing.default,
       'missing-var-log': options.missing.log,
-      recusrive: options.recursive,
+      recursive: options.recursive,
       separator: separator,
       'token-pattern': options.token.pattern,
       'token-prefix': options.token.prefix,
