@@ -294,10 +294,11 @@ If you are migrating from **v3 to v6** make sure to read this documentation firs
 | transforms | The number of transforms applied. | `2` |
 
 ## Examples
-### Multiple target files
+### Multiple target files and opt out of sending telemetry data
 ```yaml
 - task: qetza.replacetokens.replacetokens-task.replacetokens@6
   inputs:
+    telemetryOptout: true
     sources: |
       **/*.json;!**/*.dev.json;!**/vars.json => _tmp/*.json
       **/*.yml
@@ -331,7 +332,7 @@ steps:
 ```
 
 ## Data/Telemetry
-The Replace Tokens task for Azure Pipelines collects **anonymous** usage data and sends them by default to its author to help improve the product. If you don't wish to send usage data, you can change your telemetry settings through the _telemetryOptout_ parameter or by setting the `REPLACETOKENS_TELEMETRY_OPTOUT` environment variable to `1` or `true`.
+The Replace Tokens task for Azure Pipelines collects **anonymous** usage data and sends them by default to its author to help improve the product. If you don't wish to send usage data, you can change your telemetry settings through the `inputs` _telemetryOptout_ parameter or by setting the `REPLACETOKENS_TELEMETRY_OPTOUT` environment variable to `1` or `true`.
 
 The following **anonymous** data is send:
 - the **hash** of your collection id
