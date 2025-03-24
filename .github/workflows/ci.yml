@@ -25,10 +25,10 @@ jobs:
         with:
           python-version: '3.11' 
 
-      - name: Setup nodejs 16.x
+      - name: Setup nodejs 20.x
         uses: actions/setup-node@v4
         with:
-          node-version: 16.x
+          node-version: 20.x
 
       - name: Install dependencies
         run: |
@@ -93,10 +93,10 @@ jobs:
           cp $env:RUNNER_TEMP/node6/node.exe $env:USERPROFILE/azure-pipelines-task-lib/_download/node6
           echo '' > $env:USERPROFILE/azure-pipelines-task-lib/_download/node6.completed
 
-      - name: Setup nodejs 16.x
+      - name: Setup nodejs 20.x
         uses: actions/setup-node@v4
         with:
-          node-version: 16.x
+          node-version: 20.x
 
       - name: Install dependencies
         run: |

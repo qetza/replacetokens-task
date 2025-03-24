@@ -48,7 +48,7 @@
     "prettier": "^3.2.5",
     "semver": "^7.6.0",
     "shelljs": "^0.8.5",
-    "tfx-cli": "^0.16.0",
-    "typescript": "^4.8.4"
+    "tfx-cli": "^0.21.0",
+    "typescript": "^5.1.6"
   }
 }

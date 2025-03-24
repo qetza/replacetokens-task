@@ -12,7 +12,7 @@
   "author": "Guillaume ROUCHON",
   "version": {
     "Major": 6,
-    "Minor": 1,
+    "Minor": 2,
     "Patch": 0
   },
   "releaseNotes": "breaking changes, see [changelog](https://github.com/qetza/replacetokens-task/blob/master/tasks/ReplaceTokensV6/CHANGELOG.md)",
@@ -312,6 +312,10 @@
   ],
   "execution": {
     "Node16": {
+      "target": "index.js",
+      "argumentFormat": ""
+    },
+    "Node20_1": {
       "target": "index.js",
       "argumentFormat": ""
     }

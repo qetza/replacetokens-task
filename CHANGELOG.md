@@ -1,4 +1,8 @@
 # Changelog
+## 5.2.0
+Task 6.2.0
+- Add Node 20 support ([#74](https://github.com/qetza/replacetokens-task/issues/74)).
+
 ## 5.1.0
 Task 6.1.0
 - Add _useAdditionalVariablesOnly_ parameter ([#29](https://github.com/qetza/replacetokens-task/issues/60)).
