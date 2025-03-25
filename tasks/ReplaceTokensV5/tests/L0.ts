@@ -11,17 +11,14 @@ const tmp = path.join(__dirname, '_tmp');
 describe('ReplaceTokens v5 L0 suite', function () {
   this.timeout(10000);
 
-  function runValidation(validator: () => void, tr: ttm.MockTestRunner, done: Mocha.Done) {
+  function runValidation(validator: () => void, tr: ttm.MockTestRunner) {
     try {
       validator();
-      done();
     } catch (err) {
-      console.log('STDERR');
-      console.log(tr.stderr);
-      console.log('STDOUT');
-      console.log(tr.stdout);
+      console.log('STDERR', tr.stderr);
+      console.log('STDOUT', tr.stdout);
 
-      done(err);
+      throw err;
     }
   }
 
@@ -91,25 +88,24 @@ describe('ReplaceTokens v5 L0 suite', function () {
   });
 
   describe('telemetry', function () {
-    it('should not call telemetry when disabled by input', function (done: Mocha.Done) {
+    it('should not call telemetry when disabled by input', async () => {
       // arrange
       let tp: string = path.join(__dirname, 'telemetry', 'L0_TelemetryDisabledByInput.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
         () => {
           tr.stdout.should.not.include('sent usage telemetry:');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should not call telemetry when disabled by REPLACETOKENS_DISABLE_TELEMETRY', function (done: Mocha.Done) {
+    it('should not call telemetry when disabled by REPLACETOKENS_DISABLE_TELEMETRY', async () => {
       // arrange
       let tp = path.join(__dirname, 'telemetry', 'L0_TelemetryDisabledByVariable.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -117,7 +113,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['REPLACETOKENS_DISABLE_TELEMETRY'] = 'true';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -125,12 +121,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
           tr.stdout.should.not.include('telemetry sent');
           tr.stdout.should.not.include('sent usage telemetry:');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should not call telemetry when disabled by REPLACETOKENS_TELEMETRY_OPTOUT', function (done: Mocha.Done) {
+    it('should not call telemetry when disabled by REPLACETOKENS_TELEMETRY_OPTOUT', async () => {
       // arrange
       let tp = path.join(__dirname, 'telemetry', 'L0_TelemetryDisabledByVariable.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -138,7 +133,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['REPLACETOKENS_TELEMETRY_OPTOUT'] = 'true';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -146,18 +141,17 @@ describe('ReplaceTokens v5 L0 suite', function () {
           tr.stdout.should.not.include('telemetry sent');
           tr.stdout.should.not.include('sent usage telemetry:');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should call telemetry on failure', function (done: Mocha.Done) {
+    it('should call telemetry on failure', async () => {
       // arrange
       let tp = path.join(__dirname, 'telemetry', 'L0_TelemetryOnFailure.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -169,12 +163,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
             /\[\{"account":"494d0aad9d06c4ddb51d5300620122ce55366a9382b3cc2835ed5f0e2e67b4d0","pipeline":"b98ed03d3eec376dcc015365c1a944e3ebbcc33d30e3261af3f4e4abb107aa82","host":"server","os":"Windows","result":"failed","eventType":"TokensReplaced","application":"replacetokens-task","version":"5.0.0"}]/
           );
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should call telemetry on success', function (done: Mocha.Done) {
+    it('should call telemetry on success', async () => {
       // arrange
       let tp = path.join(__dirname, 'telemetry', 'L0_TelemetryOnSuccess.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -182,7 +175,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__inputpath__'] = copyData('default.json', 'default_telemetryonsuccess.json');
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -194,14 +187,13 @@ describe('ReplaceTokens v5 L0 suite', function () {
             /\[\{"account":"494d0aad9d06c4ddb51d5300620122ce55366a9382b3cc2835ed5f0e2e67b4d0","pipeline":"b98ed03d3eec376dcc015365c1a944e3ebbcc33d30e3261af3f4e4abb107aa82","host":"server","os":"Windows","actionOnMissing":"warn","encoding":"auto","keepToken":false,"pattern":"#\\\\{\\\\s\*\(\(\?:\(\?!#\\\\{\)\(\?!\\\\s\*\\\\}#\)\.\)\*\)\\\\s\*\\\\}#","result":"success","rules":1,"rulesWithInputWildcard":0,"rulesWithNegativePattern":0,"rulesWithOutputPattern":0,"tokenPrefix":"#{","tokenSuffix":"}#","variableFiles":0,"verbosity":"normal","writeBOM":true,"useLegacyPattern":false,"enableTransforms":false,"transformPrefix":"\(","transformSuffix":"\)","transformPattern":"\\\\s\*\(\.\*\)\\\\\(\\\\s\*\(\(\?:\(\?!\\\\\(\)\(\?!\\\\s\*\\\\\)\)\.\)\*\)\\\\s\*\\\\\)\\\\s\*","defaultValue":"","tokenPattern":"default","actionOnNoFiles":"continue","inlineVariables":0,"enableRecursion":false,"useLegacyEmptyFeature":false,"useDefaultValue":false,"useAdditionalVariablesOnly":false,"duration":\d+(?:\.\d+)?,"tokenReplaced":1,"tokenFound":1,"defaultValueReplaced":0,"fileProcessed":1,"transformExecuted":0,"eventType":"TokensReplaced","application":"replacetokens-task","version":"5.0.0"}]/
           );
         },
-        tr,
-        done
+        tr
       );
     });
   });
 
   describe('target files', function () {
-    it('should replace inline when no output path', function (done: Mocha.Done) {
+    it('should replace inline when no output path', async () => {
       // arrange
       let tp = path.join(__dirname, 'targetFiles', 'L0_InlineReplace.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -209,7 +201,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__inputpath__'] = copyData('default.json', 'default_inlinereplace.json');
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -218,12 +210,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should replace multiple inline when no output path', function (done: Mocha.Done) {
+    it('should replace multiple inline when no output path', async () => {
       // arrange
       let tp = path.join(__dirname, 'targetFiles', 'L0_MultipleInlineReplace.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -232,7 +223,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__inputpath2__'] = copyData('default.json', 'default_inlinereplace2.json');
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -242,12 +233,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
           assertFilesEqual(process.env['__inputpath1__'], path.join(data, 'default.expected.json'), 'replaced output in first file');
           assertFilesEqual(process.env['__inputpath2__'], path.join(data, 'default.expected.json'), 'replaced output in second file');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should replace in other file when relative output path', function (done: Mocha.Done) {
+    it('should replace in other file when relative output path', async () => {
       // arrange
       let tp = path.join(__dirname, 'targetFiles', 'L0_OutputReplace.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -256,7 +246,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__outputpath__'] = path.join('output', 'default_relativeoutputreplace.output.json');
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -266,12 +256,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
           assertFilesEqual(path.join(tmp, process.env['__outputpath__']), path.join(data, 'default.expected.json'), 'replaced output');
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.json'), 'input');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should replace in other file when absolute output path', function (done: Mocha.Done) {
+    it('should replace in other file when absolute output path', async () => {
       // arrange
       let tp = path.join(__dirname, 'targetFiles', 'L0_OutputReplace.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -280,7 +269,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__outputpath__'] = path.join(tmp, 'output', 'default_absoluteoutputreplace.output.json');
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -290,12 +279,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
           assertFilesEqual(process.env['__outputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.json'), 'input');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should replace in other file when wildcard and output path', function (done: Mocha.Done) {
+    it('should replace in other file when wildcard and output path', async () => {
       // arrange
       let tp = path.join(__dirname, 'targetFiles', 'L0_WildcardReplace.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -305,7 +293,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__outputpath__'] = path.join('output', 'default_wildcardreplace.*.output.json');
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -315,14 +303,13 @@ describe('ReplaceTokens v5 L0 suite', function () {
           assertFilesEqual(path.join(tmp, 'output', 'default_wildcardreplace.dev.output.json'), path.join(data, 'default.expected.json'), 'replaced output');
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.json'), 'input');
         },
-        tr,
-        done
+        tr
       );
     });
   });
 
   describe('token pattern', function () {
-    it('should replace when default pattern', function (done: Mocha.Done) {
+    it('should replace when default pattern', async () => {
       // arrange
       let tp = path.join(__dirname, 'tokenPattern', 'L0_TokenPattern.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -331,7 +318,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__tokenpattern__'] = 'default';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -340,12 +327,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should replace when rm pattern', function (done: Mocha.Done) {
+    it('should replace when rm pattern', async () => {
       // arrange
       let tp = path.join(__dirname, 'tokenPattern', 'L0_TokenPattern.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -354,7 +340,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__tokenpattern__'] = 'rm';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -363,12 +349,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should replace when octopus pattern', function (done: Mocha.Done) {
+    it('should replace when octopus pattern', async () => {
       // arrange
       let tp = path.join(__dirname, 'tokenPattern', 'L0_TokenPattern.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -377,7 +362,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__tokenpattern__'] = 'octopus';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -386,12 +371,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should replace when azpipelines pattern', function (done: Mocha.Done) {
+    it('should replace when azpipelines pattern', async () => {
       // arrange
       let tp = path.join(__dirname, 'tokenPattern', 'L0_TokenPattern.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -400,7 +384,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__tokenpattern__'] = 'azpipelines';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -409,12 +393,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should replace when doublebraces pattern', function (done: Mocha.Done) {
+    it('should replace when doublebraces pattern', async () => {
       // arrange
       let tp = path.join(__dirname, 'tokenPattern', 'L0_TokenPattern.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -423,7 +406,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__tokenpattern__'] = 'doublebraces';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -432,12 +415,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should replace when custom pattern', function (done: Mocha.Done) {
+    it('should replace when custom pattern', async () => {
       // arrange
       let tp = path.join(__dirname, 'tokenPattern', 'L0_CustomTokenPattern.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -445,7 +427,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__inputpath__'] = copyData('default.custom.json', 'default_customtokenpattern.json');
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -454,12 +436,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should replace when legacy pattern', function (done: Mocha.Done) {
+    it('should replace when legacy pattern', async () => {
       // arrange
       let tp = path.join(__dirname, 'tokenPattern', 'L0_LegacyTokenPattern.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -467,7 +448,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__inputpath__'] = copyData('default.json', 'default_legacytokenpattern.json');
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -476,12 +457,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should no replace when legacy pattern', function (done: Mocha.Done) {
+    it('should no replace when legacy pattern', async () => {
       // arrange
       let tp = path.join(__dirname, 'tokenPattern', 'L0_LegacyTokenPattern.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -489,7 +469,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__inputpath__'] = copyData('default.json', 'default_newtokenpattern.json');
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -498,14 +478,13 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
   });
 
   describe('keep token', function () {
-    it('should replace with empty when not keeping token', function (done: Mocha.Done) {
+    it('should replace with empty when not keeping token', async () => {
       // arrange
       let tp = path.join(__dirname, 'keepToken', 'L0_KeepToken.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -514,7 +493,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__keeptoken__'] = 'false';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -523,12 +502,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_noreplace.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should replace with token when keeping token', function (done: Mocha.Done) {
+    it('should replace with token when keeping token', async () => {
       // arrange
       let tp = path.join(__dirname, 'keepToken', 'L0_KeepToken.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -537,7 +515,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__keeptoken__'] = 'true';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -546,14 +524,13 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
   });
 
   describe('transforms', function () {
-    it('should uppercase replaced value with transform', function (done: Mocha.Done) {
+    it('should uppercase replaced value with transform', async () => {
       // arrange
       let tp = path.join(__dirname, 'transforms', 'L0_TransformValue.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -562,7 +539,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['VAR1'] = 'var1_value';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -571,12 +548,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'transform.upper.expected.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should lowercase replaced value with transform', function (done: Mocha.Done) {
+    it('should lowercase replaced value with transform', async () => {
       // arrange
       let tp = path.join(__dirname, 'transforms', 'L0_TransformValue.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -585,7 +561,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['VAR1'] = 'VAR1_VALUE';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -594,12 +570,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'transform.lower.expected.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should base64 replaced value with transform', function (done: Mocha.Done) {
+    it('should base64 replaced value with transform', async () => {
       // arrange
       let tp = path.join(__dirname, 'transforms', 'L0_TransformValue.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -608,7 +583,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['VAR1'] = 'var1_value';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -617,12 +592,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'transform.base64.expected.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should not escape replaced value with transform', function (done: Mocha.Done) {
+    it('should not escape replaced value with transform', async () => {
       // arrange
       let tp = path.join(__dirname, 'transforms', 'L0_TransformValue.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -631,7 +605,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['VAR1'] = '"var1_value"';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -640,12 +614,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'transform.noescape.expected.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should transform replaced value with custom transform pattern', function (done: Mocha.Done) {
+    it('should transform replaced value with custom transform pattern', async () => {
       // arrange
       let tp = path.join(__dirname, 'transforms', 'L0_TransformPattern.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -653,7 +626,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__inputpath__'] = copyData('transform.custom.json', 'transform_custom.json');
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -662,12 +635,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'transform.upper.expected.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should indent replaced value with transform', function (done: Mocha.Done) {
+    it('should indent replaced value with transform', async () => {
       // arrange
       let tp = path.join(__dirname, 'transforms', 'L0_TransformValue.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -676,7 +648,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['VAR1'] = 'line1\nline2\nline3';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -685,14 +657,13 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'transform.indent.expected.yml'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
   });
 
   describe('action on missing', function () {
-    it('should display information on missing value when continue silently', function (done: Mocha.Done) {
+    it('should display information on missing value when continue silently', async () => {
       // arrange
       let tp = path.join(__dirname, 'actionOnMissing', 'L0_ActionOnMissing.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -701,7 +672,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__actiononmissing__'] = 'continue';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -710,12 +681,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           tr.stdout.should.include('##vso[task.debug]  variable not found: var1');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should display warn on missing value when warning', function (done: Mocha.Done) {
+    it('should display warn on missing value when warning', async () => {
       // arrange
       let tp = path.join(__dirname, 'actionOnMissing', 'L0_ActionOnMissing.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -724,7 +694,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__actiononmissing__'] = 'warn';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -733,12 +703,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           tr.stdout.should.include('##vso[task.issue type=warning;source=TaskInternal;]  variable not found: var1');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should fail on missing value when fail', function (done: Mocha.Done) {
+    it('should fail on missing value when fail', async () => {
       // arrange
       let tp = path.join(__dirname, 'actionOnMissing', 'L0_ActionOnMissing.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -747,7 +716,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__actiononmissing__'] = 'fail';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -756,14 +725,13 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           tr.stdout.should.include('##vso[task.issue type=error;source=TaskInternal;]  variable not found: var1');
         },
-        tr,
-        done
+        tr
       );
     });
   });
 
   describe('logs', function () {
-    it('should log minimal when normal', function (done: Mocha.Done) {
+    it('should log minimal when normal', async () => {
       // arrange
       let tp = path.join(__dirname, 'logs', 'L0_Verbosity.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -772,7 +740,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__verbosity__'] = 'normal';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -786,12 +754,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           tr.stdout.should.include('replaced 1 tokens out of 1 in 1 file(s)');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should log all when detailed', function (done: Mocha.Done) {
+    it('should log all when detailed', async () => {
       // arrange
       let tp = path.join(__dirname, 'logs', 'L0_Verbosity.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -800,7 +767,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__verbosity__'] = 'detailed';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -814,12 +781,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           tr.stdout.should.include('replaced 1 tokens out of 1 in 1 file(s)');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should not log when off', function (done: Mocha.Done) {
+    it('should not log when off', async () => {
       // arrange
       let tp = path.join(__dirname, 'logs', 'L0_Verbosity.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -828,7 +794,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__verbosity__'] = 'off';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -842,12 +808,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           tr.stdout.should.not.include('replaced 1 tokens out of 1 in 1 file(s)');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should log summary when replaced', function (done: Mocha.Done) {
+    it('should log summary when replaced', async () => {
       // arrange
       let tp = path.join(__dirname, 'logs', 'L0_Logs.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -856,7 +821,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__inputpath2__'] = copyData('logs.json', 'default_logs2.json');
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -871,14 +836,13 @@ describe('ReplaceTokens v5 L0 suite', function () {
           tr.stdout.should.include('##vso[task.setvariable variable=transformExecutedCount;isOutput=false;issecret=false;]2');
           tr.stdout.should.include('##vso[task.setvariable variable=defaultValueCount;isOutput=false;issecret=false;]2');
         },
-        tr,
-        done
+        tr
       );
     });
   });
 
   describe('escape characters', function () {
-    it('should escape json when auto on .json', function (done: Mocha.Done) {
+    it('should escape json when auto on .json', async () => {
       // arrange
       let tp = path.join(__dirname, 'escapeChars', 'L0_EscapeType.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -888,7 +852,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['VAR1'] = '"var\\1\n\r\tvalue\b\f';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -897,12 +861,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_escape.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should escape xml when auto on .xml', function (done: Mocha.Done) {
+    it('should escape xml when auto on .xml', async () => {
       // arrange
       let tp = path.join(__dirname, 'escapeChars', 'L0_EscapeType.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -912,7 +875,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['VAR1'] = '"var\'1&<value>';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -921,12 +884,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_escape.xml'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should not escape when none', function (done: Mocha.Done) {
+    it('should not escape when none', async () => {
       // arrange
       let tp = path.join(__dirname, 'escapeChars', 'L0_EscapeType.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -936,7 +898,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['VAR1'] = '"var\\1\n\r\tvalue\b\f';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -945,12 +907,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_noescape.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should escape json when json', function (done: Mocha.Done) {
+    it('should escape json when json', async () => {
       // arrange
       let tp = path.join(__dirname, 'escapeChars', 'L0_EscapeType.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -960,7 +921,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['VAR1'] = '"var\\1\n\r\tvalue\b\f';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -969,12 +930,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_escape.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should escape xml when xml', function (done: Mocha.Done) {
+    it('should escape xml when xml', async () => {
       // arrange
       let tp = path.join(__dirname, 'escapeChars', 'L0_EscapeType.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -984,7 +944,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['VAR1'] = '"var\'1&<value>';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -993,12 +953,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_escape.xml'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should escape custom when custom', function (done: Mocha.Done) {
+    it('should escape custom when custom', async () => {
       // arrange
       let tp = path.join(__dirname, 'escapeChars', 'L0_CustomEscapeType.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -1006,7 +965,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__inputpath__'] = copyData('default.json', 'default_customescape.json');
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -1015,14 +974,13 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_customescape.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
   });
 
   describe('action on no file', function () {
-    it('should display information on no file when continue silently', function (done: Mocha.Done) {
+    it('should display information on no file when continue silently', async () => {
       // arrange
       let tp = path.join(__dirname, 'actionOnNoFile', 'L0_ActionOnNoFile.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -1030,7 +988,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__actiononnofiles__'] = 'continue';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -1039,12 +997,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           tr.stdout.should.include('replaced 0 tokens out of 0 in 0 file(s)');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should display warn on no file when warn', function (done: Mocha.Done) {
+    it('should display warn on no file when warn', async () => {
       // arrange
       let tp = path.join(__dirname, 'actionOnNoFile', 'L0_ActionOnNoFile.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -1052,7 +1009,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__actiononnofiles__'] = 'warn';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -1061,12 +1018,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           tr.stdout.should.include('##vso[task.issue type=warning;source=TaskInternal;]found no files to process');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should fail on no file when fail', function (done: Mocha.Done) {
+    it('should fail on no file when fail', async () => {
       // arrange
       let tp = path.join(__dirname, 'actionOnNoFile', 'L0_ActionOnNoFile.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -1074,7 +1030,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__actiononnofiles__'] = 'fail';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -1083,14 +1039,13 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           tr.stdout.should.include('##vso[task.issue type=error;source=TaskInternal;]found no files to process');
         },
-        tr,
-        done
+        tr
       );
     });
   });
 
   describe('empty value', function () {
-    it('should replace empty value when legacy', function (done: Mocha.Done) {
+    it('should replace empty value when legacy', async () => {
       // arrange
       let tp = path.join(__dirname, 'emptyValue', 'L0_LegacyEmptyValue.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -1099,7 +1054,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['VAR1'] = '';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -1110,12 +1065,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_empty.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should replace empty value when new', function (done: Mocha.Done) {
+    it('should replace empty value when new', async () => {
       // arrange
       let tp = path.join(__dirname, 'emptyValue', 'L0_EmptyValue.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -1123,7 +1077,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__inputpath__'] = copyData('default.json', 'default_empty.json');
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -1134,12 +1088,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_empty.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should not replace empty value when new and empty token', function (done: Mocha.Done) {
+    it('should not replace empty value when new and empty token', async () => {
       // arrange
       let tp = path.join(__dirname, 'emptyValue', 'L0_EmptyValue.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -1148,7 +1101,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['VAR1'] = '(empty)';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -1159,14 +1112,13 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_emptytoken.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
   });
 
   describe('default value', function () {
-    it('should not replace when legacy and no default', function (done: Mocha.Done) {
+    it('should not replace when legacy and no default', async () => {
       // arrange
       let tp = path.join(__dirname, 'defaultValue', 'L0_LegacyDefaultValue.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -1175,7 +1127,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__defaultvalue__'] = '';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -1186,12 +1138,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_noreplace.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should replace with default when legacy and default', function (done: Mocha.Done) {
+    it('should replace with default when legacy and default', async () => {
       // arrange
       let tp = path.join(__dirname, 'defaultValue', 'L0_LegacyDefaultValue.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -1200,7 +1151,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__defaultvalue__'] = '[default]';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -1211,12 +1162,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_default.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should replace with empty when legacy and empty default', function (done: Mocha.Done) {
+    it('should replace with empty when legacy and empty default', async () => {
       // arrange
       let tp = path.join(__dirname, 'defaultValue', 'L0_LegacyDefaultValue.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -1225,7 +1175,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__defaultvalue__'] = '(empty)';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -1236,12 +1186,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_empty.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should not replace when no default', function (done: Mocha.Done) {
+    it('should not replace when no default', async () => {
       // arrange
       let tp = path.join(__dirname, 'defaultValue', 'L0_DefaultValue.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -1251,7 +1200,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__defaultvalue__'] = '';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -1262,12 +1211,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_noreplace.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should replace with default when default', function (done: Mocha.Done) {
+    it('should replace with default when default', async () => {
       // arrange
       let tp = path.join(__dirname, 'defaultValue', 'L0_DefaultValue.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -1277,7 +1225,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__defaultvalue__'] = '[default]';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -1288,12 +1236,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_default.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should replace with empty when empty default', function (done: Mocha.Done) {
+    it('should replace with empty when empty default', async () => {
       // arrange
       let tp = path.join(__dirname, 'defaultValue', 'L0_DefaultValue.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -1303,7 +1250,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__defaultvalue__'] = '';
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -1314,14 +1261,13 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_empty.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
   });
 
   describe('recursion', function () {
-    it('should not replace recursively when recursion disabled', function (done: Mocha.Done) {
+    it('should not replace recursively when recursion disabled', async () => {
       // arrange
       let tp = path.join(__dirname, 'recursion', 'L0_DisabledRecursion.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -1329,7 +1275,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__inputpath__'] = copyData('default.json', 'default_disabledrecursion.json');
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -1338,12 +1284,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_disabledrecursion.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should replace recursively when recursion', function (done: Mocha.Done) {
+    it('should replace recursively when recursion', async () => {
       // arrange
       let tp = path.join(__dirname, 'recursion', 'L0_Recursion.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -1351,7 +1296,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__inputpath__'] = copyData('default.json', 'default_recursion.json');
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -1360,12 +1305,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should fail when cycle recursion', function (done: Mocha.Done) {
+    it('should fail when cycle recursion', async () => {
       // arrange
       let tp = path.join(__dirname, 'recursion', 'L0_CycleRecursion.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -1373,7 +1317,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__inputpath__'] = copyData('default.json', 'default_cyclerecursion.json');
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -1383,14 +1327,13 @@ describe('ReplaceTokens v5 L0 suite', function () {
           tr.stdout.should.include("##vso[task.issue type=error;source=TaskInternal;]recursion cycle with token 'var1'.");
           tr.stdout.should.include("##vso[task.complete result=Failed;]recursion cycle with token 'var1'.");
         },
-        tr,
-        done
+        tr
       );
     });
   });
 
   describe('misc', function () {
-    it('should not replace when binary file', function (done: Mocha.Done) {
+    it('should not replace when binary file', async () => {
       // arrange
       let tp = path.join(__dirname, 'targetFiles', 'L0_InlineReplace.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -1398,7 +1341,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__inputpath__'] = copyData('binary.jpg', 'binary.jpg');
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -1417,14 +1360,13 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           actual.should.equal(expected, 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
   });
 
   describe('external variables', function () {
-    it('should replace with inline variables in single document', function (done: Mocha.Done) {
+    it('should replace with inline variables in single document', async () => {
       // arrange
       let tp = path.join(__dirname, 'externalVariables', 'L0_InlineVariablesSingleDocument.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -1432,7 +1374,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__inputpath__'] = copyData('variables.json', 'inlinevariables_singledocument.json');
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -1441,12 +1383,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.expected.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should replace with inline variables in multiple documents', function (done: Mocha.Done) {
+    it('should replace with inline variables in multiple documents', async () => {
       // arrange
       let tp = path.join(__dirname, 'externalVariables', 'L0_InlineVariablesMultipleDocuments.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -1454,7 +1395,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__inputpath__'] = copyData('variables.json', 'inlinevariables_multipledocuments.json');
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -1463,12 +1404,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.expected.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should replace with variables from JSON file', function (done: Mocha.Done) {
+    it('should replace with variables from JSON file', async () => {
       // arrange
       let tp = path.join(__dirname, 'externalVariables', 'L0_SingleFile.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -1477,7 +1417,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__variablespath__'] = path.join(data, 'externalvariables.json');
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -1486,12 +1426,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.expected.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should replace with variables from JSON file with comments', function (done: Mocha.Done) {
+    it('should replace with variables from JSON file with comments', async () => {
       // arrange
       let tp = path.join(__dirname, 'externalVariables', 'L0_SingleFile.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -1500,7 +1439,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__variablespath__'] = path.join(data, 'externalvariables_comments.jsonc');
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -1509,12 +1448,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.expected.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should replace with variables from multiple JSON files', function (done: Mocha.Done) {
+    it('should replace with variables from multiple JSON files', async () => {
       // arrange
       let tp = path.join(__dirname, 'externalVariables', 'L0_MultipleFiles.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -1524,7 +1462,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__variablespath2__'] = path.join(data, 'externalvariables2.json');
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -1533,12 +1471,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.expected.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should replace with variables from YAML single document file', function (done: Mocha.Done) {
+    it('should replace with variables from YAML single document file', async () => {
       // arrange
       let tp = path.join(__dirname, 'externalVariables', 'L0_SingleFile.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -1547,7 +1484,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__variablespath__'] = path.join(data, 'externalvariables_single.yml');
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -1556,12 +1493,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.expected.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should replace with variables from YAML multiple document file', function (done: Mocha.Done) {
+    it('should replace with variables from YAML multiple document file', async () => {
       // arrange
       let tp = path.join(__dirname, 'externalVariables', 'L0_SingleFile.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -1570,7 +1506,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__variablespath__'] = path.join(data, 'externalvariables_multiple.yml');
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -1579,12 +1515,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.expected.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
 
-    it('should replace only with file or inline variables when specified', function (done: Mocha.Done) {
+    it('should replace only with file or inline variables when specified', async () => {
       // arrange
       let tp = path.join(__dirname, 'externalVariables', 'L0_UseAdditionalVariablesOnly.js');
       let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
@@ -1593,7 +1528,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       process.env['__variablespath__'] = path.join(data, 'externalvariables1.json');
 
       // act
-      tr.run();
+      await tr.runAsync();
 
       // assert
       runValidation(
@@ -1602,8 +1537,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
 
           assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.useadditionalvariablesonly.expected.json'), 'replaced output');
         },
-        tr,
-        done
+        tr
       );
     });
   });
