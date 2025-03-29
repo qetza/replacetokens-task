@@ -1,6 +1,7 @@
 # Changelog
 ## 6.2.0
 - Add Node 20 support ([#74](https://github.com/qetza/replacetokens-task/issues/74)).
+- Fix issue with spaces in patterns ([#66](https://github.com/qetza/replacetokens-task/issues/66)).
 
 ## 6.1.0
 - Add _useAdditionalVariablesOnly_ parameter ([#29](https://github.com/qetza/replacetokens-task/issues/60)).
