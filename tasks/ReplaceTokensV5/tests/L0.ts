@@ -97,12 +97,9 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.stdout.should.not.include('sent usage telemetry:');
-        },
-        tr
-      );
+      runValidation(() => {
+        tr.stdout.should.not.include('sent usage telemetry:');
+      }, tr);
     });
 
     it('should not call telemetry when disabled by REPLACETOKENS_DISABLE_TELEMETRY', async () => {
@@ -116,13 +113,10 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.stdout.should.not.include('telemetry sent');
-          tr.stdout.should.not.include('sent usage telemetry:');
-        },
-        tr
-      );
+      runValidation(() => {
+        tr.stdout.should.not.include('telemetry sent');
+        tr.stdout.should.not.include('sent usage telemetry:');
+      }, tr);
     });
 
     it('should not call telemetry when disabled by REPLACETOKENS_TELEMETRY_OPTOUT', async () => {
@@ -136,13 +130,10 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.stdout.should.not.include('telemetry sent');
-          tr.stdout.should.not.include('sent usage telemetry:');
-        },
-        tr
-      );
+      runValidation(() => {
+        tr.stdout.should.not.include('telemetry sent');
+        tr.stdout.should.not.include('sent usage telemetry:');
+      }, tr);
     });
 
     it('should call telemetry on failure', async () => {
@@ -154,17 +145,14 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(false, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(false, 'task succeeded');
 
-          tr.stdout.should.include('telemetry sent');
-          tr.stdout.should.match(
-            /\[\{"account":"494d0aad9d06c4ddb51d5300620122ce55366a9382b3cc2835ed5f0e2e67b4d0","pipeline":"b98ed03d3eec376dcc015365c1a944e3ebbcc33d30e3261af3f4e4abb107aa82","host":"server","os":"Windows","result":"failed","eventType":"TokensReplaced","application":"replacetokens-task","version":"5.0.0"}]/
-          );
-        },
-        tr
-      );
+        tr.stdout.should.include('telemetry sent');
+        tr.stdout.should.match(
+          /\[\{"account":"494d0aad9d06c4ddb51d5300620122ce55366a9382b3cc2835ed5f0e2e67b4d0","pipeline":"b98ed03d3eec376dcc015365c1a944e3ebbcc33d30e3261af3f4e4abb107aa82","host":"server","os":"Windows","result":"failed","eventType":"TokensReplaced","application":"replacetokens-task","version":"5.0.0"}]/
+        );
+      }, tr);
     });
 
     it('should call telemetry on success', async () => {
@@ -178,17 +166,14 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          tr.stdout.should.include('telemetry sent');
-          tr.stdout.should.match(
-            /\[\{"account":"494d0aad9d06c4ddb51d5300620122ce55366a9382b3cc2835ed5f0e2e67b4d0","pipeline":"b98ed03d3eec376dcc015365c1a944e3ebbcc33d30e3261af3f4e4abb107aa82","host":"server","os":"Windows","actionOnMissing":"warn","encoding":"auto","keepToken":false,"pattern":"#\\\\{\\\\s\*\(\(\?:\(\?!#\\\\{\)\(\?!\\\\s\*\\\\}#\)\.\)\*\)\\\\s\*\\\\}#","result":"success","rules":1,"rulesWithInputWildcard":0,"rulesWithNegativePattern":0,"rulesWithOutputPattern":0,"tokenPrefix":"#{","tokenSuffix":"}#","variableFiles":0,"verbosity":"normal","writeBOM":true,"useLegacyPattern":false,"enableTransforms":false,"transformPrefix":"\(","transformSuffix":"\)","transformPattern":"\\\\s\*\(\.\*\)\\\\\(\\\\s\*\(\(\?:\(\?!\\\\\(\)\(\?!\\\\s\*\\\\\)\)\.\)\*\)\\\\s\*\\\\\)\\\\s\*","defaultValue":"","tokenPattern":"default","actionOnNoFiles":"continue","inlineVariables":0,"enableRecursion":false,"useLegacyEmptyFeature":false,"useDefaultValue":false,"useAdditionalVariablesOnly":false,"duration":\d+(?:\.\d+)?,"tokenReplaced":1,"tokenFound":1,"defaultValueReplaced":0,"fileProcessed":1,"transformExecuted":0,"eventType":"TokensReplaced","application":"replacetokens-task","version":"5.0.0"}]/
-          );
-        },
-        tr
-      );
+        tr.stdout.should.include('telemetry sent');
+        tr.stdout.should.match(
+          /\[\{"account":"494d0aad9d06c4ddb51d5300620122ce55366a9382b3cc2835ed5f0e2e67b4d0","pipeline":"b98ed03d3eec376dcc015365c1a944e3ebbcc33d30e3261af3f4e4abb107aa82","host":"server","os":"Windows","actionOnMissing":"warn","encoding":"auto","keepToken":false,"pattern":"#\\\\{\\\\s\*\(\(\?:\(\?!#\\\\{\)\(\?!\\\\s\*\\\\}#\)\.\)\*\)\\\\s\*\\\\}#","result":"success","rules":1,"rulesWithInputWildcard":0,"rulesWithNegativePattern":0,"rulesWithOutputPattern":0,"tokenPrefix":"#{","tokenSuffix":"}#","variableFiles":0,"verbosity":"normal","writeBOM":true,"useLegacyPattern":false,"enableTransforms":false,"transformPrefix":"\(","transformSuffix":"\)","transformPattern":"\\\\s\*\(\.\*\)\\\\\(\\\\s\*\(\(\?:\(\?!\\\\\(\)\(\?!\\\\s\*\\\\\)\)\.\)\*\)\\\\s\*\\\\\)\\\\s\*","defaultValue":"","tokenPattern":"default","actionOnNoFiles":"continue","inlineVariables":0,"enableRecursion":false,"useLegacyEmptyFeature":false,"useDefaultValue":false,"useAdditionalVariablesOnly":false,"duration":\d+(?:\.\d+)?,"tokenReplaced":1,"tokenFound":1,"defaultValueReplaced":0,"fileProcessed":1,"transformExecuted":0,"eventType":"TokensReplaced","application":"replacetokens-task","version":"5.0.0"}]/
+        );
+      }, tr);
     });
   });
 
@@ -204,14 +189,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
+      }, tr);
     });
 
     it('should replace multiple inline when no output path', async () => {
@@ -226,15 +208,12 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath1__'], path.join(data, 'default.expected.json'), 'replaced output in first file');
-          assertFilesEqual(process.env['__inputpath2__'], path.join(data, 'default.expected.json'), 'replaced output in second file');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath1__'], path.join(data, 'default.expected.json'), 'replaced output in first file');
+        assertFilesEqual(process.env['__inputpath2__'], path.join(data, 'default.expected.json'), 'replaced output in second file');
+      }, tr);
     });
 
     it('should replace in other file when relative output path', async () => {
@@ -249,15 +228,12 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(path.join(tmp, process.env['__outputpath__']), path.join(data, 'default.expected.json'), 'replaced output');
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.json'), 'input');
-        },
-        tr
-      );
+        assertFilesEqual(path.join(tmp, process.env['__outputpath__']), path.join(data, 'default.expected.json'), 'replaced output');
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.json'), 'input');
+      }, tr);
     });
 
     it('should replace in other file when absolute output path', async () => {
@@ -272,15 +248,12 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__outputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.json'), 'input');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__outputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.json'), 'input');
+      }, tr);
     });
 
     it('should replace in other file when wildcard and output path', async () => {
@@ -296,15 +269,12 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(path.join(tmp, 'output', 'default_wildcardreplace.dev.output.json'), path.join(data, 'default.expected.json'), 'replaced output');
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.json'), 'input');
-        },
-        tr
-      );
+        assertFilesEqual(path.join(tmp, 'output', 'default_wildcardreplace.dev.output.json'), path.join(data, 'default.expected.json'), 'replaced output');
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.json'), 'input');
+      }, tr);
     });
   });
 
@@ -321,14 +291,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
+      }, tr);
     });
 
     it('should replace when rm pattern', async () => {
@@ -343,14 +310,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
+      }, tr);
     });
 
     it('should replace when octopus pattern', async () => {
@@ -365,14 +329,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
+      }, tr);
     });
 
     it('should replace when azpipelines pattern', async () => {
@@ -387,14 +348,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
+      }, tr);
     });
 
     it('should replace when doublebraces pattern', async () => {
@@ -409,14 +367,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
+      }, tr);
     });
 
     it('should replace when custom pattern', async () => {
@@ -430,14 +385,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
+      }, tr);
     });
 
     it('should replace when legacy pattern', async () => {
@@ -451,14 +403,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
+      }, tr);
     });
 
     it('should no replace when legacy pattern', async () => {
@@ -472,14 +421,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
+      }, tr);
     });
   });
 
@@ -496,14 +442,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_noreplace.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_noreplace.json'), 'replaced output');
+      }, tr);
     });
 
     it('should replace with token when keeping token', async () => {
@@ -518,14 +461,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.json'), 'replaced output');
+      }, tr);
     });
   });
 
@@ -542,14 +482,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'transform.upper.expected.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'transform.upper.expected.json'), 'replaced output');
+      }, tr);
     });
 
     it('should lowercase replaced value with transform', async () => {
@@ -564,14 +501,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'transform.lower.expected.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'transform.lower.expected.json'), 'replaced output');
+      }, tr);
     });
 
     it('should base64 replaced value with transform', async () => {
@@ -586,14 +520,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'transform.base64.expected.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'transform.base64.expected.json'), 'replaced output');
+      }, tr);
     });
 
     it('should not escape replaced value with transform', async () => {
@@ -608,14 +539,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'transform.noescape.expected.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'transform.noescape.expected.json'), 'replaced output');
+      }, tr);
     });
 
     it('should transform replaced value with custom transform pattern', async () => {
@@ -629,14 +557,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'transform.upper.expected.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'transform.upper.expected.json'), 'replaced output');
+      }, tr);
     });
 
     it('should indent replaced value with transform', async () => {
@@ -651,14 +576,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'transform.indent.expected.yml'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'transform.indent.expected.yml'), 'replaced output');
+      }, tr);
     });
   });
 
@@ -675,14 +597,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          tr.stdout.should.include('##vso[task.debug]  variable not found: var1');
-        },
-        tr
-      );
+        tr.stdout.should.include('##vso[task.debug]  variable not found: var1');
+      }, tr);
     });
 
     it('should display warn on missing value when warning', async () => {
@@ -697,14 +616,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          tr.stdout.should.include('##vso[task.issue type=warning;source=TaskInternal;]  variable not found: var1');
-        },
-        tr
-      );
+        tr.stdout.should.include('##vso[task.issue type=warning;source=TaskInternal;]  variable not found: var1');
+      }, tr);
     });
 
     it('should fail on missing value when fail', async () => {
@@ -719,14 +635,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(false, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(false, 'task succeeded');
 
-          tr.stdout.should.include('##vso[task.issue type=error;source=TaskInternal;]  variable not found: var1');
-        },
-        tr
-      );
+        tr.stdout.should.include('##vso[task.issue type=error;source=TaskInternal;]  variable not found: var1');
+      }, tr);
     });
   });
 
@@ -743,19 +656,16 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          tr.stdout.should.include('##[group]replacing tokens in: ' + process.env['__inputpath__']);
-          tr.stdout.should.not.include('\n  using encoding: ascii');
-          tr.stdout.should.not.include('\n  var1: var1_value');
-          tr.stdout.should.include('1 token(s) replaced out of 1');
+        tr.stdout.should.include('##[group]replacing tokens in: ' + process.env['__inputpath__']);
+        tr.stdout.should.not.include('\n  using encoding: ascii');
+        tr.stdout.should.not.include('\n  var1: var1_value');
+        tr.stdout.should.include('1 token(s) replaced out of 1');
 
-          tr.stdout.should.include('replaced 1 tokens out of 1 in 1 file(s)');
-        },
-        tr
-      );
+        tr.stdout.should.include('replaced 1 tokens out of 1 in 1 file(s)');
+      }, tr);
     });
 
     it('should log all when detailed', async () => {
@@ -770,19 +680,16 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          tr.stdout.should.include('##[group]replacing tokens in: ' + process.env['__inputpath__']);
-          tr.stdout.should.include('\n  using encoding: ascii');
-          tr.stdout.should.include('\n  var1: var1_value');
-          tr.stdout.should.include('1 token(s) replaced out of 1');
+        tr.stdout.should.include('##[group]replacing tokens in: ' + process.env['__inputpath__']);
+        tr.stdout.should.include('\n  using encoding: ascii');
+        tr.stdout.should.include('\n  var1: var1_value');
+        tr.stdout.should.include('1 token(s) replaced out of 1');
 
-          tr.stdout.should.include('replaced 1 tokens out of 1 in 1 file(s)');
-        },
-        tr
-      );
+        tr.stdout.should.include('replaced 1 tokens out of 1 in 1 file(s)');
+      }, tr);
     });
 
     it('should not log when off', async () => {
@@ -797,19 +704,16 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          tr.stdout.should.not.include('##[group]replacing tokens in: ' + process.env['__inputpath__']);
-          tr.stdout.should.not.include('\n  using encoding: ascii');
-          tr.stdout.should.not.include('\n  var1: var1_value');
-          tr.stdout.should.not.include('1 token(s) replaced out of 1');
+        tr.stdout.should.not.include('##[group]replacing tokens in: ' + process.env['__inputpath__']);
+        tr.stdout.should.not.include('\n  using encoding: ascii');
+        tr.stdout.should.not.include('\n  var1: var1_value');
+        tr.stdout.should.not.include('1 token(s) replaced out of 1');
 
-          tr.stdout.should.not.include('replaced 1 tokens out of 1 in 1 file(s)');
-        },
-        tr
-      );
+        tr.stdout.should.not.include('replaced 1 tokens out of 1 in 1 file(s)');
+      }, tr);
     });
 
     it('should log summary when replaced', async () => {
@@ -824,20 +728,17 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          tr.stdout.should.include('replaced 8 tokens out of 8 (using 2 default value(s)) and running 2 functions in 2 file(s)');
+        tr.stdout.should.include('replaced 8 tokens out of 8 (using 2 default value(s)) and running 2 functions in 2 file(s)');
 
-          tr.stdout.should.include('##vso[task.setvariable variable=tokenReplacedCount;isOutput=false;issecret=false;]8');
-          tr.stdout.should.include('##vso[task.setvariable variable=tokenFoundCount;isOutput=false;issecret=false;]8');
-          tr.stdout.should.include('##vso[task.setvariable variable=fileProcessedCount;isOutput=false;issecret=false;]2');
-          tr.stdout.should.include('##vso[task.setvariable variable=transformExecutedCount;isOutput=false;issecret=false;]2');
-          tr.stdout.should.include('##vso[task.setvariable variable=defaultValueCount;isOutput=false;issecret=false;]2');
-        },
-        tr
-      );
+        tr.stdout.should.include('##vso[task.setvariable variable=tokenReplacedCount;isOutput=false;issecret=false;]8');
+        tr.stdout.should.include('##vso[task.setvariable variable=tokenFoundCount;isOutput=false;issecret=false;]8');
+        tr.stdout.should.include('##vso[task.setvariable variable=fileProcessedCount;isOutput=false;issecret=false;]2');
+        tr.stdout.should.include('##vso[task.setvariable variable=transformExecutedCount;isOutput=false;issecret=false;]2');
+        tr.stdout.should.include('##vso[task.setvariable variable=defaultValueCount;isOutput=false;issecret=false;]2');
+      }, tr);
     });
   });
 
@@ -855,14 +756,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_escape.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_escape.json'), 'replaced output');
+      }, tr);
     });
 
     it('should escape xml when auto on .xml', async () => {
@@ -878,14 +776,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_escape.xml'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_escape.xml'), 'replaced output');
+      }, tr);
     });
 
     it('should not escape when none', async () => {
@@ -901,14 +796,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_noescape.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_noescape.json'), 'replaced output');
+      }, tr);
     });
 
     it('should escape json when json', async () => {
@@ -924,14 +816,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_escape.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_escape.json'), 'replaced output');
+      }, tr);
     });
 
     it('should escape xml when xml', async () => {
@@ -947,14 +836,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_escape.xml'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_escape.xml'), 'replaced output');
+      }, tr);
     });
 
     it('should escape custom when custom', async () => {
@@ -968,14 +854,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_customescape.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_customescape.json'), 'replaced output');
+      }, tr);
     });
   });
 
@@ -991,14 +874,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          tr.stdout.should.include('replaced 0 tokens out of 0 in 0 file(s)');
-        },
-        tr
-      );
+        tr.stdout.should.include('replaced 0 tokens out of 0 in 0 file(s)');
+      }, tr);
     });
 
     it('should display warn on no file when warn', async () => {
@@ -1012,14 +892,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          tr.stdout.should.include('##vso[task.issue type=warning;source=TaskInternal;]found no files to process');
-        },
-        tr
-      );
+        tr.stdout.should.include('##vso[task.issue type=warning;source=TaskInternal;]found no files to process');
+      }, tr);
     });
 
     it('should fail on no file when fail', async () => {
@@ -1033,14 +910,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(false, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(false, 'task succeeded');
 
-          tr.stdout.should.include('##vso[task.issue type=error;source=TaskInternal;]found no files to process');
-        },
-        tr
-      );
+        tr.stdout.should.include('##vso[task.issue type=error;source=TaskInternal;]found no files to process');
+      }, tr);
     });
   });
 
@@ -1057,16 +931,13 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          tr.stdout.should.not.include('##vso[task.debug]  variable not found: var1');
+        tr.stdout.should.not.include('##vso[task.debug]  variable not found: var1');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_empty.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_empty.json'), 'replaced output');
+      }, tr);
     });
 
     it('should replace empty value when new', async () => {
@@ -1080,16 +951,13 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          tr.stdout.should.not.include('##vso[task.debug]  variable not found: var1');
+        tr.stdout.should.not.include('##vso[task.debug]  variable not found: var1');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_empty.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_empty.json'), 'replaced output');
+      }, tr);
     });
 
     it('should not replace empty value when new and empty token', async () => {
@@ -1104,16 +972,13 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          tr.stdout.should.not.include('##vso[task.debug]  variable not found: var1');
+        tr.stdout.should.not.include('##vso[task.debug]  variable not found: var1');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_emptytoken.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_emptytoken.json'), 'replaced output');
+      }, tr);
     });
   });
 
@@ -1130,16 +995,13 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          tr.stdout.should.include('##vso[task.issue type=warning;source=TaskInternal;]  variable not found: var1');
+        tr.stdout.should.include('##vso[task.issue type=warning;source=TaskInternal;]  variable not found: var1');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_noreplace.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_noreplace.json'), 'replaced output');
+      }, tr);
     });
 
     it('should replace with default when legacy and default', async () => {
@@ -1154,16 +1016,13 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          tr.stdout.should.include('##vso[task.debug]  var1: [default] (default value)');
+        tr.stdout.should.include('##vso[task.debug]  var1: [default] (default value)');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_default.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_default.json'), 'replaced output');
+      }, tr);
     });
 
     it('should replace with empty when legacy and empty default', async () => {
@@ -1178,16 +1037,13 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          tr.stdout.should.include('##vso[task.debug]  var1:  (default value)');
+        tr.stdout.should.include('##vso[task.debug]  var1:  (default value)');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_empty.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_empty.json'), 'replaced output');
+      }, tr);
     });
 
     it('should not replace when no default', async () => {
@@ -1203,16 +1059,13 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          tr.stdout.should.include('##vso[task.issue type=warning;source=TaskInternal;]  variable not found: var1');
+        tr.stdout.should.include('##vso[task.issue type=warning;source=TaskInternal;]  variable not found: var1');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_noreplace.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_noreplace.json'), 'replaced output');
+      }, tr);
     });
 
     it('should replace with default when default', async () => {
@@ -1228,16 +1081,13 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          tr.stdout.should.include('##vso[task.debug]  var1: [default] (default value)');
+        tr.stdout.should.include('##vso[task.debug]  var1: [default] (default value)');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_default.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_default.json'), 'replaced output');
+      }, tr);
     });
 
     it('should replace with empty when empty default', async () => {
@@ -1253,16 +1103,13 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          tr.stdout.should.include('##vso[task.debug]  var1:  (default value)');
+        tr.stdout.should.include('##vso[task.debug]  var1:  (default value)');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_empty.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_empty.json'), 'replaced output');
+      }, tr);
     });
   });
 
@@ -1278,14 +1125,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_disabledrecursion.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected_disabledrecursion.json'), 'replaced output');
+      }, tr);
     });
 
     it('should replace recursively when recursion', async () => {
@@ -1299,14 +1143,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'default.expected.json'), 'replaced output');
+      }, tr);
     });
 
     it('should fail when cycle recursion', async () => {
@@ -1320,15 +1161,12 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(false, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(false, 'task succeeded');
 
-          tr.stdout.should.include("##vso[task.issue type=error;source=TaskInternal;]recursion cycle with token 'var1'.");
-          tr.stdout.should.include("##vso[task.complete result=Failed;]recursion cycle with token 'var1'.");
-        },
-        tr
-      );
+        tr.stdout.should.include("##vso[task.issue type=error;source=TaskInternal;]recursion cycle with token 'var1'.");
+        tr.stdout.should.include("##vso[task.complete result=Failed;]recursion cycle with token 'var1'.");
+      }, tr);
     });
   });
 
@@ -1344,24 +1182,21 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          let buffer: Buffer = fs.readFileSync(process.env['__inputpath__']);
-          let hash = crypto.createHash('sha256');
-          hash.update(buffer);
-          let actual: string = hash.digest('hex');
+        let buffer: Buffer = fs.readFileSync(process.env['__inputpath__']);
+        let hash = crypto.createHash('sha256');
+        hash.update(buffer);
+        let actual: string = hash.digest('hex');
 
-          buffer = fs.readFileSync(path.join(data, 'binary.jpg'));
-          hash = crypto.createHash('sha256');
-          hash.update(buffer);
-          let expected: string = hash.digest('hex');
+        buffer = fs.readFileSync(path.join(data, 'binary.jpg'));
+        hash = crypto.createHash('sha256');
+        hash.update(buffer);
+        let expected: string = hash.digest('hex');
 
-          actual.should.equal(expected, 'replaced output');
-        },
-        tr
-      );
+        actual.should.equal(expected, 'replaced output');
+      }, tr);
     });
   });
 
@@ -1377,14 +1212,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.expected.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.expected.json'), 'replaced output');
+      }, tr);
     });
 
     it('should replace with inline variables in multiple documents', async () => {
@@ -1398,14 +1230,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.expected.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.expected.json'), 'replaced output');
+      }, tr);
     });
 
     it('should replace with variables from JSON file', async () => {
@@ -1420,14 +1249,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.expected.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.expected.json'), 'replaced output');
+      }, tr);
     });
 
     it('should replace with variables from JSON file with comments', async () => {
@@ -1442,14 +1268,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.expected.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.expected.json'), 'replaced output');
+      }, tr);
     });
 
     it('should replace with variables from multiple JSON files', async () => {
@@ -1465,14 +1288,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.expected.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.expected.json'), 'replaced output');
+      }, tr);
     });
 
     it('should replace with variables from YAML single document file', async () => {
@@ -1487,14 +1307,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.expected.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.expected.json'), 'replaced output');
+      }, tr);
     });
 
     it('should replace with variables from YAML multiple document file', async () => {
@@ -1509,14 +1326,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.expected.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.expected.json'), 'replaced output');
+      }, tr);
     });
 
     it('should replace only with file or inline variables when specified', async () => {
@@ -1531,14 +1345,11 @@ describe('ReplaceTokens v5 L0 suite', function () {
       await tr.runAsync();
 
       // assert
-      runValidation(
-        () => {
-          tr.succeeded.should.equal(true, 'task succeeded');
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
 
-          assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.useadditionalvariablesonly.expected.json'), 'replaced output');
-        },
-        tr
-      );
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'variables.useadditionalvariablesonly.expected.json'), 'replaced output');
+      }, tr);
     });
   });
 });
