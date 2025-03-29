@@ -2,6 +2,7 @@
 ## 5.2.0
 Task 6.2.0
 - Add Node 20 support ([#74](https://github.com/qetza/replacetokens-task/issues/74)).
+- Fix issue with spaces in patterns ([#66](https://github.com/qetza/replacetokens-task/issues/66)).
 
 Task 5.5.0
 - Add Node 20 support ([#74](https://github.com/qetza/replacetokens-task/issues/74)).
