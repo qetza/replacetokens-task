@@ -12,7 +12,7 @@
   "author": "Guillaume ROUCHON",
   "version": {
     "Major": 5,
-    "Minor": 4,
+    "Minor": 5,
     "Patch": 0
   },
   "releaseNotes": "Migrate to Node10 handler (breaking change).<br/>Add Node16 handler.",
@@ -355,6 +355,10 @@
       "argumentFormat": ""
     },
     "Node16": {
+      "target": "index.js",
+      "argumentFormat": ""
+    },
+    "Node20_1": {
       "target": "index.js",
       "argumentFormat": ""
     }

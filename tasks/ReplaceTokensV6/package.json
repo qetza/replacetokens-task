@@ -10,7 +10,7 @@
     "@opentelemetry/semantic-conventions": "^1.22.0",
     "@qetza/replacetokens": "^1.6.0",
     "axios": "^1.6.7",
-    "azure-pipelines-task-lib": "^4.1.0",
+    "azure-pipelines-task-lib": "^4.13.0",
     "js-yaml": "^4.1.0",
     "replacetokens-task": "file:../.."
   },
@@ -18,7 +18,7 @@
     "@types/chai": "^4.3.12",
     "@types/js-yaml": "^4.0.9",
     "@types/mocha": "^10.0.6",
-    "@types/node": "^16.11.39",
+    "@types/node": "^20.3.1",
     "chai": "^4.4.1"
   }
 }

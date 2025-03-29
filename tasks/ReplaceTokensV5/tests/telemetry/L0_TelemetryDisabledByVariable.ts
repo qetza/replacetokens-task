@@ -22,8 +22,10 @@ requestClone.on = function () {
 requestClone.write = function () {
   return true;
 };
-requestClone.end = function () {
+requestClone.end = function (callback?: () => void) {
   console.log('telemetry sent');
+
+  return this;
 };
 
 const httpsClone = Object.assign({}, https);
