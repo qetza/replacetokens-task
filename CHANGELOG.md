@@ -3,6 +3,9 @@
 Task 6.3.0
 - Add `info` log level for parameter _missingVarLog_.
 
+Task 5.6.0
+- Add `info` action for parameter _actionOnMissing_.
+
 ## 5.2.0
 Task 6.2.0
 - Add Node 20 support ([#74](https://github.com/qetza/replacetokens-task/issues/74)).

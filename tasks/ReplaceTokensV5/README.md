@@ -91,6 +91,7 @@ Please refer to the [release page](https://github.com/qetza/replacetokens-task/r
     #
     # Accepted values:
     #   - continue: output a debug message
+    #   - info: output an informational message
     #   - warn: output a warning
     #   - fail: fail the task with an error message
     #

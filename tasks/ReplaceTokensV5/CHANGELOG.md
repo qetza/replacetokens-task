@@ -1,4 +1,7 @@
 # Changelog
+## 5.6.0
+- Add `info` action for parameter _actionOnMissing_.
+
 ## 5.5.0
 - Add Node 20 support ([#74](https://github.com/qetza/replacetokens-task/issues/74)).
 

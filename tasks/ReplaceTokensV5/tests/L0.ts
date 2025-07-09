@@ -604,6 +604,25 @@ describe('ReplaceTokens v5 L0 suite', function () {
       }, tr);
     });
 
+    it('should display info on missing value when informational', async () => {
+      // arrange
+      let tp = path.join(__dirname, 'actionOnMissing', 'L0_ActionOnMissing.js');
+      let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
+
+      process.env['__inputpath__'] = copyData('default.json', 'default_infomissingvar.json');
+      process.env['__actiononmissing__'] = 'info';
+
+      // act
+      await tr.runAsync();
+
+      // assert
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
+
+        tr.stdout.should.include('  variable not found: var1');
+      }, tr);
+    });
+
     it('should display warn on missing value when warning', async () => {
       // arrange
       let tp = path.join(__dirname, 'actionOnMissing', 'L0_ActionOnMissing.js');
