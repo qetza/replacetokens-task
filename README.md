@@ -191,6 +191,7 @@ If you are migrating from **v3 to v6** make sure to read this documentation firs
     #
     # Accepted values:
     #   - off
+    #   - info
     #   - warn
     #   - error
     #

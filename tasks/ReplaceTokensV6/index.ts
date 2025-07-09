@@ -58,8 +58,11 @@ async function run() {
           rt.MissingVariables.Action.None,
         default: tl.getInput('defaultValue') || '',
         log:
-          getChoiceInput('actionOnMissing', [rt.MissingVariables.Log.Error, rt.MissingVariables.Log.Off, rt.MissingVariables.Log.Warn], 'missingVarLog') ||
-          rt.MissingVariables.Log.Warn
+          getChoiceInput(
+            'actionOnMissing',
+            [rt.MissingVariables.Log.Error, rt.MissingVariables.Log.Off, rt.MissingVariables.Log.Info, rt.MissingVariables.Log.Warn],
+            'missingVarLog'
+          ) || rt.MissingVariables.Log.Warn
       },
       recursive: tl.getBoolInput('enableRecursion'),
       root: tl.getPathInput('rootDirectory', false, true),
