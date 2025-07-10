@@ -163,7 +163,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
       tr.failed.should.be.true;
 
       tr.stdout.should.include(
-        "##vso[task.complete result=Failed;]Error: Unsupported value for input: missingVarLog. Support input list: 'error | off | warn'"
+        "##vso[task.complete result=Failed;]Error: Unsupported value for input: missingVarLog. Support input list: 'error | off | info | warn'"
       );
     }, tr);
   });

@@ -12,7 +12,7 @@
   "author": "Guillaume ROUCHON",
   "version": {
     "Major": 6,
-    "Minor": 2,
+    "Minor": 3,
     "Patch": 0
   },
   "releaseNotes": "breaking changes, see [changelog](https://github.com/qetza/replacetokens-task/blob/master/tasks/ReplaceTokensV6/CHANGELOG.md)",
@@ -220,6 +220,7 @@
       "defaultValue": "warn",
       "options": {
         "off": "no log",
+        "info": "information",
         "warn": "warning",
         "error": "error and fail task"
       },

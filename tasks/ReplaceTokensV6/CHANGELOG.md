@@ -1,4 +1,7 @@
 # Changelog
+## 6.3.0
+- Add `info` log level for parameter _missingVarLog_.
+
 ## 6.2.0
 - Add Node 20 support ([#74](https://github.com/qetza/replacetokens-task/issues/74)).
 - Fix issue with spaces in patterns ([#66](https://github.com/qetza/replacetokens-task/issues/66)).

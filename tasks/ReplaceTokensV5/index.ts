@@ -17,6 +17,7 @@ const ENCODING_UTF_16BE: string = 'utf-16be';
 const ENCODING_WIN1252: string = 'windows1252';
 const ENCODING_ISO_8859_1: string = 'iso88591';
 
+const ACTION_INFO: string = 'info';
 const ACTION_WARN: string = 'warn';
 const ACTION_FAIL: string = 'fail';
 
@@ -281,6 +282,10 @@ var replaceTokensInString = function (
 
       let message: string = '  variable not found: ' + name;
       switch (options.actionOnMissing) {
+        case ACTION_INFO:
+          logger.info(message);
+          break;
+
         case ACTION_WARN:
           logger.warn(message);
           break;
