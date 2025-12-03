@@ -235,7 +235,7 @@ If you are migrating from **v3 to v6** make sure to read this documentation firs
     #   - custom: token-prefix ... token-suffix
     #   - doublebraces: {{ ... }}
     #   - doubleunderscores: __ ... __
-    #   - githubactions: #{{ ... }}
+    #   - githubactions: ${{ ... }}
     #   - octopus: #{ ... }
     #
     # Optional. Default: default
