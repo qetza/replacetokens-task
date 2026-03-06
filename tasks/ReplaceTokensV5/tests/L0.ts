@@ -1217,6 +1217,27 @@ describe('ReplaceTokens v5 L0 suite', function () {
         actual.should.equal(expected, 'replaced output');
       }, tr);
     });
+
+    it('should treat empty token as mising variable', async () => {
+      // arrange
+      let tp = path.join(__dirname, 'targetFiles', 'L0_InlineReplace.js');
+      let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
+
+      process.env['__inputpath__'] = copyData('emptytoken.json', 'emptytoken.json');
+
+      // act
+      await tr.runAsync();
+
+      // assert
+      runValidation(() => {
+        tr.succeeded.should.equal(true, 'task succeeded');
+
+        tr.stdout.should.include('##vso[task.issue type=warning;source=TaskInternal;]  variable not found: ');
+        tr.stdout.should.include('##vso[task.debug]  : ');
+
+        assertFilesEqual(process.env['__inputpath__'], path.join(data, 'emptytoken.expected.json'), 'replaced output');
+      }, tr);
+    });
   });
 
   describe('external variables', function () {

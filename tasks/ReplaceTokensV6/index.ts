@@ -154,7 +154,7 @@ async function run() {
     // replace tokens
     const result = await rt.replaceTokens(
       sources,
-      (name: string) => (name in additionalVariables || useAdditionalVariablesOnly ? additionalVariables[name] : tl.getVariable(name)),
+      (name: string) => (name in additionalVariables || useAdditionalVariablesOnly ? additionalVariables[name] : name ? tl.getVariable(name) : undefined),
       options
     );
 

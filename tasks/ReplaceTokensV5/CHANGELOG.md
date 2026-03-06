@@ -1,4 +1,7 @@
 # Changelog
+## 5.6.1
+- Fix "name not supplied" on empty token ([#88](https://github.com/qetza/replacetokens-task/issues/88)).
+
 ## 5.6.0
 - Add `info` action for parameter _actionOnMissing_.
 
