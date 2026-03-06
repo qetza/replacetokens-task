@@ -1,4 +1,7 @@
 # Changelog
+## 6.3.1
+- Fix "name not supplied" on empty token ([#88](https://github.com/qetza/replacetokens-task/issues/88)).
+
 ## 6.3.0
 - Add `info` log level for parameter _missingVarLog_.
 

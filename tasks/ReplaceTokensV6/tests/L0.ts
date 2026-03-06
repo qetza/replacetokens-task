@@ -1078,6 +1078,40 @@ describe('ReplaceTokens v6 L0 suite', function () {
     }, tr);
   });
 
+  it('empty token', async () => {
+    // arrange
+    const tp = path.join(__dirname, 'L0_NoMock.js');
+    const tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
+
+    addVariables({ 'var.var': 'var', var_yaml2: 'var' });
+
+    let input = path.join(tmp, 'empty.txt');
+    await fs.promises.copyFile(path.join(data, 'empty.txt'), input);
+    input = path.resolve(input);
+
+    process.env['__telemetryOptout__'] = 'false';
+    process.env['__sources__'] = input;
+    process.env['__missingVarAction__'] = 'keep';
+    process.env['__missingVarDefault__'] = 'DEFAULT';
+    process.env['__root__'] = path.join(data, '..');
+
+    // act
+    await tr.runAsync();
+
+    // assert
+    runValidations(() => {
+      tr.succeeded.should.be.true;
+
+      const actual = fs.readFileSync(input, 'utf8');
+      const expected = fs.readFileSync(path.join(data, 'empty.expected.txt'), 'utf8');
+
+      actual.should.equal(expected);
+
+      tr.stdout.should.include("##vso[task.issue type=warning;source=TaskInternal;]variable '' not found");
+      tr.stdout.should.include('##vso[task.debug]: #{}#');
+    }, tr);
+  });
+
   it('useAdditionalVariablesOnly', async () => {
     // arrange
     const tp = path.join(__dirname, 'L0_NoMock.js');
