@@ -258,7 +258,7 @@ var replaceTokensInString = function (
     if (options.enableRecursion && names.includes(name)) throw new Error("recursion cycle with token '" + name + "'.");
 
     // replace value
-    let value: string = name in externalVariables || options.useAdditionalVariablesOnly ? externalVariables[name] : tl.getVariable(name);
+    let value: string = name in externalVariables || options.useAdditionalVariablesOnly ? externalVariables[name] : name ? tl.getVariable(name) : undefined;
 
     let usedDefaultValue: boolean = false;
     if (
