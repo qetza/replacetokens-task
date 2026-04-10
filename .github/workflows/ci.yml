@@ -80,13 +80,13 @@ jobs:
           rm -rf $HOME/azure-pipelines-task-lib/_download/node6
           mkdir -p $HOME/azure-pipelines-task-lib/_download/node6
           curl https://nodejs.org/dist/v6.17.1/node-v6.17.1-darwin-x64.tar.gz -o $HOME/azure-pipelines-task-lib/_download/node6/node.tar.gz
-          tar xzf $HOME/azure-pipelines-task-lib/_download/node6/node.tar.gz
+          tar xz -C $HOME/azure-pipelines-task-lib/_download/node6 -f $HOME/azure-pipelines-task-lib/_download/node6/node.tar.gz
           echo '' > $HOME/azure-pipelines-task-lib/_download/node6.completed
 
           rm -rf $HOME/azure-pipelines-task-lib/_download/node24
           mkdir -p $HOME/azure-pipelines-task-lib/_download/node24
           curl https://nodejs.org/dist/v24.10.0/node-v24.10.0-darwin-x64.tar.gz -o $HOME/azure-pipelines-task-lib/_download/node24/node.tar.gz
-          tar xzf $HOME/azure-pipelines-task-lib/_download/node24/node.tar.gz
+          tar xz -C $HOME/azure-pipelines-task-lib/_download/node24 -f $HOME/azure-pipelines-task-lib/_download/node24/node.tar.gz
           echo '' > $HOME/azure-pipelines-task-lib/_download/node24.completed
 
       - name: 'Hack: manual download of node (windows)'
