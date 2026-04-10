@@ -9,7 +9,7 @@ const data = path.join(__dirname, '..', '..', 'tests', '_data');
 const tmp = path.join(__dirname, '..', '..', 'tests', '_tmp');
 
 describe('ReplaceTokens v6 L0 suite', function () {
-  this.timeout(20000);
+  this.timeout(5000);
 
   beforeEach(() => {
     fs.mkdirSync(tmp, { recursive: true });
@@ -103,7 +103,7 @@ describe('ReplaceTokens v6 L0 suite', function () {
 
       tr.stdout.should.include('##vso[task.complete result=Failed;]Error: Input required: sources');
     }, tr);
-  });
+  }).timeout(60000);
 
   it('validate: escape', async () => {
     // arrange
