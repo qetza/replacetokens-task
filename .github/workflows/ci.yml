@@ -18,17 +18,17 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: '3.11' 
 
-      - name: Setup nodejs 24.x
-        uses: actions/setup-node@v4
+      - name: Setup nodejs 24
+        uses: actions/setup-node@v6
         with:
-          node-version: 24.x
+          node-version: 24
 
       - name: Install dependencies
         run: |
@@ -57,7 +57,7 @@ jobs:
     needs: build
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup python 3.11
         uses: actions/setup-python@v5
@@ -94,10 +94,10 @@ jobs:
           cp $env:RUNNER_TEMP/node6/node.exe $env:USERPROFILE/azure-pipelines-task-lib/_download/node6
           echo '' > $env:USERPROFILE/azure-pipelines-task-lib/_download/node6.completed
 
-      - name: Setup nodejs 24.x
-        uses: actions/setup-node@v4
+      - name: Setup nodejs 24
+        uses: actions/setup-node@v6
         with:
-          node-version: 24.x
+          node-version: 24
 
       - name: Install dependencies
         run: |
