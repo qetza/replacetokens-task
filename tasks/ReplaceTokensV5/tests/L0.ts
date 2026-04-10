@@ -9,7 +9,7 @@ const data = path.join(__dirname, '../../tests/_data');
 const tmp = path.join(__dirname, '_tmp');
 
 describe('ReplaceTokens v5 L0 suite', function () {
-  this.timeout(10000);
+  this.timeout(20000);
 
   function runValidation(validator: () => void, tr: ttm.MockTestRunner) {
     try {

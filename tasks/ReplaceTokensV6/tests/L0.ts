@@ -9,7 +9,7 @@ const data = path.join(__dirname, '..', '..', 'tests', '_data');
 const tmp = path.join(__dirname, '..', '..', 'tests', '_tmp');
 
 describe('ReplaceTokens v6 L0 suite', function () {
-  this.timeout(10000);
+  this.timeout(20000);
 
   beforeEach(() => {
     fs.mkdirSync(tmp, { recursive: true });

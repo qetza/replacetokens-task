@@ -83,6 +83,12 @@ jobs:
           tar xz -C $HOME/azure-pipelines-task-lib/_download/node6 -f $HOME/azure-pipelines-task-lib/_download/node6/node.tar.gz
           echo '' > $HOME/azure-pipelines-task-lib/_download/node6.completed
 
+          rm -rf $HOME/azure-pipelines-task-lib/_download/node20
+          mkdir -p $HOME/azure-pipelines-task-lib/_download/node20
+          curl https://nodejs.org/dist/v20.13.1/node-v20.13.1-darwin-x64.tar.gz -o $HOME/azure-pipelines-task-lib/_download/node20/node.tar.gz
+          tar xz -C $HOME/azure-pipelines-task-lib/_download/node20 -f $HOME/azure-pipelines-task-lib/_download/node20/node.tar.gz
+          echo '' > $HOME/azure-pipelines-task-lib/_download/node20.completed
+
           rm -rf $HOME/azure-pipelines-task-lib/_download/node24
           mkdir -p $HOME/azure-pipelines-task-lib/_download/node24
           curl https://nodejs.org/dist/v24.10.0/node-v24.10.0-darwin-x64.tar.gz -o $HOME/azure-pipelines-task-lib/_download/node24/node.tar.gz
