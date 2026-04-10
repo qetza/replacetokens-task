@@ -64,7 +64,7 @@ jobs:
         with:
           python-version: '3.11' 
 
-      - name: 'Hack: manual download of node6 (linux)'
+      - name: 'Hack: manual download of node (linux)'
         if: runner.os == 'Linux'
         run: |
           mkdir -p $RUNNER_TEMP/node6/node-v6.17.1-linux-x64
@@ -74,7 +74,7 @@ jobs:
           cp $RUNNER_TEMP/node6/node-v6.17.1-linux-x64/bin/node $HOME/azure-pipelines-task-lib/_download/node6/node-v6.17.1-linux-x64/bin
           echo '' > $HOME/azure-pipelines-task-lib/_download/node6.completed
 
-      - name: 'Hack: manual download of node6 (macos)'
+      - name: 'Hack: manual download of node (macos)'
         if: runner.os == 'macOS'
         run: |
           mkdir -p $RUNNER_TEMP/node6/node-v6.17.1-darwin-x64
@@ -84,7 +84,14 @@ jobs:
           cp $RUNNER_TEMP/node6/node-v6.17.1-darwin-x64/bin/node $HOME/azure-pipelines-task-lib/_download/node6/node-v6.17.1-darwin-x64/bin
           echo '' > $HOME/azure-pipelines-task-lib/_download/node6.completed
 
-      - name: 'Hack: manual download of node6 (windows)'
+          mkdir -p $RUNNER_TEMP/node24/node-v24.10.0-darwin-x64
+          curl https://nodejs.org/dist/v24.10.0/node-v24.10.0-darwin-x64.tar.gz -o $RUNNER_TEMP/node24/node-v24.10.0-darwin-x64.tar.gz
+          tar xz --strip 1 -C $RUNNER_TEMP/node24/node-v24.10.0-darwin-x64 -f $RUNNER_TEMP/node24/node-v24.10.0-darwin-x64.tar.gz
+          mkdir -p $HOME/azure-pipelines-task-lib/_download/node24/node-v24.10.0-darwin-x64/bin
+          cp $RUNNER_TEMP/node24/node-v24.10.0-darwin-x64/bin/node $HOME/azure-pipelines-task-lib/_download/node24/node-v24.10.0-darwin-x64/bin
+          echo '' > $HOME/azure-pipelines-task-lib/_download/node24.completed
+
+      - name: 'Hack: manual download of node (windows)'
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
