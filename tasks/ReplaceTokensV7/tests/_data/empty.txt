@@ -1,0 +1,2 @@
+var.var: #{var.VAR}#
+empty: #{}#

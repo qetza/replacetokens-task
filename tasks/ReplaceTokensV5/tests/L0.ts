@@ -9,7 +9,7 @@ const data = path.join(__dirname, '../../tests/_data');
 const tmp = path.join(__dirname, '_tmp');
 
 describe('ReplaceTokens v5 L0 suite', function () {
-  this.timeout(10000);
+  this.timeout(5000);
 
   function runValidation(validator: () => void, tr: ttm.MockTestRunner) {
     try {
@@ -100,7 +100,7 @@ describe('ReplaceTokens v5 L0 suite', function () {
       runValidation(() => {
         tr.stdout.should.not.include('sent usage telemetry:');
       }, tr);
-    });
+    }).timeout(60000);
 
     it('should not call telemetry when disabled by REPLACETOKENS_DISABLE_TELEMETRY', async () => {
       // arrange

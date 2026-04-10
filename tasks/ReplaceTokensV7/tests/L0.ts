@@ -8,7 +8,7 @@ require('chai').should();
 const data = path.join(__dirname, '..', '..', 'tests', '_data');
 const tmp = path.join(__dirname, '..', '..', 'tests', '_tmp');
 
-describe('ReplaceTokens v6 L0 suite', function () {
+describe('ReplaceTokens v7 L0 suite', function () {
   this.timeout(5000);
 
   beforeEach(() => {
