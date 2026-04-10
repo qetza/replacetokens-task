@@ -1,0 +1,3 @@
+var.yml1: 'file'
+---
+var.yml2: 'file'

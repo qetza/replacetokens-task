@@ -1,4 +1,9 @@
 # Changelog
+## 6.0.0
+Task 7.0.0
+- **Breaking changes**: Remove Node 16 support.
+- Add Node 24 support ([#90](https://github.com/qetza/replacetokens-task/issues/90)).
+
 ## 5.3.0
 Task 6.3.1
 - Fix "name not supplied" on empty token ([#88](https://github.com/qetza/replacetokens-task/issues/88)).

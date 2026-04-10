@@ -1,5 +1,5 @@
 {
-  "name": "replacetokens-v6",
+  "name": "replacetokens-v7",
   "author": "Guillaume ROUCHON",
   "scripts": {
     "test": "jest"
@@ -9,9 +9,9 @@
     "@opentelemetry/sdk-trace-base": "^1.22.0",
     "@opentelemetry/semantic-conventions": "^1.22.0",
     "@qetza/replacetokens": "^1.9.0",
-    "axios": "^1.6.7",
-    "azure-pipelines-task-lib": "^4.13.0",
-    "js-yaml": "^4.1.0",
+    "axios": "1.14.0",
+    "azure-pipelines-task-lib": "5.2.8",
+    "js-yaml": "4.1.1",
     "replacetokens-task": "file:../.."
   },
   "devDependencies": {

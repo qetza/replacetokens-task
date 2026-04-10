@@ -1,0 +1,10 @@
+var.var: DEFAULT
+var.secret: DEFAULT
+var1: env
+var2: inline
+var_json: file
+var_yaml1: file
+var_yaml2: file
+var.yml1: file
+var.yml2: inline
+unknown: DEFAULT

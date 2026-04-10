@@ -22,23 +22,26 @@
     "url": "git+https://github.com/qetza/replacetokens-task.git"
   },
   "scripts": {
-    "build": "npm run build:v3 && npm run build:v4 && npm run build:v5 && npm run build:v6",
+    "build": "npm run build:v3 && npm run build:v4 && npm run build:v5 && npm run build:v6 && npm run build:v7",
     "build:v3": "tsc --project tasks/ReplaceTokensV3/tsconfig.json",
     "build:v4": "tsc --project tasks/ReplaceTokensV4/tsconfig.json",
     "build:v5": "tsc --project tasks/ReplaceTokensV5/tsconfig.json",
     "build:v6": "tsc --project tasks/ReplaceTokensV6/tsconfig.json",
-    "test": "npm run build && mocha tasks/**/tests/L0.js",
+    "build:v7": "tsc --project tasks/ReplaceTokensV7/tsconfig.json",
+    "test": "npm run test:v3 && npm run test:v4 && npm run test:v5 && npm run test:v6 && npm run test:v7",
     "test:v3": "npm run build:v3 && mocha tasks/ReplaceTokensV3/dist/tests/L0.js",
     "test:v4": "npm run build:v4 && mocha tasks/ReplaceTokensV4/dist/tests/L0.js",
     "test:v5": "npm run build:v5 && mocha tasks/ReplaceTokensV5/dist/tests/L0.js",
     "test:v6": "npm run build:v6 && mocha tasks/ReplaceTokensV6/dist/tests/L0.js",
+    "test:v7": "npm run build:v7 && mocha tasks/ReplaceTokensV7/dist/tests/L0.js",
     "package": "node scripts/package.js",
     "package:public": "node scripts/package.js --public",
-    "format": "npm run format:v3 && npm run format:v4 && npm run format:v5 && npm run format:v6",
+    "format": "npm run format:v3 && npm run format:v4 && npm run format:v5 && npm run format:v6 && npm run format:v7",
     "format:v3": "prettier --write tasks/ReplaceTokensV3/**/*.ts",
     "format:v4": "prettier --write tasks/ReplaceTokensV4/**/*.ts",
     "format:v5": "prettier --write tasks/ReplaceTokensV5/**/*.ts",
     "format:v6": "prettier --write tasks/ReplaceTokensV6/**/*.ts",
+    "format:v7": "prettier --write tasks/ReplaceTokensV7/**/*.ts",
     "format:check": "prettier --check **/*.ts"
   },
   "devDependencies": {
@@ -49,6 +52,6 @@
     "semver": "^7.6.0",
     "shelljs": "^0.8.5",
     "tfx-cli": "^0.21.0",
-    "typescript": "^5.1.6"
+    "typescript": "5.7.2"
   }
 }

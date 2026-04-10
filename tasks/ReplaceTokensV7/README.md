@@ -1,4 +1,4 @@
-# ReplaceTokens
+# ReplaceTokens v7
 [![mit license](https://img.shields.io/badge/license-MIT-green)](https://github.com/qetza/replacetokens-task/blob/main/LICENSE) [![donate](https://img.shields.io/badge/donate-paypal-blue)](https://www.paypal.com/donate/?hosted_button_id=CCEAVYA8DUFD8)
 
 This Azure Pipelines task replaces tokens in text based files with variable values.
@@ -251,11 +251,10 @@ Remove Node 16 support.
 | transforms | The number of transforms applied. | `2` |
 
 ## Examples
-### Multiple target files and opt out of sending telemetry data
+### Multiple target files
 ```yaml
 - task: qetza.replacetokens.replacetokens-task.replacetokens@7
   inputs:
-    telemetryOptout: true
     sources: |
       **/*.json;!**/*.dev.json;!**/vars.json => _tmp/*.json
       **/*.yml
@@ -289,7 +288,7 @@ steps:
 ```
 
 ## Data/Telemetry
-The Replace Tokens task for Azure Pipelines collects **anonymous** usage data and sends them by default to its author to help improve the product. If you don't wish to send usage data, you can change your telemetry settings through the `inputs` _telemetryOptout_ parameter or by setting the `REPLACETOKENS_TELEMETRY_OPTOUT` environment variable to `1` or `true`.
+The Replace Tokens task for Azure Pipelines collects **anonymous** usage data and sends them by default to its author to help improve the product. If you don't wish to send usage data, you can change your telemetry settings through the _telemetryOptout_ parameter or by setting the `REPLACETOKENS_TELEMETRY_OPTOUT` environment variable to `1` or `true`.
 
 The following **anonymous** data is send:
 - the **hash** of your collection id
