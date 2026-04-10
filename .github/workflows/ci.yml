@@ -77,18 +77,16 @@ jobs:
       - name: 'Hack: manual download of node (macos)'
         if: runner.os == 'macOS'
         run: |
-          mkdir -p $RUNNER_TEMP/node6/node-v6.17.1-darwin-x64
-          curl https://nodejs.org/dist/v6.17.1/node-v6.17.1-darwin-x64.tar.gz -o $RUNNER_TEMP/node6/node-v6.17.1-darwin-x64.tar.gz
-          tar xz --strip 1 -C $RUNNER_TEMP/node6/node-v6.17.1-darwin-x64 -f $RUNNER_TEMP/node6/node-v6.17.1-darwin-x64.tar.gz
-          mkdir -p $HOME/azure-pipelines-task-lib/_download/node6/node-v6.17.1-darwin-x64/bin
-          cp $RUNNER_TEMP/node6/node-v6.17.1-darwin-x64/bin/node $HOME/azure-pipelines-task-lib/_download/node6/node-v6.17.1-darwin-x64/bin
+          rm -rf $HOME/azure-pipelines-task-lib/_download/node6
+          mkdir -p $HOME/azure-pipelines-task-lib/_download/node6
+          curl https://nodejs.org/dist/v6.17.1/node-v6.17.1-darwin-x64.tar.gz -o $HOME/azure-pipelines-task-lib/_download/node6/node.tar.gz
+          tar -xzf $HOME/azure-pipelines-task-lib/_download/node6/node.tar.gz
           echo '' > $HOME/azure-pipelines-task-lib/_download/node6.completed
 
-          mkdir -p $RUNNER_TEMP/node24/node-v24.10.0-darwin-x64
-          curl https://nodejs.org/dist/v24.10.0/node-v24.10.0-darwin-x64.tar.gz -o $RUNNER_TEMP/node24/node-v24.10.0-darwin-x64.tar.gz
-          tar xz --strip 1 -C $RUNNER_TEMP/node24/node-v24.10.0-darwin-x64 -f $RUNNER_TEMP/node24/node-v24.10.0-darwin-x64.tar.gz
-          mkdir -p $HOME/azure-pipelines-task-lib/_download/node24/node-v24.10.0-darwin-x64/bin
-          cp $RUNNER_TEMP/node24/node-v24.10.0-darwin-x64/bin/node $HOME/azure-pipelines-task-lib/_download/node24/node-v24.10.0-darwin-x64/bin
+          rm -rf $HOME/azure-pipelines-task-lib/_download/node24
+          mkdir -p $HOME/azure-pipelines-task-lib/_download/node24
+          curl https://nodejs.org/dist/v24.10.0/node-v24.10.0-darwin-x64.tar.gz -o $HOME/azure-pipelines-task-lib/_download/node24/node.tar.gz
+          tar -xzf $HOME/azure-pipelines-task-lib/_download/node24/node.tar.gz
           echo '' > $HOME/azure-pipelines-task-lib/_download/node24.completed
 
       - name: 'Hack: manual download of node (windows)'
@@ -96,9 +94,14 @@ jobs:
         shell: pwsh
         run: |
           mkdir $env:RUNNER_TEMP/node6 > $null
-          curl https://nodejs.org/dist/v6.17.1/win-x64/node.exe -o $env:RUNNER_TEMP/node6/node.exe
           mkdir $env:USERPROFILE/azure-pipelines-task-lib/_download/node6 > $null
+
+          curl https://nodejs.org/dist/v6.17.1/win-x64/node.exe -o $env:RUNNER_TEMP/node6/node.exe
           cp $env:RUNNER_TEMP/node6/node.exe $env:USERPROFILE/azure-pipelines-task-lib/_download/node6
+
+          curl https://nodejs.org/dist/v6.17.1/win-x64/node.lib -o $env:RUNNER_TEMP/node6/node.lib
+          cp $env:RUNNER_TEMP/node6/node.lib $env:USERPROFILE/azure-pipelines-task-lib/_download/node6
+
           echo '' > $env:USERPROFILE/azure-pipelines-task-lib/_download/node6.completed
 
       - name: Setup nodejs 24
